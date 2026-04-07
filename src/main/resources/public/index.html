@@ -7,29 +7,107 @@
 <meta name="description"
 	content="A simple webservice allowing consumers to get planets and cusps positions. The AstroAPI uses Swiss Ephemeris.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
+<style>
+  #astrologyMasterWrapper {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+  }
+  #astrologyMasterWrapper label {
+    display: inline-block;
+    width: 140px;
+    font-weight: bold;
+  }
+  #astrologyMasterWrapper input {
+    padding: 6px;
+    width: 260px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  #astrologyMasterWrapper button[type="submit"] {
+    background-color: #ffcc00;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  #astrologyMasterWrapper button[type="submit"]:hover {
+    background-color: #e6b800;
+  }
+  #result {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+  }
+  #result.error {
+    border-color: #f44;
+    color: #c00;
+  }
+</style>
 </head>
 <body>
-	<h1>Astro web service API v1</h1>
-	<p>
-		The AstroWebService is a simple webservice allowing consumers to get
-		planets and cusps positions. The AstroAPI uses <a
-			href="http://www.astro.com/swisseph/swephinfo_e.htm">the Swiss
-			Ephemeris</a>.
-	</p>
-		
-	<h2>Documentation</h2>
-	<ul>
-		<li><a href="http://docs.astrologyapi.apiary.io/#">AstrologyAPI</a></li>
-	</ul>
 
-	<h2>Demo</h2>
+<!-- Astrology Master Personal Interpretation Widget -->
+<div id="astrologyMasterWrapper">
+  <div style="text-align:center;">
+    <h2>Astrology Master: Personal Interpretation</h2>
+    <p>Enter your birth details to receive a personalized astrological analysis:</p>
+    <form id="astroForm" style="max-width: 500px; margin: 0 auto; text-align: left;">
+      <div style="margin-bottom: 12px;">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" placeholder="Your full name" required />
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label for="birthdate">Date of Birth:</label>
+        <input type="date" id="birthdate" name="birthdate" required />
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label for="birthtime">Time of Birth:</label>
+        <input type="time" id="birthtime" name="birthtime" />
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label for="place">Place of Birth:</label>
+        <input type="text" id="place" name="birthplace" placeholder="City or Country" required />
+      </div>
+      <div style="text-align: center;">
+        <button type="submit">Get My Interpretation</button>
+      </div>
+    </form>
+  </div>
+  <div id="result" style="display:none;"></div>
+</div>
+
+<hr style="margin: 40px 0;" />
+
+<!-- Existing API demo section -->
+<h1>Astro web service API v1</h1>
+<p>
+  The AstroWebService is a simple webservice allowing consumers to get
+  planets and cusps positions. The AstroAPI uses <a
+    href="http://www.astro.com/swisseph/swephinfo_e.htm">the Swiss
+    Ephemeris</a>.
+</p>
+
+<h2>Documentation</h2>
+<ul>
+  <li><a href="http://docs.astrologyapi.apiary.io/#">AstrologyAPI</a></li>
+</ul>
+
+<h2>Demo</h2>
 
 <p>10. 6. 2018 16:00, geocentric, tropical</p>
 <pre>
-{ 
-      "event": "20180610160000", 
-      "planets": ["Sun", "Moon"],           
+{
+      "event": "20180610160000",
+      "planets": ["Sun", "Moon"],
 }
 </pre>
 <pre id="demo1"></pre>
@@ -38,20 +116,140 @@
 <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
 
 <script>
-	var context = "/api/v1";
-	$("#example1").click(function() {
-		$.post( context + "/planets", 
-				JSON.stringify({ 
-				      "event": "20120610160000", 
-				      "planets": ["Sun", "Moon"],           
-				}), 
-				function( data ) {			  					  	
-			  		$( "#demo1" ).html( "Data Loaded: " + JSON.stringify(data, null, 2) );			  		
-				});
-	});
+  var context = "/api/v1";
+  $("#example1").click(function() {
+    $.post( context + "/planets",
+        JSON.stringify({
+              "event": "20120610160000",
+              "planets": ["Sun", "Moon"],
+        }),
+        function( data ) {
+          $( "#demo1" ).html( "Data Loaded: " + JSON.stringify(data, null, 2) );
+        });
+  });
 </script>
 
+<script>
+  // Zodiac sign lookup from Sun longitude (0-360 degrees)
+  var ZODIAC_SIGNS = [
+    "Aries", "Taurus", "Gemini", "Cancer",
+    "Leo", "Virgo", "Libra", "Scorpio",
+    "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+  ];
 
+  var ZODIAC_DESCRIPTIONS = {
+    "Aries":       "As an Aries, you are bold, ambitious, and a natural leader. Your pioneering spirit drives you to dive headfirst into new challenges.",
+    "Taurus":      "As a Taurus, you are grounded, reliable, and deeply connected to beauty and comfort. Your patience and determination are your greatest strengths.",
+    "Gemini":      "As a Gemini, you are curious, adaptable, and quick-witted. Your dual nature makes you versatile and excellent at communication.",
+    "Cancer":      "As a Cancer, you are deeply intuitive, nurturing, and emotionally intelligent. Home and family are at the center of your world.",
+    "Leo":         "As a Leo, you are charismatic, confident, and creative. You shine naturally and inspire those around you with your warmth.",
+    "Virgo":       "As a Virgo, you are analytical, precise, and devoted to service. Your attention to detail helps you achieve excellence in all you do.",
+    "Libra":       "As a Libra, you are diplomatic, fair-minded, and a lover of harmony and beauty. You excel at bringing balance to any situation.",
+    "Scorpio":     "As a Scorpio, you are passionate, resourceful, and intensely perceptive. Your depth of feeling and determination are unmatched.",
+    "Sagittarius": "As a Sagittarius, you are adventurous, optimistic, and philosophical. Your love of freedom and truth drives you to explore new horizons.",
+    "Capricorn":   "As a Capricorn, you are disciplined, responsible, and deeply ambitious. Your perseverance ensures you climb steadily toward your goals.",
+    "Aquarius":    "As an Aquarius, you are innovative, humanitarian, and fiercely independent. You are drawn to ideas that can change the world.",
+    "Pisces":      "As a Pisces, you are empathetic, artistic, and deeply spiritual. Your compassionate nature makes you attuned to the feelings of others."
+  };
+
+  function longitudeToZodiac(longitude) {
+    var index = Math.floor(longitude / 30) % 12;
+    return ZODIAC_SIGNS[index];
+  }
+
+  // Format a date and optional time string into the API event format: yyyyMMddHHmmss
+  function formatEvent(dateStr, timeStr) {
+    // dateStr: "YYYY-MM-DD", timeStr: "HH:MM" or ""
+    var dateParts = dateStr.split("-");
+    var year  = dateParts[0];
+    var month = dateParts[1];
+    var day   = dateParts[2];
+
+    var hours   = "12";
+    var minutes = "00";
+    if (timeStr && timeStr.length >= 5) {
+      var timeParts = timeStr.split(":");
+      hours   = timeParts[0];
+      minutes = timeParts[1];
+    }
+
+    return year + month + day + hours + minutes + "00";
+  }
+
+  document.getElementById("astroForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    var formData = new FormData(document.getElementById("astroForm"));
+    var name       = formData.get("name");
+    var birthdate  = formData.get("birthdate");
+    var birthtime  = formData.get("birthtime") || "";
+    var birthplace = formData.get("birthplace");
+
+    var resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+    resultDiv.className = "";
+    resultDiv.innerHTML = "<p>Calculating your chart&hellip;</p>";
+
+    var eventStr = formatEvent(birthdate, birthtime);
+    var timeDisplay = birthtime ? birthtime : "Unknown Time";
+
+    fetch("/api/v1/planets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "event": eventStr,
+        "planets": ["Sun"]
+      })
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      if (data.error) {
+        resultDiv.className = "error";
+        resultDiv.innerHTML = "<p><strong>Error:</strong> " + data.error + "</p>";
+        return;
+      }
+
+      // The planets response contains an array of planet objects with a "position" field (longitude)
+      // Response format: {"planets":{"Sun":[longitude, declination], ...}}
+      var sunLongitude = null;
+      if (data.planets && data.planets["Sun"] && data.planets["Sun"].length > 0) {
+        sunLongitude = data.planets["Sun"][0];
+      }
+
+      if (sunLongitude === null || sunLongitude === undefined) {
+        resultDiv.className = "error";
+        resultDiv.innerHTML = "<p>Could not determine Sun position from the response.</p>";
+        return;
+      }
+
+      var zodiacSign   = longitudeToZodiac(sunLongitude);
+      var description  = ZODIAC_DESCRIPTIONS[zodiacSign] || "";
+      var birthDisplay = birthdate.split("-").reverse().join(". ");
+
+      resultDiv.innerHTML =
+        "<h3>Hello, " + escapeHtml(name) + "!</h3>" +
+        "<p>Your birth date: <strong>" + birthDisplay + "</strong>" +
+          (birthtime ? " at <strong>" + escapeHtml(birthtime) + "</strong>" : "") +
+          "<br />Born in: <strong>" + escapeHtml(birthplace) + "</strong></p>" +
+        "<p>Your Sun is at <strong>" + sunLongitude.toFixed(2) + "&deg;</strong> &mdash; " +
+          "Your zodiac sign is <strong>" + zodiacSign + "</strong>.</p>" +
+        "<p>" + description + "</p>" +
+        "<p><em>Feeling curious? Explore further &amp; connect with tailored insights!</em></p>";
+    })
+    .catch(function(err) {
+      resultDiv.className = "error";
+      resultDiv.innerHTML = "<p>Request failed: " + escapeHtml(String(err)) + "</p>";
+    });
+  });
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+</script>
 
 </body>
 </html>
