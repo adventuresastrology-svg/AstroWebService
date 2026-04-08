@@ -19,7 +19,7 @@
             line-height: 1.6;
         }
 
-        #aiLessonBox {
+        .lesson-box {
             width: 100%;
             max-width: 900px;
             margin: 40px auto;
@@ -27,8 +27,7 @@
             box-sizing: border-box;
         }
 
-        /* FIXED BACKGROUND CONTAINER */
-        #aiLessonBox .lesson-container {
+        .lesson-container {
             background: #faf9f7;
             border: 1px solid #d4ccc2;
             border-radius: 18px;
@@ -36,9 +35,8 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
         }
 
-        /* TYPOGRAPHY */
-        #aiLessonBox .lesson-meta {
-            font-family: "Trebuchet MS", Arial, sans-serif;
+        .lesson-meta {
+            font-family: Arial, sans-serif;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -47,7 +45,7 @@
             font-weight: 600;
         }
 
-        #aiLessonBox .lesson-title {
+        .lesson-title {
             font-size: 34px;
             font-weight: 700;
             color: #1a1815;
@@ -55,8 +53,8 @@
             margin-bottom: 8px;
         }
 
-        #aiLessonBox .lesson-module {
-            font-family: "Trebuchet MS", Arial, sans-serif;
+        .lesson-module {
+            font-family: Arial, sans-serif;
             font-size: 13px;
             color: #a87c3f;
             margin-bottom: 36px;
@@ -65,13 +63,12 @@
             font-weight: 500;
         }
 
-        /* SECTIONS */
-        #aiLessonBox .lesson-section {
+        .lesson-section {
             margin-bottom: 32px;
         }
 
-        #aiLessonBox .lesson-section h2 {
-            font-family: "Trebuchet MS", Arial, sans-serif;
+        .lesson-section h2 {
+            font-family: Arial, sans-serif;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -82,15 +79,14 @@
             font-weight: 600;
         }
 
-        #aiLessonBox p {
+        .lesson-section p {
             font-size: 17px;
             line-height: 1.75;
             color: #3a3530;
             margin-bottom: 14px;
         }
 
-        /* DISTINCTION BOX */
-        #aiLessonBox .distinction-box {
+        .distinction-box {
             background: #fffbf7;
             border: 1px solid #d4ccc2;
             border-left: 4px solid #a87c3f;
@@ -99,7 +95,7 @@
             margin: 22px 0;
         }
 
-        #aiLessonBox .distinction-label {
+        .distinction-label {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -108,61 +104,31 @@
             margin-bottom: 6px;
         }
 
-        #aiLessonBox .distinction-text {
+        .distinction-text {
             font-size: 16px;
             color: #1e1c19;
             font-weight: 600;
         }
 
-        #aiLessonBox .distinction-sub {
+        .distinction-sub {
             font-size: 13px;
             color: #9b8f81;
             font-style: italic;
         }
 
-        /* TABLE */
-        #aiLessonBox table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fffbf7;
-            border: 1px solid #d4ccc2;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        #aiLessonBox td {
-            padding: 14px;
-            border-bottom: 1px solid #d4ccc2;
-        }
-
-        #aiLessonBox td:last-child {
-            border-right: none;
-        }
-
-        #aiLessonBox tr:last-child td {
-            border-bottom: none;
-        }
-
-        #aiLessonBox td:first-child {
-            font-weight: 700;
-            width: 160px;
-            color: #1a1815;
-        }
-
-        /* NOTICE */
-        #aiLessonBox .notice-box {
+        .notice-box {
             background: #fffbf7;
             border: 1px solid #d4ccc2;
             border-radius: 12px;
             padding: 20px;
+            margin: 22px 0;
         }
 
-        #aiLessonBox .notice-box p {
+        .notice-box p {
             margin-bottom: 0;
         }
 
-        /* FOOTER */
-        #aiLessonBox .lesson-footer {
+        .lesson-footer {
             margin-top: 40px;
             border-top: 1px solid #d4ccc2;
             padding-top: 20px;
@@ -173,116 +139,85 @@
             align-items: center;
         }
 
-        #aiLessonBox .footer-right {
+        .footer-right {
             text-align: right;
         }
 
-        #aiLessonBox .next-title {
+        .next-title {
             color: #a87c3f;
             font-weight: 700;
             margin-top: 4px;
         }
 
-        /* MOBILE FIX */
         @media (max-width: 600px) {
-            #aiLessonBox .lesson-container {
+            .lesson-container {
                 padding: 28px 20px;
             }
 
-            #aiLessonBox .lesson-title {
+            .lesson-title {
                 font-size: 28px;
             }
 
-            #aiLessonBox .lesson-footer {
+            .lesson-footer {
                 flex-direction: column;
                 gap: 20px;
                 align-items: flex-start;
-            }
-
-            #aiLessonBox .footer-right {
-                align-self: flex-start;
             }
         }
     </style>
 </head>
 <body>
 
-<div id="aiLessonBox">
+<div class="lesson-box">
     <div class="lesson-container">
-        <div class="lesson-meta">Module 01 • Lesson 1.1 • 8 Minutes</div>
+        <div class="lesson-meta">Module 01 • Lesson 1.1 • 5 Minutes</div>
         <div class="lesson-title">The Living Sky vs Your Natal Chart</div>
         <div class="lesson-module">What Are Transits? | Adventures in Astrology</div>
 
         <div class="lesson-section">
-            <h2>Lesson Overview</h2>
-            <p>This lesson establishes the single most important concept in transit work. The difference between your natal chart and the current sky.</p>
+            <h2>What You'll Learn</h2>
+            <p><strong>The key difference:</strong> Your birth chart is frozen. The sky keeps moving.</p>
         </div>
 
         <div class="lesson-section">
-            <h2>What Is Your Natal Chart?</h2>
-            <p>Your natal chart is a map of the sky at the moment you were born. It does not change.</p>
-            <p>It is fixed. It is your foundation.</p>
+            <h2>Your Natal Chart</h2>
+            <p>↓ Snapshot of the sky when you were born</p>
+            <p>↓ Never changes</p>
+            <p>↓ This is you</p>
         </div>
 
         <div class="lesson-section">
-            <h2>What Are Transits?</h2>
-            <p>The sky kept moving after you were born.</p>
-            <p>Transits are the planets moving right now in real time.</p>
-            <p>They interact with your natal chart.</p>
+            <h2>Transits</h2>
+            <p>↓ The sky right now</p>
+            <p>↓ Planets keep moving</p>
+            <p>↓ They bump into your chart</p>
+            <p>↓ That's when things happen</p>
         </div>
 
         <div class="lesson-section">
-            <h2>The Key Distinction</h2>
+            <h2>The Two Things You Need to Know</h2>
 
             <div class="distinction-box">
                 <div>
-                    <div class="distinction-label">Natal Planets</div>
-                    <div class="distinction-text">Fixed at birth</div>
-                    <div class="distinction-sub">Your foundation</div>
+                    <div class="distinction-label">Natal = Fixed</div>
+                    <div class="distinction-text">Your foundation</div>
                 </div>
 
                 <br>
 
                 <div>
-                    <div class="distinction-label">Transiting Planets</div>
-                    <div class="distinction-text">Moving right now</div>
-                    <div class="distinction-sub">The current conditions</div>
+                    <div class="distinction-label">Transits = Moving</div>
+                    <div class="distinction-text">What activates your foundation right now</div>
                 </div>
             </div>
 
-            <p>The chart is the structure. Transits are what activates it.</p>
-
         </div>
 
         <div class="lesson-section">
-            <h2>Key Terms</h2>
-
-            <table>
-                <tr>
-                    <td>Natal Chart</td>
-                    <td>Fixed birth chart</td>
-                </tr>
-                <tr>
-                    <td>Transit</td>
-                    <td>Current planetary movement</td>
-                </tr>
-                <tr>
-                    <td>Natal Planet</td>
-                    <td>Planet at birth</td>
-                </tr>
-                <tr>
-                    <td>Transiting Planet</td>
-                    <td>Planet now</td>
-                </tr>
-            </table>
-
-        </div>
-
-        <div class="lesson-section">
-            <h2>Before Next Lesson</h2>
+            <h2>Quick Task</h2>
 
             <div class="notice-box">
-                <p>Look at your chart and today's chart side by side. Notice the difference. That gap is where astrology becomes alive.</p>
+                <p><strong>Open your birth chart.</strong> Then open today's chart. Look at both. See the difference? <em>That gap is astrology working.</em></p>
             </div>
 
         </div>
@@ -290,7 +225,7 @@
         <div class="lesson-footer">
             <span>Adventures in Astrology</span>
             <div class="footer-right">
-                <div>Next Lesson</div>
+                <div>Next</div>
                 <div class="next-title">1.2 Practical Transit Work</div>
             </div>
         </div>

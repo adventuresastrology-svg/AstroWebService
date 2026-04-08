@@ -19,7 +19,7 @@
             line-height: 1.6;
         }
 
-        #aiLessonBox {
+        .lesson-box {
             width: 100%;
             max-width: 900px;
             margin: 40px auto;
@@ -27,8 +27,7 @@
             box-sizing: border-box;
         }
 
-        /* FIXED BACKGROUND CONTAINER */
-        #aiLessonBox .lesson-container {
+        .lesson-container {
             background: #faf9f7;
             border: 1px solid #d4ccc2;
             border-radius: 18px;
@@ -36,9 +35,8 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
         }
 
-        /* TYPOGRAPHY */
-        #aiLessonBox .lesson-meta {
-            font-family: "Trebuchet MS", Arial, sans-serif;
+        .lesson-meta {
+            font-family: Arial, sans-serif;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -47,7 +45,7 @@
             font-weight: 600;
         }
 
-        #aiLessonBox .lesson-title {
+        .lesson-title {
             font-size: 34px;
             font-weight: 700;
             color: #1a1815;
@@ -55,8 +53,8 @@
             margin-bottom: 8px;
         }
 
-        #aiLessonBox .lesson-module {
-            font-family: "Trebuchet MS", Arial, sans-serif;
+        .lesson-module {
+            font-family: Arial, sans-serif;
             font-size: 13px;
             color: #a87c3f;
             margin-bottom: 36px;
@@ -65,13 +63,12 @@
             font-weight: 500;
         }
 
-        /* SECTIONS */
-        #aiLessonBox .lesson-section {
+        .lesson-section {
             margin-bottom: 32px;
         }
 
-        #aiLessonBox .lesson-section h2 {
-            font-family: "Trebuchet MS", Arial, sans-serif;
+        .lesson-section h2 {
+            font-family: Arial, sans-serif;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -82,15 +79,25 @@
             font-weight: 600;
         }
 
-        #aiLessonBox p {
+        .lesson-section p {
             font-size: 17px;
             line-height: 1.75;
             color: #3a3530;
             margin-bottom: 14px;
         }
 
-        /* DISTINCTION BOX */
-        #aiLessonBox .distinction-box {
+        .step-list {
+            margin: 14px 0 14px 24px;
+            color: #3a3530;
+        }
+
+        .step-list li {
+            margin-bottom: 10px;
+            font-size: 17px;
+            line-height: 1.75;
+        }
+
+        .distinction-box {
             background: #fffbf7;
             border: 1px solid #d4ccc2;
             border-left: 4px solid #a87c3f;
@@ -99,7 +106,7 @@
             margin: 22px 0;
         }
 
-        #aiLessonBox .distinction-label {
+        .distinction-label {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -108,73 +115,31 @@
             margin-bottom: 6px;
         }
 
-        #aiLessonBox .distinction-text {
+        .distinction-text {
             font-size: 16px;
             color: #1e1c19;
             font-weight: 600;
         }
 
-        #aiLessonBox .distinction-sub {
+        .distinction-sub {
             font-size: 13px;
             color: #9b8f81;
             font-style: italic;
         }
 
-        /* LIST STYLES */
-        #aiLessonBox ul {
-            margin: 14px 0 14px 24px;
-            color: #3a3530;
-        }
-
-        #aiLessonBox li {
-            margin-bottom: 10px;
-            font-size: 17px;
-            line-height: 1.75;
-        }
-
-        /* TABLE */
-        #aiLessonBox table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fffbf7;
-            border: 1px solid #d4ccc2;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        #aiLessonBox td {
-            padding: 14px;
-            border-bottom: 1px solid #d4ccc2;
-        }
-
-        #aiLessonBox td:last-child {
-            border-right: none;
-        }
-
-        #aiLessonBox tr:last-child td {
-            border-bottom: none;
-        }
-
-        #aiLessonBox td:first-child {
-            font-weight: 700;
-            width: 160px;
-            color: #1a1815;
-        }
-
-        /* NOTICE */
-        #aiLessonBox .notice-box {
+        .notice-box {
             background: #fffbf7;
             border: 1px solid #d4ccc2;
             border-radius: 12px;
             padding: 20px;
+            margin: 22px 0;
         }
 
-        #aiLessonBox .notice-box p {
+        .notice-box p {
             margin-bottom: 0;
         }
 
-        /* FOOTER */
-        #aiLessonBox .lesson-footer {
+        .lesson-footer {
             margin-top: 40px;
             border-top: 1px solid #d4ccc2;
             padding-top: 20px;
@@ -185,125 +150,85 @@
             align-items: center;
         }
 
-        #aiLessonBox .footer-right {
+        .footer-right {
             text-align: right;
         }
 
-        #aiLessonBox .next-title {
+        .next-title {
             color: #a87c3f;
             font-weight: 700;
             margin-top: 4px;
         }
 
-        /* MOBILE FIX */
         @media (max-width: 600px) {
-            #aiLessonBox .lesson-container {
+            .lesson-container {
                 padding: 28px 20px;
             }
 
-            #aiLessonBox .lesson-title {
+            .lesson-title {
                 font-size: 28px;
             }
 
-            #aiLessonBox .lesson-footer {
+            .lesson-footer {
                 flex-direction: column;
                 gap: 20px;
                 align-items: flex-start;
-            }
-
-            #aiLessonBox .footer-right {
-                align-self: flex-start;
             }
         }
     </style>
 </head>
 <body>
 
-<div id="aiLessonBox">
+<div class="lesson-box">
     <div class="lesson-container">
-        <div class="lesson-meta">Module 01 • Lesson 1.2 • 10 Minutes</div>
+        <div class="lesson-meta">Module 01 • Lesson 1.2 • 7 Minutes</div>
         <div class="lesson-title">Practical Transit Work</div>
         <div class="lesson-module">How Transits Actually Work | Adventures in Astrology</div>
 
         <div class="lesson-section">
-            <h2>Lesson Overview</h2>
-            <p>Now that you understand the difference between your natal chart and transits, let's apply it. Here's how transits actually affect your life.</p>
+            <h2>What You'll Learn</h2>
+            <p><strong>A transit is simple:</strong> A moving planet touches your natal planet. That's it.</p>
         </div>
 
         <div class="lesson-section">
-            <h2>The Core Concept</h2>
-            <p>A transit occurs when a moving planet makes an aspect to your natal planet.</p>
-            <p>This is the moment when current planetary energy meets your natal foundation.</p>
-            <p>That's where the magic happens.</p>
+            <h2>Find a Transit in 3 Steps</h2>
+            <ol class="step-list">
+                <li><strong>Step 1:</strong> Open your birth chart</li>
+                <li><strong>Step 2:</strong> Open today's chart</li>
+                <li><strong>Step 3:</strong> Do any planets line up? If yes = transit</li>
+            </ol>
         </div>
 
         <div class="lesson-section">
-            <h2>How to Spot a Transit</h2>
-            <ul>
-                <li>Take your natal chart position</li>
-                <li>Look at today's planetary positions</li>
-                <li>Check if they form an aspect (conjunction, square, trine, etc.)</li>
-                <li>If yes, you're experiencing that transit</li>
-            </ul>
-        </div>
-
-        <div class="lesson-section">
-            <h2>Transit Aspects Matter</h2>
+            <h2>Aspect Types</h2>
 
             <div class="distinction-box">
                 <div>
-                    <div class="distinction-label">Harmonious Aspects</div>
-                    <div class="distinction-text">Trines & Sextiles</div>
-                    <div class="distinction-sub">Flow. Support. Ease.</div>
+                    <div class="distinction-label">Easy (Trine/Sextile)</div>
+                    <div class="distinction-text">Smooth &amp; Flowing</div>
                 </div>
 
                 <br>
 
                 <div>
-                    <div class="distinction-label">Challenging Aspects</div>
-                    <div class="distinction-text">Squares & Oppositions</div>
-                    <div class="distinction-sub">Friction. Growth. Change.</div>
+                    <div class="distinction-label">Hard (Square/Opposition)</div>
+                    <div class="distinction-text">Tension &amp; Growth</div>
                 </div>
             </div>
 
         </div>
 
         <div class="lesson-section">
-            <h2>The Transit Timeline</h2>
-
-            <table>
-                <tr>
-                    <td>Exact Aspect</td>
-                    <td>The precise moment of influence</td>
-                </tr>
-                <tr>
-                    <td>Orb</td>
-                    <td>The influence extends slightly before and after</td>
-                </tr>
-                <tr>
-                    <td>Applying</td>
-                    <td>Approaching the exact aspect</td>
-                </tr>
-                <tr>
-                    <td>Separating</td>
-                    <td>Moving away from the exact aspect</td>
-                </tr>
-            </table>
-
+            <h2>Planet Speed Matters</h2>
+            <p><strong>Fast planets =</strong> Quick transits (Moon = days)</p>
+            <p><strong>Slow planets =</strong> Long transits (Saturn = months)</p>
         </div>
 
         <div class="lesson-section">
-            <h2>Why Planets Matter Differently</h2>
-            <p>Fast-moving planets like the Moon create quick, emotional transits.</p>
-            <p>Slow planets like Saturn create long, transformative effects.</p>
-            <p>This determines how long a transit lasts and how intensely you feel it.</p>
-        </div>
-
-        <div class="lesson-section">
-            <h2>Before Next Lesson</h2>
+            <h2>Your Task</h2>
 
             <div class="notice-box">
-                <p>Find one transit in your chart right now. Don't worry about interpretation yet. Just find where a moving planet is aspecting your natal planets. Notice which planet and which house it's in.</p>
+                <p><strong>Find ONE transit happening right now in your chart.</strong> You don't need to interpret it. Just spot where a moving planet touches your natal chart.</p>
             </div>
 
         </div>
@@ -311,7 +236,7 @@
         <div class="lesson-footer">
             <span>Adventures in Astrology</span>
             <div class="footer-right">
-                <div>Next Lesson</div>
+                <div>Next</div>
                 <div class="next-title">1.3 Reading the Planets</div>
             </div>
         </div>
