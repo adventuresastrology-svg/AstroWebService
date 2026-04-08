@@ -1,0 +1,62 @@
+╔════════════════════════════════════════════════════════════════╗
+║          SQUARESPACE LESSON EMBED - QUICK START               ║
+╚════════════════════════════════════════════════════════════════╝
+
+📋 STEP-BY-STEP (Takes 2 minutes):
+
+  1. Open your Squarespace site editor
+  2. Go to the page where you want the lesson
+  3. Click [+] button to add a block
+  4. Find and click "Code Block"
+  5. Copy ALL code from squarespace-lesson-1-1.html (or 1-2)
+  6. Paste into the Code Block
+  7. Click Save/Publish
+
+✅ DONE! Your lesson is live.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 FILES TO USE:
+
+  ✓ squarespace-lesson-1-1.html  →  Lesson 1.1: Intro to Transits
+  ✓ squarespace-lesson-1-2.html  →  Lesson 1.2: Practical Transit Work
+
+  ✗ DO NOT use lesson-1-1.html or lesson-1-2.html
+    (those are full pages, not Squarespace embeds)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ IMPORTANT:
+
+  • Copy the ENTIRE file (scroll to the bottom)
+  • Don't add extra text or spaces
+  • Use Code Block, not Text Block
+  • Desktop + Mobile both work automatically
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎨 WHAT YOU'LL GET:
+
+  ✓ Beige/tan professional lesson box
+  ✓ Clear sections with brown headers
+  ✓ Highlighted distinction boxes
+  ✓ "Next Lesson" footer navigation
+  ✓ Mobile-responsive design
+  ✓ Ready to publish immediately
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ HELP:
+
+  Problem: Code shows as text, not formatted
+  → You're in wrong mode. Delete and use Code Block, not Text Block
+
+  Problem: Missing content on mobile
+  → Refresh page (F5) or clear browser cache
+
+  Problem: Colors look wrong
+  → This is rare. Try refreshing or check if Squarespace theme is overriding
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Need help? See SQUARESPACE-INSTRUCTIONS.md for detailed guide.
