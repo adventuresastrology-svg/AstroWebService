@@ -28,8 +28,21 @@ public class API {
 		before((req, res) -> {
 			res.header("Access-Control-Allow-Origin", "*");
 			res.header("Access-Control-Allow-Headers", "*");
+			res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 		});
-				
+
+		// Answer the CORS preflight. Browsers send OPTIONS before any cross-origin
+		// POST carrying Content-Type: application/json; without this the preflight
+		// falls through to the 404 handler and the real request is never sent.
+		// The wildcard headers set above already cover the preflight, so this only
+		// needs to answer 200 rather than fall through to notFound().
+		options("/*", (req, res) -> {
+			res.header("Access-Control-Max-Age", "86400");
+			res.type("application/json");
+			return "{}";
+		});
+
+
 		// For test
     	get("/status", (req, res) -> {
     		res.type("application/json");          

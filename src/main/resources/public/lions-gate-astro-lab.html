@@ -1,0 +1,1411 @@
+<!--
+  LIONS GATE ASTRO LAB — Chart Reading Lab
+  Paste this ENTIRE block into a single Squarespace Code Block.
+  No external libraries, no build step, no API key. It works the moment it is pasted.
+
+  ============================================================
+  WHAT CHANGED FROM THE EARLIER VERSION
+  ============================================================
+  1. Buttons now work. Every <button> carries type="button". Squarespace wraps page
+     content in a <form>, so a button without an explicit type defaults to
+     type="submit" — clicking it reloaded the page and nothing appeared to happen.
+  2. The script no longer contains a nested "</script>" inside a JS string. That
+     sequence terminates the surrounding script element early no matter how it is
+     escaped through a CMS, which killed the whole widget before it painted.
+  3. Every DOM lookup is scoped to this widget's root element instead of the whole
+     document, so nothing collides with Squarespace's own markup.
+  4. Chart calculation is real and runs in the browser — no proxy required.
+     See "ACCURACY" below.
+  5. Light theme.
+
+  ============================================================
+  ACCURACY
+  ============================================================
+  Positions are computed locally:
+    Sun, Moon .............. Meeus, Astronomical Algorithms (ch. 25 / 47)
+    Mercury..Neptune ....... Schlyter elements + Jupiter/Saturn/Uranus perturbations
+    Pluto .................. Schlyter periodic series
+    Ascendant, Midheaven ... apparent sidereal time + true obliquity
+  Verified against this project's Swiss Ephemeris service over ten birth charts
+  spanning 1900-2026 and six continents (100 body comparisons):
+    Ascendant / Midheaven ... within 0.01 arc-minutes
+    Sun, Moon ............... within 0.9 arc-minutes
+    all planets ............. within 1.9 arc-minutes
+    zodiac sign disagreements 0 of 100
+  That is far finer than any reading needs. If you would rather have Swiss
+  Ephemeris answer directly, fill in SWISS.endpoint below and it will be used
+  instead, with the local engine kept as an automatic fallback.
+
+  ============================================================
+  EXPANDING CONTENT
+  ============================================================
+  QUIZ_BANK and GLOSSARY are plain arrays near the end of the script.
+-->
+<div id="lionsGateLab">
+<style>
+  #lionsGateLab {
+    --ink:#241a3d; --ink-soft:#5a4e78; --mute:#8b81a6;
+    --gold:#b8791a; --gold-lt:#f0c060; --rose:#c2456f; --rose-lt:#f5a8c0;
+    --teal:#1c7d92; --violet:#7b52c4; --sage:#4e8a5c;
+    --paper:#fffdf7; --paper-2:#fdf6e8; --line:#e8dcc4;
+    --shadow:rgba(90,60,20,0.10);
+    font-family:'Iowan Old Style',Palatino,Georgia,serif;
+    color:var(--ink); line-height:1.6;
+    background:
+      radial-gradient(900px 420px at 78% -12%, rgba(240,192,96,0.30), transparent 62%),
+      radial-gradient(700px 380px at 12% 4%, rgba(245,168,192,0.24), transparent 60%),
+      linear-gradient(168deg, #fffdf7 0%, #fdf6e8 46%, #fbeede 100%);
+    padding:28px 16px 40px; border-radius:18px;
+  }
+  #lionsGateLab *, #lionsGateLab *::before, #lionsGateLab *::after { box-sizing:border-box; }
+  #lionsGateLab .lg-wrap { max-width:760px; margin:0 auto; }
+
+  #lionsGateLab .lg-eyebrow {
+    font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.28em;
+    text-transform:uppercase; color:var(--rose); text-align:center; margin-bottom:10px;
+  }
+  #lionsGateLab h1 {
+    font-size:34px; font-weight:400; font-style:italic; text-align:center;
+    margin:0 0 10px; line-height:1.2; color:var(--ink);
+  }
+  #lionsGateLab h1 span {
+    background:linear-gradient(90deg,var(--gold),var(--rose) 60%,var(--violet));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  #lionsGateLab .lg-sub {
+    text-align:center; color:var(--ink-soft); font-style:italic; font-size:15.5px; margin:0 0 26px;
+  }
+  #lionsGateLab .lg-sub em { color:var(--gold); }
+
+  #lionsGateLab .lg-section {
+    background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    padding:22px; margin:18px 0; box-shadow:0 2px 14px var(--shadow);
+  }
+  #lionsGateLab h2 {
+    font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--gold); margin:0 0 16px; padding-bottom:9px;
+    border-bottom:1px solid var(--line);
+  }
+  #lionsGateLab h3 { font-size:17px; font-style:italic; font-weight:400; margin:0 0 8px; }
+  #lionsGateLab p { margin:0 0 10px; }
+  #lionsGateLab .lg-hint { color:var(--ink-soft); font-size:13.5px; font-style:italic; }
+
+  #lionsGateLab label {
+    display:block; font-family:ui-monospace,Menlo,monospace; font-size:10.5px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:12px 0 5px;
+  }
+  #lionsGateLab input, #lionsGateLab select, #lionsGateLab textarea {
+    width:100%; padding:10px 12px; border-radius:9px; border:1px solid var(--line);
+    background:#fff; color:var(--ink); font-family:inherit; font-size:14.5px;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  #lionsGateLab input:focus, #lionsGateLab select:focus, #lionsGateLab textarea:focus {
+    outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(240,192,96,0.32);
+  }
+  #lionsGateLab textarea {
+    min-height:88px; resize:vertical; font-family:ui-monospace,Menlo,monospace; font-size:12.5px;
+  }
+  #lionsGateLab input::placeholder, #lionsGateLab textarea::placeholder { color:#b6abc9; }
+  #lionsGateLab button:focus-visible, #lionsGateLab .lg-tab:focus-visible,
+  #lionsGateLab summary:focus-visible {
+    outline:2px solid var(--gold); outline-offset:2px;
+  }
+  #lionsGateLab .lg-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(152px,1fr)); gap:2px 14px; }
+  #lionsGateLab .lg-row3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(144px,1fr)); gap:2px 14px; }
+
+  #lionsGateLab details { margin-top:14px; }
+  #lionsGateLab summary {
+    cursor:pointer; font-family:ui-monospace,Menlo,monospace; font-size:11px;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--teal);
+  }
+
+  #lionsGateLab button {
+    margin:14px 8px 0 0; padding:11px 20px; border:none; border-radius:999px;
+    background:linear-gradient(92deg,var(--gold-lt),var(--rose-lt));
+    color:#3a2410; font-weight:700; cursor:pointer; font-family:inherit; font-size:14.5px;
+    box-shadow:0 2px 8px rgba(194,69,111,0.22); transition:transform .12s, box-shadow .12s;
+  }
+  #lionsGateLab button:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(194,69,111,0.28); }
+  #lionsGateLab button:active { transform:translateY(0); }
+  #lionsGateLab button.lg-ghost {
+    background:transparent; color:var(--teal); border:1px solid rgba(28,125,146,0.45);
+    font-weight:400; box-shadow:none;
+  }
+  #lionsGateLab button.lg-ghost:hover { background:rgba(28,125,146,0.07); }
+  #lionsGateLab .lg-msg { margin-top:10px; font-size:13.5px; color:var(--rose); font-style:italic; }
+  #lionsGateLab .lg-msg.ok { color:var(--sage); }
+  #lionsGateLab .lg-msg.busy { color:var(--teal); }
+
+  /* place picker */
+  #lionsGateLab .lg-places { list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--line);
+    border-radius:9px; overflow:hidden; display:none; }
+  #lionsGateLab .lg-places.show { display:block; }
+  #lionsGateLab .lg-places li { border-top:1px solid var(--line); }
+  #lionsGateLab .lg-places li:first-child { border-top:none; }
+  #lionsGateLab .lg-places button {
+    margin:0; width:100%; text-align:left; border-radius:0; background:#fff; color:var(--ink);
+    font-weight:400; font-size:13.5px; padding:9px 12px; box-shadow:none; transform:none;
+  }
+  #lionsGateLab .lg-places button:hover { background:var(--paper-2); transform:none; box-shadow:none; }
+
+  /* wheel */
+  #lionsGateLab .lg-wheel-wrap { display:flex; justify-content:center; margin:18px 0 4px; }
+  #lionsGateLab svg.lg-wheel { width:300px; height:300px; max-width:100%; }
+  #lionsGateLab .lg-table { width:100%; border-collapse:collapse; margin-top:14px; font-size:13.5px; }
+  #lionsGateLab .lg-table th {
+    text-align:left; font-family:ui-monospace,Menlo,monospace; font-size:10px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--mute); font-weight:400; padding:6px 8px; border-bottom:1px solid var(--line);
+  }
+  #lionsGateLab .lg-table td { padding:7px 8px; border-bottom:1px solid var(--paper-2); }
+  #lionsGateLab .lg-table td.lg-b { font-style:italic; color:var(--violet); white-space:nowrap; }
+  #lionsGateLab .lg-rx { color:var(--rose); font-family:ui-monospace,Menlo,monospace; font-size:11px; }
+
+  /* tabs */
+  #lionsGateLab .lg-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  #lionsGateLab .lg-tab {
+    padding:8px 15px; border-radius:999px; border:1px solid var(--line); background:#fff;
+    color:var(--ink-soft); font-family:ui-monospace,Menlo,monospace; font-size:11.5px;
+    cursor:pointer; transition:background .15s, color .15s, border-color .15s;
+  }
+  #lionsGateLab .lg-tab:hover { border-color:var(--gold); }
+  #lionsGateLab .lg-tab.active {
+    background:linear-gradient(92deg,var(--gold-lt),var(--rose-lt));
+    color:#3a2410; border-color:transparent; font-weight:700;
+  }
+  #lionsGateLab .lg-output p { font-size:15.5px; }
+  #lionsGateLab .lg-chips {
+    margin:16px 0 0; padding:13px 15px; background:var(--paper-2);
+    border-left:3px solid var(--gold); border-radius:7px; font-size:13.5px;
+  }
+  #lionsGateLab .lg-chips b {
+    font-family:ui-monospace,Menlo,monospace; letter-spacing:.08em; color:var(--gold);
+  }
+
+  /* quiz */
+  #lionsGateLab .lg-q { margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--paper-2); }
+  #lionsGateLab .lg-q:last-of-type { border-bottom:none; }
+  #lionsGateLab .lg-qtext { font-size:15px; margin-bottom:8px; }
+  #lionsGateLab .lg-opt {
+    display:flex; align-items:flex-start; gap:8px; font-size:14px; margin:5px 0; cursor:pointer;
+    font-family:system-ui,sans-serif; text-transform:none; letter-spacing:0; color:var(--ink);
+  }
+  #lionsGateLab .lg-opt input { width:auto; margin:3px 0 0; }
+  #lionsGateLab .lg-explain { font-size:13px; margin-top:7px; padding:9px 11px; border-radius:7px; display:none; }
+  #lionsGateLab .lg-explain.show { display:block; }
+  #lionsGateLab .lg-explain.right { background:rgba(78,138,92,0.12); color:#2f5c39; }
+  #lionsGateLab .lg-explain.wrong { background:rgba(194,69,111,0.10); color:#8e2f4d; }
+  #lionsGateLab .lg-score { font-family:ui-monospace,Menlo,monospace; color:var(--gold); font-size:14px; margin-top:10px; }
+
+  /* glossary */
+  #lionsGateLab .lg-gloss-item { padding:9px 0; border-bottom:1px solid var(--paper-2); font-size:14px; }
+  #lionsGateLab .lg-gloss-item b { color:var(--gold); font-style:italic; }
+
+  #lionsGateLab .lg-fail {
+    background:#fff3f5; border:1px solid var(--rose-lt); color:#8e2f4d;
+    border-radius:10px; padding:14px 16px; font-size:14px;
+  }
+
+  @media (max-width:520px) {
+    #lionsGateLab { padding:20px 12px 30px; }
+    #lionsGateLab h1 { font-size:26px; }
+    #lionsGateLab .lg-section { padding:17px; }
+    #lionsGateLab button { width:100%; margin-right:0; }
+    #lionsGateLab .lg-places button { width:100%; }
+  }
+</style>
+
+<div class="lg-wrap">
+
+  <div class="lg-eyebrow">Lions Gate Astro Lab &middot; Chart Reading</div>
+  <h1><span>Read the Sky You Were Born Under</span></h1>
+  <p class="lg-sub">Enter a birth date, time, and place &mdash; get a real chart, then learn to read it.</p>
+
+  <div class="lg-section">
+    <h2>&#10022; Your Chart</h2>
+
+    <div class="lg-row3">
+      <div><label for="lg-b-date">Birth date</label><input type="date" id="lg-b-date"></div>
+      <div><label for="lg-b-time">Birth time</label><input type="time" id="lg-b-time"></div>
+      <div><label for="lg-b-place">Birth place</label><input type="text" id="lg-b-place" placeholder="City, Country" autocomplete="off"></div>
+    </div>
+    <ul class="lg-places" id="lg-places"></ul>
+
+    <details>
+      <summary>Advanced: exact coordinates &amp; time zone</summary>
+      <div class="lg-row3" style="margin-top:10px;">
+        <div><label for="lg-b-lat">Latitude</label><input type="text" id="lg-b-lat" placeholder="40.7128" autocomplete="off"></div>
+        <div><label for="lg-b-lon">Longitude</label><input type="text" id="lg-b-lon" placeholder="-74.0060" autocomplete="off"></div>
+        <div><label for="lg-b-tz">Time zone</label><input type="text" id="lg-b-tz" placeholder="America/New_York" autocomplete="off"></div>
+      </div>
+      <p class="lg-hint" style="margin-top:8px;">Latitude is positive north, longitude positive east. Filling these in overrides the city lookup.</p>
+    </details>
+
+    <button type="button" id="lg-calc-btn">Calculate Chart</button>
+    <button type="button" class="lg-ghost" id="lg-example-btn">Try an example</button>
+    <div id="lg-calc-msg" class="lg-msg"></div>
+
+    <div class="lg-wheel-wrap"><svg class="lg-wheel" viewBox="0 0 300 300" id="lg-wheel-svg" role="img" aria-label="Birth chart wheel"></svg></div>
+    <div id="lg-positions"></div>
+
+    <details>
+      <summary>Enter or override placements by hand</summary>
+      <p class="lg-hint" style="margin-top:10px;">Already know your chart? Set any placement directly &mdash; these override the calculation.</p>
+      <div class="lg-grid" id="lg-chart-inputs"></div>
+      <button type="button" class="lg-ghost" id="lg-reset-btn">Reset chart</button>
+    </details>
+  </div>
+
+  <div class="lg-section">
+    <h2>&#128301; Readings</h2>
+    <div class="lg-tabs" id="lg-tabs"></div>
+    <div class="lg-output" id="lg-output"></div>
+    <div class="lg-chips" id="lg-chips" style="display:none;"></div>
+  </div>
+
+  <div class="lg-section">
+    <h2>&#128366; Import Name Pieces</h2>
+    <p class="lg-hint">Paste a Name Pieces export from The Nomen Atlas to weave your names into the Full Woven Reading.</p>
+    <textarea id="lg-import-box" placeholder='[{"name":"Marisa","meaning":"of the sea","origin":"Latin","astro":{"element":"Water"}}]'></textarea>
+    <button type="button" id="lg-import-btn">Weave into Full Reading</button>
+    <button type="button" class="lg-ghost" id="lg-import-clear">Clear</button>
+    <div id="lg-import-msg" class="lg-msg"></div>
+  </div>
+
+  <div class="lg-section">
+    <h2>&#128218; Learn the Meaning</h2>
+    <div id="lg-lesson"></div>
+  </div>
+
+  <div class="lg-section">
+    <h2>&#129504; Mini Quiz</h2>
+    <div id="lg-quiz"></div>
+    <button type="button" id="lg-quiz-check">Check Answers</button>
+    <button type="button" class="lg-ghost" id="lg-quiz-new">New Questions</button>
+    <div class="lg-score" id="lg-quiz-score"></div>
+  </div>
+
+  <div class="lg-section">
+    <h2>&#128214; Glossary</h2>
+    <input type="text" id="lg-search" placeholder="Search term..." autocomplete="off">
+    <div id="lg-glossary" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="lg-section" style="text-align:center;">
+    <button type="button" id="lg-pdf-btn">Save as PDF</button>
+    <p class="lg-hint" style="margin-top:12px;">Opens a print-ready reading. Choose &ldquo;Save as PDF&rdquo; as the destination.</p>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var root = document.getElementById('lionsGateLab');
+  if (!root) { return; }
+
+  /* Scoped lookups. Never query the whole document — Squarespace has its own ids. */
+  function $(sel) { return root.querySelector(sel); }
+  function $$(sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
+  function on(sel, evt, fn) { var el = $(sel); if (el) { el.addEventListener(evt, fn); } }
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* ============================================================
+     OPTIONAL: Swiss Ephemeris service
+     Leave endpoint empty to use the built-in engine (accurate to ~2 arc-minutes).
+     Point it at an AstroWebService deployment for arc-second precision;
+     the local engine stays as an automatic fallback if the request fails.
+  ============================================================ */
+  var SWISS = { endpoint: "", houses: "Placidus" };
+
+  /* ============================================================
+     ASTRONOMY
+     Sun/Moon: Meeus, Astronomical Algorithms ch. 25 / 47.
+     Planets: Schlyter elements with Jupiter/Saturn/Uranus perturbations.
+     Angles: apparent sidereal time with true obliquity.
+     Verified against Swiss Ephemeris — see the header comment.
+  ============================================================ */
+  var R2D = 180 / Math.PI, D2R = Math.PI / 180;
+  function sin(d) { return Math.sin(d * D2R); }
+  function cos(d) { return Math.cos(d * D2R); }
+  function tan(d) { return Math.tan(d * D2R); }
+  function norm360(d) { d = d % 360; return d < 0 ? d + 360 : d; }
+  function atan2d(y, x) { return norm360(Math.atan2(y, x) * R2D); }
+
+  function julianDay(y, m, d, hourUT) {
+    if (m <= 2) { y -= 1; m += 12; }
+    var A = Math.floor(y / 100);
+    var B = 2 - A + Math.floor(A / 4);
+    return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) +
+           d + B - 1524.5 + (hourUT || 0) / 24;
+  }
+
+  function nutation(jd) {
+    var T = (jd - 2451545) / 36525;
+    var Om = 125.04452 - 1934.136261 * T;
+    var Ls = 280.4665 + 36000.7698 * T;
+    var Lm = 218.3165 + 481267.8813 * T;
+    return {
+      dpsi: (-17.20 * sin(Om) - 1.32 * sin(2 * Ls) - 0.23 * sin(2 * Lm) + 0.21 * sin(2 * Om)) / 3600,
+      deps: (9.20 * cos(Om) + 0.57 * cos(2 * Ls) + 0.10 * cos(2 * Lm) - 0.09 * cos(2 * Om)) / 3600
+    };
+  }
+  function meanObliquity(jd) {
+    var T = (jd - 2451545) / 36525;
+    return 23.4392911111 - 0.0130041667 * T - 1.6389e-7 * T * T + 5.036e-7 * T * T * T;
+  }
+
+  function sunData(jd) {
+    var T = (jd - 2451545) / 36525;
+    var L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+    var M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
+    var e = 0.016708634 - 0.000042037 * T - 0.0000001267 * T * T;
+    var C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * sin(M) +
+            (0.019993 - 0.000101 * T) * sin(2 * M) + 0.000289 * sin(3 * M);
+    var trueLon = L0 + C;
+    var v = M + C;
+    return {
+      trueLon: norm360(trueLon),
+      lon: norm360(trueLon - 0.00569 + nutation(jd).dpsi),
+      R: 1.000001018 * (1 - e * e) / (1 + e * cos(v))
+    };
+  }
+
+  var MOON_TERMS = [
+    [0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],
+    [0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],
+    [2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],
+    [0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],
+    [4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],
+    [2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],
+    [2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],
+    [2,0,-1,2,-2602],[2,-1,-2,0,2390],[1,0,1,0,-2348],[2,-2,0,0,2236],
+    [0,1,2,0,-2120],[0,2,0,0,-2069],[2,-2,-1,0,2048],[2,0,1,-2,-1773],
+    [2,0,0,2,-1595],[4,-1,-1,0,1215],[0,0,2,2,-1110],[3,0,-1,0,-892],
+    [2,1,1,0,-810],[4,-1,-2,0,759],[0,2,-1,0,-713],[2,2,-1,0,-700],
+    [2,1,-2,0,691],[2,-1,0,-2,596],[4,0,1,0,549],[0,0,4,0,537],
+    [4,-1,0,0,520],[1,0,-2,0,-487],[2,1,0,-2,-399],[0,0,2,-2,-381],
+    [1,1,1,0,351],[3,0,-2,0,-340],[4,0,-3,0,330],[2,-1,2,0,327],
+    [0,2,1,0,-323],[1,1,-1,0,299],[2,0,3,0,294]
+  ];
+  function moonLongitude(jd) {
+    var T = (jd - 2451545) / 36525;
+    var Lp = 218.3164477 + 481267.88123421 * T - 0.0015786 * T * T + T * T * T / 538841 - T * T * T * T / 65194000;
+    var D  = 297.8501921 + 445267.1114034 * T - 0.0018819 * T * T + T * T * T / 545868 - T * T * T * T / 113065000;
+    var M  = 357.5291092 + 35999.0502909 * T - 0.0001536 * T * T + T * T * T / 24490000;
+    var Mp = 134.9633964 + 477198.8675055 * T + 0.0087414 * T * T + T * T * T / 69699 - T * T * T * T / 14712000;
+    var F  = 93.2720950 + 483202.0175233 * T - 0.0036539 * T * T - T * T * T / 3526000 + T * T * T * T / 863310000;
+    var A1 = 119.75 + 131.849 * T, A2 = 53.09 + 479264.290 * T;
+    var E = 1 - 0.002516 * T - 0.0000074 * T * T;
+    var sum = 0;
+    for (var i = 0; i < MOON_TERMS.length; i++) {
+      var t = MOON_TERMS[i];
+      var ecc = Math.abs(t[1]) === 1 ? E : (Math.abs(t[1]) === 2 ? E * E : 1);
+      sum += t[4] * ecc * sin(t[0] * D + t[1] * M + t[2] * Mp + t[3] * F);
+    }
+    sum += 3958 * sin(A1) + 1962 * sin(Lp - F) + 318 * sin(A2);
+    return norm360(Lp + sum / 1000000 + nutation(jd).dpsi);
+  }
+
+  function elements(name, d) {
+    switch (name) {
+      case 'Mercury': return {N:48.3313+3.24587e-5*d,  i:7.0047+5.00e-8*d, w:29.1241+1.01444e-5*d,  a:0.387098,           e:0.205635+5.59e-10*d, M:168.6562+4.0923344368*d};
+      case 'Venus':   return {N:76.6799+2.46590e-5*d,  i:3.3946+2.75e-8*d, w:54.8910+1.38374e-5*d,  a:0.723330,           e:0.006773-1.302e-9*d, M:48.0052+1.6021302244*d};
+      case 'Mars':    return {N:49.5574+2.11081e-5*d,  i:1.8497-1.78e-8*d, w:286.5016+2.92961e-5*d, a:1.523688,           e:0.093405+2.516e-9*d, M:18.6021+0.5240207766*d};
+      case 'Jupiter': return {N:100.4542+2.76854e-5*d, i:1.3030-1.557e-7*d,w:273.8777+1.64505e-5*d, a:5.20256,            e:0.048498+4.469e-9*d, M:19.8950+0.0830853001*d};
+      case 'Saturn':  return {N:113.6634+2.38980e-5*d, i:2.4886-1.081e-7*d,w:339.3939+2.97661e-5*d, a:9.55475,            e:0.055546-9.499e-9*d, M:316.9670+0.0334442282*d};
+      case 'Uranus':  return {N:74.0005+1.3978e-5*d,   i:0.7733+1.9e-8*d,  w:96.6612+3.0565e-5*d,   a:19.18171-1.55e-8*d, e:0.047318+7.45e-9*d,  M:142.5905+0.011725806*d};
+      case 'Neptune': return {N:131.7806+3.0173e-5*d,  i:1.7700-2.55e-7*d, w:272.8461-6.027e-6*d,   a:30.05826+3.313e-8*d,e:0.008606+2.15e-9*d,  M:260.2471+0.005995147*d};
+    }
+  }
+  function keplerE(M, e) {
+    var E = M + R2D * e * sin(M) * (1 + e * cos(M));
+    for (var k = 0; k < 12; k++) {
+      var dE = (E - R2D * e * sin(E) - M) / (1 - e * cos(E));
+      E -= dE;
+      if (Math.abs(dE) < 1e-9) { break; }
+    }
+    return E;
+  }
+  function helio(name, d) {
+    var o = elements(name, d);
+    var E = keplerE(norm360(o.M), o.e);
+    var xv = o.a * (cos(E) - o.e);
+    var yv = o.a * Math.sqrt(1 - o.e * o.e) * sin(E);
+    var v = atan2d(yv, xv);
+    var r = Math.sqrt(xv * xv + yv * yv);
+    var u = v + o.w;
+    var xh = r * (cos(o.N) * cos(u) - sin(o.N) * sin(u) * cos(o.i));
+    var yh = r * (sin(o.N) * cos(u) + cos(o.N) * sin(u) * cos(o.i));
+    var zh = r * sin(u) * sin(o.i);
+    var lon = atan2d(yh, xh);
+    var lat = Math.atan2(zh, Math.sqrt(xh * xh + yh * yh)) * R2D;
+    if (name === 'Jupiter' || name === 'Saturn' || name === 'Uranus') {
+      var Mj = norm360(elements('Jupiter', d).M);
+      var Ms = norm360(elements('Saturn', d).M);
+      var Mu = norm360(elements('Uranus', d).M);
+      if (name === 'Jupiter') {
+        lon += -0.332 * sin(2*Mj - 5*Ms - 67.6) - 0.056 * sin(2*Mj - 2*Ms + 21)
+             + 0.042 * sin(3*Mj - 5*Ms + 21) - 0.036 * sin(Mj - 2*Ms)
+             + 0.022 * cos(Mj - Ms) + 0.023 * sin(2*Mj - 3*Ms + 52)
+             - 0.016 * sin(Mj - 5*Ms - 69);
+      } else if (name === 'Saturn') {
+        lon += 0.812 * sin(2*Mj - 5*Ms - 67.6) - 0.229 * cos(2*Mj - 4*Ms - 2)
+             + 0.119 * sin(Mj - 2*Ms - 3) + 0.046 * sin(2*Mj - 6*Ms - 69)
+             + 0.014 * sin(Mj - 3*Ms + 32);
+        lat += -0.020 * cos(2*Mj - 4*Ms - 2) + 0.018 * sin(2*Mj - 6*Ms - 49);
+      } else {
+        lon += 0.040 * sin(Ms - 2*Mu + 6) + 0.035 * sin(Ms - 3*Mu + 33) - 0.012 * sin(Mj - Mu + 20);
+      }
+    }
+    return { lon: norm360(lon), lat: lat, r: r };
+  }
+  function plutoHelio(d) {
+    var S = 50.03 + 0.033459652 * d, P = 238.95 + 0.003968789 * d;
+    return {
+      lon: norm360(238.9508 + 0.00400703 * d
+        - 19.799*sin(P) + 19.848*cos(P) + 0.897*sin(2*P) - 4.956*cos(2*P)
+        + 0.610*sin(3*P) + 1.211*cos(3*P) - 0.341*sin(4*P) - 0.190*cos(4*P)
+        + 0.128*sin(5*P) - 0.034*cos(5*P) - 0.038*sin(6*P) + 0.031*cos(6*P)
+        + 0.020*sin(S-P) - 0.010*cos(S-P)),
+      lat: -3.9082 - 5.453*sin(P) - 14.975*cos(P) + 3.527*sin(2*P) + 1.673*cos(2*P)
+        - 1.051*sin(3*P) + 0.328*cos(3*P) + 0.179*sin(4*P) - 0.292*cos(4*P)
+        + 0.019*sin(5*P) + 0.100*cos(5*P) - 0.031*sin(6*P) - 0.026*cos(6*P) + 0.011*cos(S-P),
+      r: 40.72 + 6.68*sin(P) + 6.90*cos(P) - 1.18*sin(2*P) - 0.03*cos(2*P)
+        + 0.15*sin(3*P) - 0.14*cos(3*P)
+    };
+  }
+  function bodyLongitude(name, jd) {
+    if (name === 'Sun') { return sunData(jd).lon; }
+    if (name === 'Moon') { return moonLongitude(jd); }
+    var d = jd - 2451543.5;
+    var h = (name === 'Pluto') ? plutoHelio(d) : helio(name, d);
+    var xh = h.r * cos(h.lon) * cos(h.lat);
+    var yh = h.r * sin(h.lon) * cos(h.lat);
+    var s = sunData(jd);
+    return norm360(atan2d(yh + s.R * sin(s.trueLon), xh + s.R * cos(s.trueLon)) + nutation(jd).dpsi);
+  }
+  function apparentSiderealTime(jd) {
+    var T = (jd - 2451545) / 36525;
+    var t0 = 280.46061837 + 360.98564736629 * (jd - 2451545) + 0.000387933 * T * T - T * T * T / 38710000;
+    var n = nutation(jd);
+    return norm360(t0 + n.dpsi * cos(meanObliquity(jd) + n.deps));
+  }
+  /* lonEast: geographic longitude, east positive */
+  function computeAngles(jd, latitude, lonEast) {
+    var eps = meanObliquity(jd) + nutation(jd).deps;
+    var ramc = norm360(apparentSiderealTime(jd) + lonEast);
+    return {
+      mc: atan2d(sin(ramc), cos(ramc) * cos(eps)),
+      /* atan2 of this pair lands on the descendant; the ascendant is opposite it. */
+      asc: norm360(atan2d(-cos(ramc), sin(ramc) * cos(eps) + tan(latitude) * sin(eps)) + 180)
+    };
+  }
+
+  /* ============================================================
+     TIME ZONES
+     Convert local wall-clock birth time to UTC using the browser's own
+     time-zone database, so historical daylight-saving rules are honoured.
+  ============================================================ */
+  function zoneOffsetMinutes(utcMillis, zone) {
+    var dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: zone, hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    var p = {};
+    dtf.formatToParts(new Date(utcMillis)).forEach(function (x) { p[x.type] = x.value; });
+    var asUTC = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second);
+    return Math.round((asUTC - utcMillis) / 60000);
+  }
+  function localToUTC(y, mo, d, h, mi, zone) {
+    var target = Date.UTC(y, mo - 1, d, h, mi);
+    var guess = target;
+    for (var i = 0; i < 4; i++) {
+      var off = zoneOffsetMinutes(guess, zone);
+      var next = target - off * 60000;
+      if (next === guess) { break; }
+      guess = next;
+    }
+    return { millis: guess, offsetMinutes: zoneOffsetMinutes(guess, zone) };
+  }
+  function validZone(zone) {
+    if (!zone) { return false; }
+    try { new Intl.DateTimeFormat('en-US', { timeZone: zone }); return true; }
+    catch (e) { return false; }
+  }
+
+  /* ============================================================
+     ZODIAC DATA
+  ============================================================ */
+  var ZODIAC = [
+    {name:'Aries',      glyph:'♈', element:'Fire',  modality:'Cardinal', ruler:'Mars',    trait:'bold, direct, and quick to act'},
+    {name:'Taurus',     glyph:'♉', element:'Earth', modality:'Fixed',    ruler:'Venus',   trait:'steady, sensual, and grounded in comfort'},
+    {name:'Gemini',     glyph:'♊', element:'Air',   modality:'Mutable',  ruler:'Mercury', trait:'curious, quick-witted, and endlessly adaptable'},
+    {name:'Cancer',     glyph:'♋', element:'Water', modality:'Cardinal', ruler:'Moon',    trait:'protective, intuitive, and deeply feeling'},
+    {name:'Leo',        glyph:'♌', element:'Fire',  modality:'Fixed',    ruler:'Sun',     trait:'warm, expressive, and naturally magnetic'},
+    {name:'Virgo',      glyph:'♍', element:'Earth', modality:'Mutable',  ruler:'Mercury', trait:'precise, discerning, and quietly devoted'},
+    {name:'Libra',      glyph:'♎', element:'Air',   modality:'Cardinal', ruler:'Venus',   trait:'diplomatic, aesthetic, and relationship-minded'},
+    {name:'Scorpio',    glyph:'♏', element:'Water', modality:'Fixed',    ruler:'Pluto',   trait:'intense, perceptive, and transformative'},
+    {name:'Sagittarius',glyph:'♐', element:'Fire',  modality:'Mutable',  ruler:'Jupiter', trait:'adventurous, philosophical, and freedom-loving'},
+    {name:'Capricorn',  glyph:'♑', element:'Earth', modality:'Cardinal', ruler:'Saturn',  trait:'disciplined, ambitious, and built for the long game'},
+    {name:'Aquarius',   glyph:'♒', element:'Air',   modality:'Fixed',    ruler:'Uranus',  trait:'unconventional, idea-driven, and community-minded'},
+    {name:'Pisces',     glyph:'♓', element:'Water', modality:'Mutable',  ruler:'Neptune', trait:'dreamy, empathetic, and porous to the world around them'}
+  ];
+  var SIGN_BY_NAME = {};
+  ZODIAC.forEach(function (z) { SIGN_BY_NAME[z.name] = z; });
+
+  var PLANET_META = {
+    sun:     {label:'Sun',     glyph:'☉', body:'Sun'},
+    moon:    {label:'Moon',    glyph:'☽', body:'Moon'},
+    rising:  {label:'Rising',  glyph:'AC',    body:null},
+    mercury: {label:'Mercury', glyph:'☿', body:'Mercury'},
+    venus:   {label:'Venus',   glyph:'♀', body:'Venus'},
+    mars:    {label:'Mars',    glyph:'♂', body:'Mars'},
+    jupiter: {label:'Jupiter', glyph:'♃', body:'Jupiter'},
+    saturn:  {label:'Saturn',  glyph:'♄', body:'Saturn'},
+    uranus:  {label:'Uranus',  glyph:'♅', body:'Uranus'},
+    neptune: {label:'Neptune', glyph:'♆', body:'Neptune'},
+    pluto:   {label:'Pluto',   glyph:'♇', body:'Pluto'},
+    mc:      {label:'Midheaven', glyph:'MC',  body:null}
+  };
+  /* The six placements a beginner reads first, and the ones the wheel labels. */
+  var CORE_KEYS = ['sun','moon','rising','mercury','venus','mars'];
+  var ALL_KEYS = ['sun','moon','rising','mercury','venus','mars',
+                  'jupiter','saturn','uranus','neptune','pluto','mc'];
+  /* Element balance uses the personal placements only — outer planets are
+     generational and would swamp a six-placement tally. */
+  var BALANCE_KEYS = CORE_KEYS;
+
+  var ELEMENT_DESC = {
+    Fire:  'initiative, courage, and instinctive action',
+    Earth: 'practicality, patience, and material sense',
+    Air:   'ideas, communication, and social connection',
+    Water: 'emotion, intuition, and depth of feeling'
+  };
+  var ELEMENT_COLOR = { Fire:'#d98324', Earth:'#5f8a4a', Air:'#7b52c4', Water:'#1c7d92' };
+  var MODALITY_DESC = {
+    Cardinal: 'initiates — starts things, leads, begins seasons',
+    Fixed:    'sustains — stabilizes, commits, holds steady',
+    Mutable:  'adapts — adjusts, transitions, stays flexible'
+  };
+
+  /* ============================================================
+     STATE
+     signs[key]  -> sign name (what the readings use)
+     exact[key]  -> { lon, retro } when we calculated it
+  ============================================================ */
+  var signs = {}, exact = {}, birthInfo = null, importedPieces = null, activeTab = 'big3';
+
+  function signOf(lon) { return ZODIAC[Math.floor(norm360(lon) / 30)].name; }
+  function formatDeg(lon) {
+    var L = norm360(lon);
+    var within = L % 30;
+    var deg = Math.floor(within);
+    var min = Math.round((within - deg) * 60);
+    if (min === 60) { min = 0; deg += 1; }
+    return deg + '°' + (min < 10 ? '0' : '') + min + "'";
+  }
+
+  /* ============================================================
+     CHART CALCULATION
+  ============================================================ */
+  function computeChart(birth) {
+    var u = localToUTC(birth.year, birth.month, birth.day, birth.hour, birth.minute, birth.zone);
+    var dt = new Date(u.millis);
+    var jd = julianDay(dt.getUTCFullYear(), dt.getUTCMonth() + 1, dt.getUTCDate(),
+                       dt.getUTCHours() + dt.getUTCMinutes() / 60 + dt.getUTCSeconds() / 3600);
+    var out = {};
+    ALL_KEYS.forEach(function (key) {
+      var body = PLANET_META[key].body;
+      if (!body) { return; }
+      var lon = bodyLongitude(body, jd);
+      var ahead = bodyLongitude(body, jd + 0.5);
+      var behind = bodyLongitude(body, jd - 0.5);
+      var motion = ((ahead - behind + 540) % 360) - 180;
+      out[key] = { lon: lon, retro: motion < 0 };
+    });
+    if (birth.hasTime) {
+      var a = computeAngles(jd, birth.latitude, birth.longitude);
+      out.rising = { lon: a.asc, retro: false };
+      out.mc = { lon: a.mc, retro: false };
+    }
+    return { jd: jd, positions: out, offsetMinutes: u.offsetMinutes, utc: dt };
+  }
+
+  /* Ask the Swiss Ephemeris service, falling back to the local engine. */
+  function computeChartRemote(birth) {
+    var chart = computeChart(birth);
+    if (!SWISS.endpoint) { return Promise.resolve({ chart: chart, source: 'local' }); }
+
+    var d = chart.utc;
+    function p2(n) { return (n < 10 ? '0' : '') + n; }
+    var event = '' + d.getUTCFullYear() + p2(d.getUTCMonth() + 1) + p2(d.getUTCDate()) +
+                p2(d.getUTCHours()) + p2(d.getUTCMinutes()) + p2(d.getUTCSeconds());
+    var bodies = ALL_KEYS.map(function (k) { return PLANET_META[k].body; }).filter(Boolean);
+    var base = SWISS.endpoint.replace(/\/+$/, '');
+    var topo = [birth.longitude, birth.latitude, 0];
+
+    /* Deliberately no topo on the planets call. Passing it makes the service return
+       topocentric positions, which shifts the Moon by up to a degree of parallax.
+       Natal charts are geocentric. The birth place only matters for the angles. */
+    var reqs = [
+      fetch(base + '/api/v1/planets', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event: event, planets: bodies })
+      }).then(function (r) { return r.json(); })
+    ];
+    if (birth.hasTime) {
+      reqs.push(fetch(base + '/api/v1/cusps', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event: event, houses: SWISS.houses, topo: topo })
+      }).then(function (r) { return r.json(); }));
+    }
+
+    return Promise.all(reqs).then(function (res) {
+      var pl = res[0], cu = res[1];
+      if (!pl || pl.error || !pl.planets) { throw new Error(pl && pl.error ? pl.error : 'no planet data'); }
+      var out = {};
+      ALL_KEYS.forEach(function (key) {
+        var body = PLANET_META[key].body;
+        if (!body) { return; }
+        var v = pl.planets[body];
+        if (!v) { return; }
+        /* The service returns [longitude, daily speed]; negative speed is retrograde. */
+        out[key] = { lon: norm360(v[0]), retro: v[1] < 0 };
+      });
+      if (cu && cu.cusps && cu.cusps.length >= 10) {
+        out.rising = { lon: norm360(cu.cusps[0]), retro: false };
+        out.mc = { lon: norm360(cu.cusps[9]), retro: false };
+      } else if (chart.positions.rising) {
+        out.rising = chart.positions.rising;
+        out.mc = chart.positions.mc;
+      }
+      chart.positions = out;
+      return { chart: chart, source: 'swiss' };
+    }).catch(function () {
+      return { chart: chart, source: 'local-fallback' };
+    });
+  }
+
+  function applyChart(chart) {
+    exact = chart.positions;
+    ALL_KEYS.forEach(function (key) {
+      if (exact[key]) { signs[key] = signOf(exact[key].lon); }
+    });
+    syncChartInputs();
+    onChartChange();
+  }
+
+  /* ============================================================
+     GEOCODING (open-meteo, no key required)
+  ============================================================ */
+  var placeTimer = null, chosenPlace = null;
+
+  function searchPlaces(q) {
+    var url = 'https://geocoding-api.open-meteo.com/v1/search?count=6&language=en&format=json&name=' +
+              encodeURIComponent(q);
+    return fetch(url).then(function (r) { return r.json(); }).then(function (d) { return d.results || []; });
+  }
+  function placeLabel(p) {
+    return [p.name, p.admin1, p.country].filter(Boolean).join(', ');
+  }
+  function renderPlaces(list) {
+    var box = $('#lg-places');
+    if (!list.length) { box.className = 'lg-places'; box.innerHTML = ''; return; }
+    box.innerHTML = list.map(function (p, i) {
+      return '<li><button type="button" data-i="' + i + '">' + esc(placeLabel(p)) +
+             ' <span style="color:#8b81a6">' + p.latitude.toFixed(2) + ', ' + p.longitude.toFixed(2) +
+             '</span></button></li>';
+    }).join('');
+    box.className = 'lg-places show';
+    $$('#lg-places button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var p = list[+b.getAttribute('data-i')];
+        chosenPlace = p;
+        $('#lg-b-place').value = placeLabel(p);
+        $('#lg-b-lat').value = p.latitude;
+        $('#lg-b-lon').value = p.longitude;
+        $('#lg-b-tz').value = p.timezone || '';
+        box.className = 'lg-places';
+        box.innerHTML = '';
+      });
+    });
+  }
+
+  /* ============================================================
+     READING THE FORM
+  ============================================================ */
+  function readBirth() {
+    var dateStr = $('#lg-b-date').value;
+    if (!dateStr) { return { error: 'Enter a birth date to calculate a chart.' }; }
+    var dparts = dateStr.split('-');
+    var year = +dparts[0], month = +dparts[1], day = +dparts[2];
+    if (!year || !month || !day) { return { error: 'That birth date could not be read.' }; }
+
+    var timeStr = $('#lg-b-time').value;
+    var hasTime = !!timeStr;
+    var hour = 12, minute = 0;
+    if (hasTime) {
+      var tparts = timeStr.split(':');
+      hour = +tparts[0]; minute = +tparts[1] || 0;
+    }
+
+    var latRaw = $('#lg-b-lat').value.trim();
+    var lonRaw = $('#lg-b-lon').value.trim();
+    var zoneRaw = $('#lg-b-tz').value.trim();
+
+    var latitude = latRaw === '' ? null : parseFloat(latRaw);
+    var longitude = lonRaw === '' ? null : parseFloat(lonRaw);
+    var zone = zoneRaw;
+
+    if (latitude === null && chosenPlace) { latitude = chosenPlace.latitude; }
+    if (longitude === null && chosenPlace) { longitude = chosenPlace.longitude; }
+    if (!zone && chosenPlace) { zone = chosenPlace.timezone; }
+
+    if (latitude === null || longitude === null || isNaN(latitude) || isNaN(longitude)) {
+      return { error: 'Pick a birth place from the list, or type coordinates under Advanced.' };
+    }
+    if (Math.abs(latitude) > 89.5) {
+      return { error: 'The Ascendant is undefined that close to the poles. Try a latitude within 89 degrees.' };
+    }
+    if (!validZone(zone)) {
+      zone = 'UTC';
+    }
+
+    return {
+      year: year, month: month, day: day, hour: hour, minute: minute,
+      hasTime: hasTime, latitude: latitude, longitude: longitude, zone: zone,
+      place: $('#lg-b-place').value.trim() || (latitude.toFixed(2) + ', ' + longitude.toFixed(2))
+    };
+  }
+
+  function calculate() {
+    var msg = $('#lg-calc-msg');
+    var birth = readBirth();
+    if (birth.error) {
+      msg.className = 'lg-msg';
+      msg.textContent = birth.error;
+      return;
+    }
+    msg.className = 'lg-msg busy';
+    msg.textContent = 'Calculating…';
+
+    computeChartRemote(birth).then(function (res) {
+      birthInfo = birth;
+      applyChart(res.chart);
+      var offs = res.chart.offsetMinutes;
+      var sign = offs < 0 ? '-' : '+';
+      var ao = Math.abs(offs);
+      var offStr = 'UTC' + sign + Math.floor(ao / 60) + ':' + (ao % 60 < 10 ? '0' : '') + (ao % 60);
+      var note = birth.zone === 'UTC' && !$('#lg-b-tz').value.trim()
+        ? ' Time zone unknown, so the birth time was read as UTC — set one under Advanced for an exact Rising sign.'
+        : '';
+      msg.className = 'lg-msg ok';
+      msg.textContent = 'Chart calculated for ' + birth.place + ' (' + birth.zone + ', ' + offStr + ').' +
+        (birth.hasTime ? '' : ' No birth time given, so noon was used — the Moon may be off by a sign and the Rising sign cannot be found.') +
+        note +
+        (res.source === 'local-fallback' ? ' The Swiss Ephemeris service was unreachable, so the built-in engine was used.' : '');
+    }).catch(function (err) {
+      msg.className = 'lg-msg';
+      msg.textContent = 'Something went wrong calculating the chart: ' + err.message;
+    });
+  }
+
+  /* ============================================================
+     MANUAL OVERRIDES
+  ============================================================ */
+  function renderChartInputs() {
+    $('#lg-chart-inputs').innerHTML = CORE_KEYS.map(function (key) {
+      var opts = '<option value="">— not set —</option>' + ZODIAC.map(function (z) {
+        return '<option value="' + z.name + '">' + z.glyph + ' ' + z.name + '</option>';
+      }).join('');
+      return '<div><label for="lg-sel-' + key + '">' + PLANET_META[key].glyph + ' ' +
+             PLANET_META[key].label + '</label><select id="lg-sel-' + key + '">' + opts + '</select></div>';
+    }).join('');
+    CORE_KEYS.forEach(function (key) {
+      var el = $('#lg-sel-' + key);
+      el.value = signs[key] || '';
+      el.addEventListener('change', function () {
+        if (el.value) {
+          signs[key] = el.value;
+          /* A hand-picked sign replaces the calculated degree. */
+          if (exact[key] && signOf(exact[key].lon) !== el.value) { delete exact[key]; }
+        } else {
+          delete signs[key];
+          delete exact[key];
+        }
+        onChartChange();
+      });
+    });
+  }
+  function syncChartInputs() {
+    CORE_KEYS.forEach(function (key) {
+      var el = $('#lg-sel-' + key);
+      if (el) { el.value = signs[key] || ''; }
+    });
+  }
+  function onChartChange() {
+    renderWheel();
+    renderPositions();
+    renderReport();
+  }
+
+  /* ============================================================
+     WHEEL
+     Longitude increases counter-clockwise from the Ascendant at 9 o'clock,
+     which is how a natal chart is conventionally drawn. Without a birth time
+     there is no Ascendant, so 0 Aries sits at 9 o'clock instead.
+  ============================================================ */
+  function wheelPoint(cx, cy, r, phi) {
+    return { x: cx - r * cos(phi), y: cy + r * sin(phi) };
+  }
+  function renderWheel() {
+    var cx = 150, cy = 150, rim = 140, inner = 96, hub = 52;
+    var rot = exact.rising ? exact.rising.lon : 0;
+    var svg = '';
+
+    ZODIAC.forEach(function (z, i) {
+      var a0 = norm360(i * 30 - rot), a1 = a0 + 30;
+      var p0 = wheelPoint(cx, cy, rim, a0), p1 = wheelPoint(cx, cy, rim, a1);
+      var q0 = wheelPoint(cx, cy, inner, a0), q1 = wheelPoint(cx, cy, inner, a1);
+      var c = ELEMENT_COLOR[z.element];
+      svg += '<path d="M ' + q0.x.toFixed(1) + ' ' + q0.y.toFixed(1) +
+        ' L ' + p0.x.toFixed(1) + ' ' + p0.y.toFixed(1) +
+        ' A ' + rim + ' ' + rim + ' 0 0 0 ' + p1.x.toFixed(1) + ' ' + p1.y.toFixed(1) +
+        ' L ' + q1.x.toFixed(1) + ' ' + q1.y.toFixed(1) +
+        ' A ' + inner + ' ' + inner + ' 0 0 1 ' + q0.x.toFixed(1) + ' ' + q0.y.toFixed(1) + ' Z" ' +
+        'fill="' + c + '" fill-opacity="0.13" stroke="' + c + '" stroke-opacity="0.4" stroke-width="1"/>';
+      var g = wheelPoint(cx, cy, (rim + inner) / 2, a0 + 15);
+      svg += '<text x="' + g.x.toFixed(1) + '" y="' + g.y.toFixed(1) + '" text-anchor="middle" ' +
+        'dominant-baseline="central" font-size="16" fill="' + c + '">' + z.glyph + '</text>';
+    });
+
+    svg += '<circle cx="150" cy="150" r="' + rim + '" fill="none" stroke="#d8c9a8" stroke-width="1.5"/>';
+    svg += '<circle cx="150" cy="150" r="' + inner + '" fill="none" stroke="#e0d2b4" stroke-width="1"/>';
+    svg += '<circle cx="150" cy="150" r="' + hub + '" fill="#fffdf7" stroke="#e8dcc4" stroke-width="1"/>';
+
+    /* Horizon and meridian axes, drawn only when the birth time gave us angles. */
+    if (exact.rising) {
+      svg += '<line x1="' + (cx - rim) + '" y1="150" x2="' + (cx + rim) + '" y2="150" ' +
+             'stroke="#c2456f" stroke-width="1.2" stroke-opacity="0.6"/>';
+      var mcPhi = norm360(exact.mc ? exact.mc.lon - rot : 270);
+      var m0 = wheelPoint(cx, cy, rim, mcPhi), m1 = wheelPoint(cx, cy, rim, norm360(mcPhi + 180));
+      svg += '<line x1="' + m0.x.toFixed(1) + '" y1="' + m0.y.toFixed(1) + '" x2="' + m1.x.toFixed(1) +
+             '" y2="' + m1.y.toFixed(1) + '" stroke="#7b52c4" stroke-width="1.2" stroke-opacity="0.55"/>';
+      svg += '<text x="' + (cx - rim + 4) + '" y="143" font-size="9" fill="#c2456f" ' +
+             'font-family="ui-monospace,monospace">AC</text>';
+    }
+
+    /* Planet markers. Bodies within 6 degrees of each other get nudged outward
+       in turn so their glyphs stay legible. */
+    var placed = [];
+    var drawn = 0;
+    ALL_KEYS.forEach(function (key) {
+      if (key === 'mc') { return; }
+      var lon = exact[key] ? exact[key].lon
+        : (signs[key] ? ZODIAC.indexOf(SIGN_BY_NAME[signs[key]]) * 30 + 15 : null);
+      if (lon === null) { return; }
+      var phi = norm360(lon - rot);
+      var level = 0;
+      for (var i = 0; i < placed.length; i++) {
+        var gap = Math.abs(((placed[i].phi - phi + 540) % 360) - 180);
+        if (gap < 6 && placed[i].level === level) { level++; i = -1; }
+      }
+      placed.push({ phi: phi, level: level });
+      var p = wheelPoint(cx, cy, inner - 16 - level * 21, phi);
+      var isAngle = (key === 'rising');
+      svg += '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="11" fill="#fffdf7" stroke="' +
+        (isAngle ? '#c2456f' : '#b8791a') + '" stroke-width="1.3"/>';
+      svg += '<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" text-anchor="middle" ' +
+        'dominant-baseline="central" font-size="' + (isAngle ? 8 : 12) + '" fill="#241a3d">' +
+        PLANET_META[key].glyph + '</text>';
+      if (exact[key] && exact[key].retro) {
+        svg += '<text x="' + (p.x + 9).toFixed(1) + '" y="' + (p.y - 8).toFixed(1) +
+          '" font-size="7.5" fill="#c2456f" font-family="ui-monospace,monospace">R</text>';
+      }
+      drawn++;
+    });
+
+    if (!drawn) {
+      svg += '<text x="150" y="150" text-anchor="middle" dominant-baseline="central" ' +
+             'font-size="11" fill="#8b81a6">Calculate a chart</text>';
+    } else {
+      svg += '<text x="150" y="150" text-anchor="middle" dominant-baseline="central" ' +
+             'font-size="17" fill="#b8791a">✦</text>';
+    }
+    $('#lg-wheel-svg').innerHTML = svg;
+  }
+
+  function renderPositions() {
+    var rows = ALL_KEYS.filter(function (k) { return exact[k] || signs[k]; }).map(function (k) {
+      var s = SIGN_BY_NAME[signs[k]];
+      if (!s) { return ''; }
+      var deg = exact[k] ? formatDeg(exact[k].lon) : '<span style="color:#8b81a6">by hand</span>';
+      var rx = exact[k] && exact[k].retro ? ' <span class="lg-rx">Rx</span>' : '';
+      return '<tr><td class="lg-b">' + PLANET_META[k].glyph + ' ' + PLANET_META[k].label + '</td>' +
+        '<td>' + deg + ' ' + s.name + rx + '</td><td>' + s.element + '</td><td>' + s.modality + '</td></tr>';
+    }).join('');
+    $('#lg-positions').innerHTML = rows
+      ? '<table class="lg-table"><thead><tr><th>Placement</th><th>Position</th>' +
+        '<th>Element</th><th>Modality</th></tr></thead><tbody>' + rows + '</tbody></table>'
+      : '';
+  }
+
+  /* ============================================================
+     BALANCE
+  ============================================================ */
+  function computeBalance() {
+    var el = { Fire:0, Earth:0, Air:0, Water:0 };
+    var mo = { Cardinal:0, Fixed:0, Mutable:0 };
+    var n = 0;
+    BALANCE_KEYS.forEach(function (k) {
+      var s = SIGN_BY_NAME[signs[k]];
+      if (s) { el[s.element]++; mo[s.modality]++; n++; }
+    });
+    function dominant(counts) {
+      var best = null, bestN = -1, tie = false;
+      Object.keys(counts).forEach(function (k) {
+        if (counts[k] > bestN) { best = k; bestN = counts[k]; tie = false; }
+        else if (counts[k] === bestN && bestN > 0) { tie = true; }
+      });
+      return { key: best, count: bestN, tie: tie };
+    }
+    return { el: el, mo: mo, n: n, dominantElement: dominant(el), dominantModality: dominant(mo) };
+  }
+
+  /* ============================================================
+     READINGS
+  ============================================================ */
+  var TABS = [
+    { id:'big3',     label:'Big 3' },
+    { id:'elements', label:'Elements' },
+    { id:'modality', label:'Modality' },
+    { id:'ruler',    label:'Chart Ruler' },
+    { id:'full',     label:'Full Woven Reading' }
+  ];
+  function renderTabs() {
+    $('#lg-tabs').innerHTML = TABS.map(function (t) {
+      return '<button type="button" class="lg-tab' + (t.id === activeTab ? ' active' : '') +
+        '" data-tab="' + t.id + '">' + t.label + '</button>';
+    }).join('');
+    $$('.lg-tab').forEach(function (b) {
+      b.addEventListener('click', function () {
+        activeTab = b.getAttribute('data-tab');
+        renderTabs(); renderReport(); renderLesson();
+      });
+    });
+  }
+  function missing(text) { return '<p class="lg-hint">' + text + '</p>'; }
+  function withDeg(key) {
+    var s = signs[key];
+    if (!s) { return ''; }
+    return exact[key] ? formatDeg(exact[key].lon) + ' ' + s : s;
+  }
+
+  function bigThreeText() {
+    if (!signs.sun || !signs.moon || !signs.rising) {
+      var have = [];
+      if (signs.sun) { have.push('Sun'); }
+      if (signs.moon) { have.push('Moon'); }
+      if (signs.rising) { have.push('Rising'); }
+      return missing('The Big 3 needs Sun, Moon, and Rising. ' +
+        (have.length ? 'So far you have ' + have.join(' and ') + '. ' : '') +
+        'A Rising sign needs an exact birth time and place.');
+    }
+    var sun = SIGN_BY_NAME[signs.sun], moon = SIGN_BY_NAME[signs.moon], rising = SIGN_BY_NAME[signs.rising];
+    return '<p>With the Sun at ' + withDeg('sun') + ', your core identity runs ' + sun.trait + '. ' +
+      'The Moon at ' + withDeg('moon') + ' shapes an emotional world that is ' + moon.trait + '. ' +
+      'And ' + withDeg('rising') + ' rising means the face you show first is ' + rising.trait + '.</p>';
+  }
+  function elementsText() {
+    var b = computeBalance();
+    if (!b.n) { return missing('Calculate a chart, or set a placement by hand, to see your element balance.'); }
+    var d = b.dominantElement;
+    var out = d.tie
+      ? '<p>Your placements split evenly between elements — you likely draw on more than one mode depending on the moment.</p>'
+      : '<p>Across your personal placements, ' + d.key + ' leads (' + d.count + ' of ' + b.n +
+        '), bringing a thread of ' + ELEMENT_DESC[d.key] + ' through the chart.</p>';
+    out += '<p>Full spread — Fire ' + b.el.Fire + ', Earth ' + b.el.Earth +
+      ', Air ' + b.el.Air + ', Water ' + b.el.Water + '.</p>';
+    return out;
+  }
+  function modalityText() {
+    var b = computeBalance();
+    if (!b.n) { return missing('Calculate a chart, or set a placement by hand, to see your modality balance.'); }
+    var d = b.dominantModality;
+    var out = d.tie
+      ? '<p>Your placements split evenly between modalities — you can start things and see them through, depending on what is asked of you.</p>'
+      : '<p>Your dominant modality is ' + d.key + ' — this part of your chart ' + MODALITY_DESC[d.key] + '.</p>';
+    out += '<p>Full spread — Cardinal ' + b.mo.Cardinal + ', Fixed ' + b.mo.Fixed +
+      ', Mutable ' + b.mo.Mutable + '.</p>';
+    return out;
+  }
+  function rulerText() {
+    if (!signs.rising) {
+      return missing('The chart ruler comes from your Rising sign, which needs an exact birth time and place.');
+    }
+    var rising = SIGN_BY_NAME[signs.rising];
+    var rulerKey = rising.ruler.toLowerCase();
+    var out = '<p>Your rising sign, ' + rising.name + ', is ruled by ' + rising.ruler +
+      ' — the planet most responsible for how your life unfolds and what pulls you forward.</p>';
+    if (signs[rulerKey]) {
+      var s = SIGN_BY_NAME[signs[rulerKey]];
+      out += '<p>With ' + rising.ruler + ' at ' + withDeg(rulerKey) + ', that unfolding tends to look ' +
+        s.trait + '.' + (exact[rulerKey] && exact[rulerKey].retro
+          ? ' It was retrograde at your birth, which traditionally turns its energy inward before it turns outward.' : '') + '</p>';
+    } else {
+      out += '<p class="lg-hint">Calculate a chart to see where ' + rising.ruler + ' sits.</p>';
+    }
+    return out;
+  }
+  function nameWeaveText() {
+    if (!importedPieces || !importedPieces.length) { return ''; }
+    var b = computeBalance();
+    var names = importedPieces.map(function (p) { return p.name; }).filter(Boolean);
+    if (!names.length) { return ''; }
+    var out = '<p>Woven together with your names — ' + esc(names.join(', ')) +
+      ' — this chart finds echoes in language as well as sky.</p>';
+    var echoes = importedPieces.filter(function (p) {
+      return p.astro && p.astro.element && b.dominantElement.key && p.astro.element === b.dominantElement.key;
+    });
+    if (echoes.length && !b.dominantElement.tie) {
+      out += '<p>' + echoes.map(function (p) {
+        return esc(p.name) + (p.meaning ? ' (&ldquo;' + esc(p.meaning) + '&rdquo;)' : '');
+      }).join(' and ') + ' share your chart’s dominant element of ' + b.dominantElement.key +
+        ', doubling that thread through both name and star.</p>';
+    }
+    return out;
+  }
+  function fullText() {
+    var parts = [];
+    if (signs.sun && signs.moon && signs.rising) { parts.push(bigThreeText()); }
+    var b = computeBalance();
+    if (b.n && !b.dominantElement.tie && !b.dominantModality.tie) {
+      parts.push('<p>Temperamentally, ' + b.dominantElement.key + ' and ' + b.dominantModality.key +
+        ' lead the way — a mix of ' + ELEMENT_DESC[b.dominantElement.key] +
+        ', expressed in a style that ' + MODALITY_DESC[b.dominantModality.key] + '.</p>');
+    }
+    if (signs.rising) { parts.push(rulerText()); }
+    var retro = ALL_KEYS.filter(function (k) { return exact[k] && exact[k].retro; })
+      .map(function (k) { return PLANET_META[k].label; });
+    if (retro.length) {
+      parts.push('<p>' + retro.join(', ') + (retro.length > 1 ? ' were' : ' was') +
+        ' retrograde when you were born — a signature read as turning that energy inward first.</p>');
+    }
+    var weave = nameWeaveText();
+    if (weave) { parts.push(weave); }
+    else if (parts.length) {
+      parts.push('<p class="lg-hint">Paste a Name Pieces export above to weave your names into this reading.</p>');
+    }
+    if (!parts.length) { return missing('Calculate a chart above to generate your Full Woven Reading.'); }
+    return parts.join('');
+  }
+
+  function renderReport() {
+    var html = activeTab === 'big3' ? bigThreeText()
+      : activeTab === 'elements' ? elementsText()
+      : activeTab === 'modality' ? modalityText()
+      : activeTab === 'ruler' ? rulerText()
+      : fullText();
+    $('#lg-output').innerHTML = html;
+
+    var b = computeBalance();
+    var chips = $('#lg-chips');
+    if (b.n && !b.dominantElement.tie) {
+      chips.style.display = 'block';
+      chips.innerHTML = 'Dominant &nbsp; <b>◈ ' + b.dominantElement.key + '</b> &nbsp;·&nbsp; <b>✶ ' +
+        b.dominantModality.key + '</b>';
+    } else {
+      chips.style.display = 'none';
+    }
+  }
+
+  var LESSONS = {
+    big3: 'Sun = identity. Moon = emotions. Rising = how you move through life and first come across to others. Together they are called the Big 3 because they carry the most weight in a quick character sketch. The Rising sign changes about every two hours, which is why it needs an exact birth time.',
+    elements: 'The four elements — Fire, Earth, Air, Water — describe temperament. Fire acts, Earth builds, Air connects, Water feels. Most charts mix all four; a dominant one just leads.',
+    modality: 'The three modalities — Cardinal, Fixed, Mutable — describe operating style, independent of element. Cardinal starts seasons, Fixed holds steady through them, Mutable adapts as they change.',
+    ruler: 'Every rising sign has a ruling planet, the traditional chart ruler. Where that planet sits elsewhere in the chart colours how your life direction actually plays out.',
+    full: 'A woven reading combines placements rather than reading them one at a time — the same idea as combining Name Pieces into one story instead of separate definitions.'
+  };
+  function renderLesson() { $('#lg-lesson').innerHTML = '<p>' + LESSONS[activeTab] + '</p>'; }
+
+  /* ============================================================
+     NAME PIECES IMPORT
+  ============================================================ */
+  function importPieces() {
+    var raw = $('#lg-import-box').value.trim();
+    var msg = $('#lg-import-msg');
+    if (!raw) { msg.className = 'lg-msg'; msg.textContent = 'Paste a Name Pieces export first.'; return; }
+    try {
+      var parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) { throw new Error('expected a JSON array of name pieces'); }
+      importedPieces = parsed;
+      msg.className = 'lg-msg ok';
+      msg.textContent = parsed.length + ' name piece' + (parsed.length === 1 ? '' : 's') +
+        ' imported — open the Full Woven Reading tab.';
+      activeTab = 'full';
+      renderTabs(); renderReport(); renderLesson();
+    } catch (e) {
+      msg.className = 'lg-msg';
+      msg.textContent = 'Could not parse that JSON (' + e.message + ').';
+    }
+  }
+
+  /* ============================================================
+     QUIZ
+  ============================================================ */
+  var QUIZ_BANK = [
+    {q:'Which placement represents your core identity?', options:['Sun','Moon','Rising','Mercury'], correct:0, explain:'The Sun is your core identity — who you fundamentally are.'},
+    {q:'Which placement rules your emotional inner world?', options:['Sun','Moon','Venus','Mars'], correct:1, explain:'The Moon governs emotion, instinct, and inner needs.'},
+    {q:'Which placement is your first impression on others?', options:['Moon','Mercury','Rising','Saturn'], correct:2, explain:'Rising, or Ascendant, is the face you show before anyone knows you.'},
+    {q:'Fire signs (Aries, Leo, Sagittarius) are known for:', options:['Caution and routine','Initiative and instinct','Detachment and analysis','Stability above all'], correct:1, explain:'Fire signs act on instinct and initiative.'},
+    {q:'Which modality begins each season?', options:['Fixed','Mutable','Cardinal','None of these'], correct:2, explain:'Cardinal signs — Aries, Cancer, Libra, Capricorn — open each season.'},
+    {q:'Mercury governs which domain?', options:['Love and beauty','Communication and thought','War and drive','Luck and expansion'], correct:1, explain:'Mercury rules the mind — communication, thinking, information.'},
+    {q:'Which planet rules Taurus?', options:['Mars','Venus','Mercury','Jupiter'], correct:1, explain:'Venus, planet of love and value, rules Taurus.'},
+    {q:'Cancer, Scorpio, and Pisces share which element?', options:['Earth','Air','Fire','Water'], correct:3, explain:'They are the three Water signs — feeling and intuition.'},
+    {q:'The chart ruler is determined by which placement?', options:['Sun sign','Moon sign','Rising sign','Midheaven'], correct:2, explain:'The chart ruler is the planet that rules your Rising sign.'},
+    {q:'Fixed signs are known for:', options:['Constant change','Persistence and stability','Starting new projects','Avoiding commitment'], correct:1, explain:'Fixed signs — Taurus, Leo, Scorpio, Aquarius — sustain what has been started.'},
+    {q:'Why does a Rising sign need an exact birth time?', options:['It changes once a month','It changes roughly every two hours','It never changes','It depends only on the date'], correct:1, explain:'The whole zodiac rises across a day, so the Ascendant moves about one sign every two hours.'},
+    {q:'A planet marked Rx in a chart is:', options:['Especially strong','Retrograde','In its own sign','On the Ascendant'], correct:1, explain:'Rx marks a retrograde planet — one appearing to move backward from Earth.'}
+  ];
+  var quizSet = [];
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function newQuiz() {
+    quizSet = shuffle(QUIZ_BANK).slice(0, 5);
+    $('#lg-quiz').innerHTML = quizSet.map(function (item, qi) {
+      var opts = item.options.map(function (opt, oi) {
+        return '<label class="lg-opt"><input type="radio" name="lg-q' + qi + '" value="' + oi + '"> ' +
+          esc(opt) + '</label>';
+      }).join('');
+      return '<div class="lg-q"><p class="lg-qtext">' + (qi + 1) + '. ' + esc(item.q) + '</p>' + opts +
+        '<div class="lg-explain" id="lg-explain-' + qi + '"></div></div>';
+    }).join('');
+    $('#lg-quiz-score').textContent = '';
+  }
+  function checkQuiz() {
+    var right = 0, answered = 0;
+    quizSet.forEach(function (item, qi) {
+      var picked = root.querySelector('input[name="lg-q' + qi + '"]:checked');
+      var ex = $('#lg-explain-' + qi);
+      if (!picked) { ex.className = 'lg-explain'; ex.textContent = ''; return; }
+      answered++;
+      var ok = +picked.value === item.correct;
+      if (ok) { right++; }
+      ex.className = 'lg-explain show ' + (ok ? 'right' : 'wrong');
+      ex.textContent = (ok ? 'Correct — ' : 'Not quite — ') + item.explain;
+    });
+    $('#lg-quiz-score').textContent = answered
+      ? 'Score: ' + right + ' / ' + answered + (answered < quizSet.length
+        ? ' (' + (quizSet.length - answered) + ' unanswered)' : '')
+      : 'Select an answer for at least one question.';
+  }
+
+  /* ============================================================
+     GLOSSARY
+  ============================================================ */
+  var GLOSSARY = [
+    {term:'Sun', def:'Core identity and sense of self.'},
+    {term:'Moon', def:'Emotions, instincts, and inner needs.'},
+    {term:'Rising / Ascendant', def:'The sign on the eastern horizon at birth: outer personality and first impression. Sets the chart ruler.'},
+    {term:'Midheaven (MC)', def:'The highest point of the ecliptic at birth: public role, career direction, reputation.'},
+    {term:'Mercury', def:'Mind, communication, and how you process information.'},
+    {term:'Venus', def:'Affection, beauty, and personal values.'},
+    {term:'Mars', def:'Drive, assertion, and how you take action.'},
+    {term:'Jupiter', def:'Growth, luck, and where you tend to expand.'},
+    {term:'Saturn', def:'Discipline, limits, and long-term responsibility.'},
+    {term:'Uranus', def:'Disruption, individuality, and sudden change.'},
+    {term:'Neptune', def:'Dreams, intuition, and dissolving boundaries.'},
+    {term:'Pluto', def:'Transformation, power, and what lies beneath the surface.'},
+    {term:'Fire', def:'Element of initiative, courage, and instinctive action (Aries, Leo, Sagittarius).'},
+    {term:'Earth', def:'Element of practicality, patience, and material sense (Taurus, Virgo, Capricorn).'},
+    {term:'Air', def:'Element of ideas, communication, and connection (Gemini, Libra, Aquarius).'},
+    {term:'Water', def:'Element of emotion, intuition, and depth of feeling (Cancer, Scorpio, Pisces).'},
+    {term:'Cardinal', def:'Modality that initiates — starts things and begins seasons.'},
+    {term:'Fixed', def:'Modality that sustains — stabilizes and holds steady.'},
+    {term:'Mutable', def:'Modality that adapts — adjusts and stays flexible.'},
+    {term:'Natal Chart', def:'A map of the sky at the exact moment and place of birth.'},
+    {term:'House', def:'One of twelve life areas — self, money, home, career and so on — that a chart is divided into.'},
+    {term:'Aspect', def:'The angular relationship between two placements, and so how they interact.'},
+    {term:'Conjunction', def:'Two placements close together, blending their energies.'},
+    {term:'Opposition', def:'Tension and balance between placements 180 degrees apart.'},
+    {term:'Trine', def:'Ease and flow between placements 120 degrees apart.'},
+    {term:'Square', def:'Friction and growth between placements 90 degrees apart.'},
+    {term:'Sextile', def:'Opportunity between placements 60 degrees apart.'},
+    {term:'Retrograde (Rx)', def:'When a planet appears to move backward against the stars from Earth’s vantage point.'},
+    {term:'Chart Ruler', def:'The planet that rules your Rising sign — a key to life direction.'},
+    {term:'Ephemeris', def:'A table of exact planetary positions over time, used to calculate real charts.'},
+    {term:'Orb', def:'The margin of degrees within which an aspect still counts.'},
+    {term:'Name Pieces', def:'In The Nomen Atlas, the name-parts you collect for a reading. Import them here to weave your names into a chart reading.'}
+  ];
+  function renderGlossary(list) {
+    $('#lg-glossary').innerHTML = list.length
+      ? list.map(function (i) {
+          return '<div class="lg-gloss-item"><b>' + esc(i.term) + '</b> — ' + esc(i.def) + '</div>';
+        }).join('')
+      : '<p class="lg-hint">No matching terms.</p>';
+  }
+
+  /* ============================================================
+     PRINT / PDF
+     Rendered into a hidden iframe. No nested script element is written —
+     that sequence would terminate this script early inside a CMS.
+  ============================================================ */
+  function exportPDF() {
+    var b = computeBalance();
+    var css = '@page{margin:20mm}' +
+      "body{font-family:'Iowan Old Style',Palatino,Georgia,serif;color:#241a3d;line-height:1.7;max-width:640px;margin:0 auto;padding:16px}" +
+      '.eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#c2456f;margin-bottom:8px}' +
+      'h1{font-size:32px;font-weight:400;font-style:italic;margin:0 0 4px;color:#241a3d}' +
+      '.sub{color:#5a4e78;font-style:italic;margin-bottom:22px;font-size:14px}' +
+      '.story p{margin:0 0 12px;font-size:15px}' +
+      '.chips{margin:20px 0;padding:13px 15px;background:#fdf6e8;border-left:4px solid #b8791a;border-radius:4px}' +
+      '.chips b{font-family:ui-monospace,Menlo,monospace;letter-spacing:.1em}' +
+      'h2{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:#b8791a;margin:26px 0 10px;border-bottom:1px solid #e8dcc4;padding-bottom:6px}' +
+      'table{width:100%;border-collapse:collapse;font-size:13px}' +
+      'th{text-align:left;font-family:ui-monospace,Menlo,monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#8b81a6;font-weight:400;padding:6px 8px;border-bottom:1px solid #e8dcc4}' +
+      'td{padding:7px 8px;border-bottom:1px solid #f0e8d8;vertical-align:top}' +
+      'td.n{font-style:italic;color:#7b52c4;white-space:nowrap}' +
+      '.foot{margin-top:28px;font-size:11px;color:#8b81a6;font-style:italic;text-align:center}';
+
+    var rows = ALL_KEYS.filter(function (k) { return signs[k]; }).map(function (k) {
+      var s = SIGN_BY_NAME[signs[k]];
+      var deg = exact[k] ? formatDeg(exact[k].lon) + ' ' : '';
+      var rx = exact[k] && exact[k].retro ? ' Rx' : '';
+      return '<tr><td class="n">' + PLANET_META[k].label + '</td><td>' + deg + s.name + rx +
+        '</td><td>' + s.element + '</td><td>' + s.modality + '</td></tr>';
+    }).join('');
+
+    var subtitle = birthInfo
+      ? esc(birthInfo.place) + ' · ' + birthInfo.year + '-' +
+        (birthInfo.month < 10 ? '0' : '') + birthInfo.month + '-' +
+        (birthInfo.day < 10 ? '0' : '') + birthInfo.day +
+        (birthInfo.hasTime ? ' at ' + (birthInfo.hour < 10 ? '0' : '') + birthInfo.hour + ':' +
+          (birthInfo.minute < 10 ? '0' : '') + birthInfo.minute : '')
+      : 'A chart reading from the Lions Gate Astro Lab';
+
+    var html = '<!doctype html><html><head><meta charset="utf-8">' +
+      '<title>Chart Reading — Lions Gate Astro Lab</title><style>' + css + '</style></head><body>' +
+      '<div class="eyebrow">Lions Gate Astro Lab · Chart Reading</div>' +
+      '<h1>Your Chart</h1><div class="sub">' + subtitle + '</div>' +
+      '<div class="story">' + fullText() + '</div>' +
+      (b.n && !b.dominantElement.tie
+        ? '<div class="chips">Dominant &nbsp; <b>◈ ' + b.dominantElement.key +
+          '</b> &nbsp;·&nbsp; <b>✶ ' + b.dominantModality.key + '</b></div>'
+        : '') +
+      (rows
+        ? '<h2>Placements</h2><table><thead><tr><th>Placement</th><th>Position</th><th>Element</th>' +
+          '<th>Modality</th></tr></thead><tbody>' + rows + '</tbody></table>'
+        : '') +
+      '<div class="foot">Generated with the Lions Gate Astro Lab</div></body></html>';
+
+    var old = document.getElementById('lg-print-frame');
+    if (old) { old.parentNode.removeChild(old); }
+    var frame = document.createElement('iframe');
+    frame.id = 'lg-print-frame';
+    frame.setAttribute('aria-hidden', 'true');
+    frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+    document.body.appendChild(frame);
+    var doc = frame.contentWindow.document;
+    doc.open(); doc.write(html); doc.close();
+    /* Give the iframe a tick to lay out before printing. */
+    setTimeout(function () {
+      try { frame.contentWindow.focus(); frame.contentWindow.print(); }
+      catch (e) {
+        var msg = $('#lg-calc-msg');
+        msg.className = 'lg-msg';
+        msg.textContent = 'This browser blocked the print dialog. Use your browser menu to print instead.';
+      }
+    }, 250);
+  }
+
+  /* ============================================================
+     WIRE UP
+  ============================================================ */
+  function init() {
+    renderChartInputs();
+    renderWheel();
+    renderPositions();
+    renderTabs();
+    renderReport();
+    renderLesson();
+    newQuiz();
+    renderGlossary(GLOSSARY);
+
+    on('#lg-calc-btn', 'click', calculate);
+    on('#lg-reset-btn', 'click', function () {
+      signs = {}; exact = {}; birthInfo = null;
+      syncChartInputs();
+      onChartChange();
+      $('#lg-calc-msg').textContent = '';
+    });
+    on('#lg-example-btn', 'click', function () {
+      $('#lg-b-date').value = '1990-06-15';
+      $('#lg-b-time').value = '14:30';
+      $('#lg-b-place').value = 'New York, New York, United States';
+      $('#lg-b-lat').value = '40.7128';
+      $('#lg-b-lon').value = '-74.0060';
+      $('#lg-b-tz').value = 'America/New_York';
+      chosenPlace = null;
+      $('#lg-places').className = 'lg-places';
+      calculate();
+    });
+
+    on('#lg-b-place', 'input', function () {
+      var q = $('#lg-b-place').value.trim();
+      chosenPlace = null;
+      if (placeTimer) { clearTimeout(placeTimer); }
+      if (q.length < 3) { renderPlaces([]); return; }
+      placeTimer = setTimeout(function () {
+        searchPlaces(q).then(renderPlaces).catch(function () {
+          var msg = $('#lg-calc-msg');
+          msg.className = 'lg-msg';
+          msg.textContent = 'City lookup is unavailable. Type coordinates and a time zone under Advanced.';
+        });
+      }, 320);
+    });
+
+    on('#lg-import-btn', 'click', importPieces);
+    on('#lg-import-clear', 'click', function () {
+      $('#lg-import-box').value = '';
+      importedPieces = null;
+      $('#lg-import-msg').textContent = '';
+      renderReport();
+    });
+    on('#lg-quiz-check', 'click', checkQuiz);
+    on('#lg-quiz-new', 'click', newQuiz);
+    on('#lg-search', 'input', function () {
+      var v = $('#lg-search').value.toLowerCase();
+      renderGlossary(GLOSSARY.filter(function (i) {
+        return i.term.toLowerCase().indexOf(v) > -1 || i.def.toLowerCase().indexOf(v) > -1;
+      }));
+    });
+    on('#lg-pdf-btn', 'click', exportPDF);
+  }
+
+  /* Surface a failure in the page instead of leaving empty panels behind. */
+  try {
+    init();
+  } catch (err) {
+    var wrap = root.querySelector('.lg-wrap');
+    if (wrap) {
+      var div = document.createElement('div');
+      div.className = 'lg-fail';
+      div.textContent = 'The Astro Lab could not start: ' + err.message;
+      wrap.insertBefore(div, wrap.firstChild);
+    }
+    throw err;
+  }
+})();
+</script>

@@ -130,7 +130,9 @@ public class TransitTest {
 		
 		assertEquals(200, res.getStatus());
 		assertEquals( "application/json", res.getHeaders().get("Content-Type").get(0));		
-		assertEquals("{\"transit\":\"20120722100147\"}", res.getBody());	
+		// Shifted by three seconds now that parseTopo keeps the full precision of
+		// [48.8559107, 16.0542676, 286] instead of truncating it to [48, 16, 286].
+		assertEquals("{\"transit\":\"20120722100150\"}", res.getBody());
 	}
 	
 	@Test

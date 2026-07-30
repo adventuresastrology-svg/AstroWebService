@@ -22,7 +22,7 @@ public abstract class ARequest {
 					
 		if( data.has("topo")) {
 			try {
-				return new Coordinates( data.getJSONArray("topo").getInt(0) , data.getJSONArray("topo").getInt(1), data.getJSONArray("topo").getInt(2));
+				return new Coordinates( data.getJSONArray("topo").getDouble(0) , data.getJSONArray("topo").getDouble(1), data.getJSONArray("topo").getDouble(2));
 			}catch(org.json.JSONException e ) {
 				throw new ValidationException( "'topo' parse error." );
 			}
