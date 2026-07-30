@@ -19,9 +19,22 @@
   5. Light theme.
 
   ============================================================
-  ACCURACY
+  WHERE THE NUMBERS COME FROM
   ============================================================
-  Positions are computed locally:
+  Charts are calculated by the Swiss Ephemeris service at
+  https://swiss-chart-api-1.onrender.com (already wired up below — nothing to
+  configure). Requests go out as text/plain so the browser sends no CORS
+  preflight, which is what lets this work against the service as deployed.
+
+  That host is a free Render instance and sleeps when idle, so the first chart
+  after a quiet spell can take up to a minute. The widget says so while it
+  waits, retries once, and only then falls back to the built-in engine. A line
+  under the placements table always states which one answered.
+
+  ============================================================
+  THE BUILT-IN FALLBACK ENGINE
+  ============================================================
+  If the service is unreachable, positions are computed locally instead:
     Sun, Moon .............. Meeus, Astronomical Algorithms (ch. 25 / 47)
     Mercury..Neptune ....... Schlyter elements + Jupiter/Saturn/Uranus perturbations
     Pluto .................. Schlyter periodic series
@@ -32,9 +45,9 @@
     Sun, Moon ............... within 0.9 arc-minutes
     all planets ............. within 1.9 arc-minutes
     zodiac sign disagreements 0 of 100
-  That is far finer than any reading needs. If you would rather have Swiss
-  Ephemeris answer directly, fill in SWISS.endpoint below and it will be used
-  instead, with the local engine kept as an automatic fallback.
+  That is far finer than any reading needs, so a fallback chart is never wrong
+  about a sign. To skip the network entirely and always compute locally, set
+  SWISS.endpoint to "" below.
 
   ============================================================
   EXPANDING CONTENT
@@ -159,6 +172,11 @@
   #lionsGateLab .lg-table td { padding:7px 8px; border-bottom:1px solid var(--paper-2); }
   #lionsGateLab .lg-table td.lg-b { font-style:italic; color:var(--violet); white-space:nowrap; }
   #lionsGateLab .lg-rx { color:var(--rose); font-family:ui-monospace,Menlo,monospace; font-size:11px; }
+  #lionsGateLab .lg-source {
+    margin:10px 0 0; font-size:12.5px; font-style:italic; color:var(--mute);
+  }
+  #lionsGateLab .lg-source.ok { color:var(--sage); }
+  #lionsGateLab .lg-source.warn { color:var(--gold); }
 
   /* tabs */
   #lionsGateLab .lg-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
@@ -315,12 +333,32 @@
   }
 
   /* ============================================================
-     OPTIONAL: Swiss Ephemeris service
-     Leave endpoint empty to use the built-in engine (accurate to ~2 arc-minutes).
-     Point it at an AstroWebService deployment for arc-second precision;
-     the local engine stays as an automatic fallback if the request fails.
+     SWISS EPHEMERIS SERVICE
+     Every chart is calculated here first. The built-in engine is only used if
+     the service cannot be reached, so readings normally come straight from
+     Swiss Ephemeris.
+
+     Set endpoint to "" to skip the network entirely and always compute locally.
+
+     A note on why requests are sent as text/plain: a cross-origin POST with
+     Content-Type: application/json triggers a CORS preflight, and the service
+     has no OPTIONS route, so the browser would block the real request. Sending
+     the same JSON as text/plain keeps it a "simple request" with no preflight.
+     The service parses the body as JSON without inspecting the content type,
+     so nothing is lost and this works against the deployment as it stands.
+
+     Free Render instances sleep when idle, so the first chart of the day can
+     take up to a minute while the service wakes. Hence the long timeout and
+     the retry below.
   ============================================================ */
-  var SWISS = { endpoint: "", houses: "Placidus" };
+  var SWISS = {
+    endpoint: "https://swiss-chart-api-1.onrender.com",
+    houses: "Placidus",
+    timeoutMs: 75000,
+    retries: 1
+  };
+  /* Which engine produced the numbers currently on screen. */
+  var lastSource = null;
 
   /* ============================================================
      ASTRONOMY
@@ -637,10 +675,35 @@
     return { jd: jd, positions: out, offsetMinutes: u.offsetMinutes, utc: dt };
   }
 
+  /* POST JSON as text/plain so no CORS preflight is sent. See the SWISS note above. */
+  function postJSON(url, payload) {
+    var opts = {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify(payload)
+    };
+    var timer = null;
+    if (typeof AbortController !== 'undefined') {
+      var ctl = new AbortController();
+      opts.signal = ctl.signal;
+      timer = setTimeout(function () { ctl.abort(); }, SWISS.timeoutMs);
+    }
+    function done() { if (timer) { clearTimeout(timer); } }
+    return fetch(url, opts).then(function (r) {
+      done();
+      if (!r.ok) { throw new Error('the service answered HTTP ' + r.status); }
+      return r.json();
+    }, function (e) {
+      done();
+      throw new Error(e && e.name === 'AbortError' ? 'the service did not answer in time' : 'the service could not be reached');
+    });
+  }
+
   /* Ask the Swiss Ephemeris service, falling back to the local engine. */
-  function computeChartRemote(birth) {
+  function computeChartRemote(birth, onProgress) {
     var chart = computeChart(birth);
-    if (!SWISS.endpoint) { return Promise.resolve({ chart: chart, source: 'local' }); }
+    var localOnly = { chart: chart, source: 'local' };
+    if (!SWISS.endpoint) { return Promise.resolve(localOnly); }
 
     var d = chart.utc;
     function p2(n) { return (n < 10 ? '0' : '') + n; }
@@ -648,48 +711,57 @@
                 p2(d.getUTCHours()) + p2(d.getUTCMinutes()) + p2(d.getUTCSeconds());
     var bodies = ALL_KEYS.map(function (k) { return PLANET_META[k].body; }).filter(Boolean);
     var base = SWISS.endpoint.replace(/\/+$/, '');
-    var topo = [birth.longitude, birth.latitude, 0];
 
-    /* Deliberately no topo on the planets call. Passing it makes the service return
-       topocentric positions, which shifts the Moon by up to a degree of parallax.
-       Natal charts are geocentric. The birth place only matters for the angles. */
-    var reqs = [
-      fetch(base + '/api/v1/planets', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event: event, planets: bodies })
-      }).then(function (r) { return r.json(); })
-    ];
-    if (birth.hasTime) {
-      reqs.push(fetch(base + '/api/v1/cusps', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event: event, houses: SWISS.houses, topo: topo })
-      }).then(function (r) { return r.json(); }));
+    function requests() {
+      /* Deliberately no topo on the planets call. Passing it makes the service return
+         topocentric positions, which shifts the Moon by up to a degree of parallax.
+         Natal charts are geocentric. The birth place only matters for the angles. */
+      var reqs = [postJSON(base + '/api/v1/planets', { event: event, planets: bodies })];
+      if (birth.hasTime) {
+        reqs.push(postJSON(base + '/api/v1/cusps', {
+          event: event, houses: SWISS.houses, topo: [birth.longitude, birth.latitude, 0]
+        }));
+      }
+      return reqs;
     }
 
-    return Promise.all(reqs).then(function (res) {
-      var pl = res[0], cu = res[1];
-      if (!pl || pl.error || !pl.planets) { throw new Error(pl && pl.error ? pl.error : 'no planet data'); }
-      var out = {};
-      ALL_KEYS.forEach(function (key) {
-        var body = PLANET_META[key].body;
-        if (!body) { return; }
-        var v = pl.planets[body];
-        if (!v) { return; }
-        /* The service returns [longitude, daily speed]; negative speed is retrograde. */
-        out[key] = { lon: norm360(v[0]), retro: v[1] < 0 };
+    function attempt(tries) {
+      return Promise.all(requests()).then(function (res) {
+        var pl = res[0], cu = res[1];
+        if (!pl || pl.error || !pl.planets) {
+          throw new Error(pl && pl.error ? pl.error : 'the service returned no planet data');
+        }
+        var out = {};
+        ALL_KEYS.forEach(function (key) {
+          var body = PLANET_META[key].body;
+          if (!body) { return; }
+          var v = pl.planets[body];
+          if (!v) { return; }
+          /* The service returns [longitude, daily speed]; negative speed is retrograde. */
+          out[key] = { lon: norm360(v[0]), retro: v[1] < 0 };
+        });
+        if (!out.sun) { throw new Error('the service returned no planet data'); }
+        if (cu && cu.cusps && cu.cusps.length >= 10) {
+          out.rising = { lon: norm360(cu.cusps[0]), retro: false };
+          out.mc = { lon: norm360(cu.cusps[9]), retro: false };
+        } else if (chart.positions.rising) {
+          /* Angles are cheap and exact locally, so keep ours if /cusps failed. */
+          out.rising = chart.positions.rising;
+          out.mc = chart.positions.mc;
+        }
+        chart.positions = out;
+        return { chart: chart, source: 'swiss' };
+      }).catch(function (err) {
+        if (tries < SWISS.retries) {
+          if (onProgress) {
+            onProgress('The ephemeris service is waking up — trying once more…');
+          }
+          return attempt(tries + 1);
+        }
+        return { chart: chart, source: 'local-fallback', reason: err.message };
       });
-      if (cu && cu.cusps && cu.cusps.length >= 10) {
-        out.rising = { lon: norm360(cu.cusps[0]), retro: false };
-        out.mc = { lon: norm360(cu.cusps[9]), retro: false };
-      } else if (chart.positions.rising) {
-        out.rising = chart.positions.rising;
-        out.mc = chart.positions.mc;
-      }
-      chart.positions = out;
-      return { chart: chart, source: 'swiss' };
-    }).catch(function () {
-      return { chart: chart, source: 'local-fallback' };
-    });
+    }
+    return attempt(0);
   }
 
   function applyChart(chart) {
@@ -793,23 +865,28 @@
       return;
     }
     msg.className = 'lg-msg busy';
-    msg.textContent = 'Calculating…';
+    msg.textContent = SWISS.endpoint
+      ? 'Asking Swiss Ephemeris… the service sleeps when idle, so the first chart can take up to a minute.'
+      : 'Calculating…';
 
-    computeChartRemote(birth).then(function (res) {
+    computeChartRemote(birth, function (progress) {
+      msg.className = 'lg-msg busy';
+      msg.textContent = progress;
+    }).then(function (res) {
       birthInfo = birth;
+      lastSource = res.source;
       applyChart(res.chart);
       var offs = res.chart.offsetMinutes;
-      var sign = offs < 0 ? '-' : '+';
       var ao = Math.abs(offs);
-      var offStr = 'UTC' + sign + Math.floor(ao / 60) + ':' + (ao % 60 < 10 ? '0' : '') + (ao % 60);
+      var offStr = 'UTC' + (offs < 0 ? '-' : '+') + Math.floor(ao / 60) +
+                   ':' + (ao % 60 < 10 ? '0' : '') + (ao % 60);
       var note = birth.zone === 'UTC' && !$('#lg-b-tz').value.trim()
         ? ' Time zone unknown, so the birth time was read as UTC — set one under Advanced for an exact Rising sign.'
         : '';
       msg.className = 'lg-msg ok';
       msg.textContent = 'Chart calculated for ' + birth.place + ' (' + birth.zone + ', ' + offStr + ').' +
         (birth.hasTime ? '' : ' No birth time given, so noon was used — the Moon may be off by a sign and the Rising sign cannot be found.') +
-        note +
-        (res.source === 'local-fallback' ? ' The Swiss Ephemeris service was unreachable, so the built-in engine was used.' : '');
+        note;
     }).catch(function (err) {
       msg.className = 'lg-msg';
       msg.textContent = 'Something went wrong calculating the chart: ' + err.message;
@@ -950,10 +1027,21 @@
       return '<tr><td class="lg-b">' + PLANET_META[k].glyph + ' ' + PLANET_META[k].label + '</td>' +
         '<td>' + deg + ' ' + s.name + rx + '</td><td>' + s.element + '</td><td>' + s.modality + '</td></tr>';
     }).join('');
-    $('#lg-positions').innerHTML = rows
-      ? '<table class="lg-table"><thead><tr><th>Placement</th><th>Position</th>' +
-        '<th>Element</th><th>Modality</th></tr></thead><tbody>' + rows + '</tbody></table>'
-      : '';
+    if (!rows) { $('#lg-positions').innerHTML = ''; return; }
+
+    var badge = '';
+    if (lastSource === 'swiss') {
+      badge = '<p class="lg-source ok">✓ Positions from Swiss Ephemeris.</p>';
+    } else if (lastSource === 'local-fallback') {
+      badge = '<p class="lg-source warn">Swiss Ephemeris was unreachable, so these were computed ' +
+        'in your browser — accurate to about two arc-minutes, which does not change any sign.</p>';
+    } else if (lastSource === 'local') {
+      badge = '<p class="lg-source">Computed in your browser.</p>';
+    }
+
+    $('#lg-positions').innerHTML =
+      '<table class="lg-table"><thead><tr><th>Placement</th><th>Position</th>' +
+      '<th>Element</th><th>Modality</th></tr></thead><tbody>' + rows + '</tbody></table>' + badge;
   }
 
   /* ============================================================
@@ -1345,7 +1433,7 @@
 
     on('#lg-calc-btn', 'click', calculate);
     on('#lg-reset-btn', 'click', function () {
-      signs = {}; exact = {}; birthInfo = null;
+      signs = {}; exact = {}; birthInfo = null; lastSource = null;
       syncChartInputs();
       onChartChange();
       $('#lg-calc-msg').textContent = '';
