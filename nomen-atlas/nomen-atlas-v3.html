@@ -1,0 +1,1190 @@
+<!-- =====================================================================
+  THE NOMEN ATLAS  v3   (Adventures In Astrology)
+  Squarespace Code Block. Paste the whole file into one Code Block,
+  replacing the old Nomen Atlas block on /chart-calculation-station.
+
+  v3: the full name list loads from the public GitHub repo
+  adventuresastrology-svg/AstroWebService, file nomen-atlas/nomen-atlas-names.json.
+  Add names there; this block never needs re-pasting for new names.
+  Spellings that sound alike match (Zackary finds Zachary), and online
+  lookups follow "form of" and "spelling of" links on Wiktionary and
+  Wikipedia. Full-name traces keep every name, even without a meaning.
+
+  WHAT CHANGED FROM v1
+  - v1 never ran: its PDF export contained the text of an opening html
+    tag inside a JavaScript string. Squarespace rewrites that tag and
+    injects attributes with double quotes, which broke the script, so
+    the Trace button was never wired. v2 contains no such tag text.
+  - Every trace now shows a result card, even when a name is not found
+    (you can fill in the meaning by hand and add it).
+  - Larger built-in atlas, spelling variants, accent-insensitive search,
+    and "did you mean" suggestions.
+  - Live lookup (on by default): Wikipedia for names, Open-Meteo for
+    places. Results are editable before they are kept.
+  - Full name mode: "Marisa Ann Medeiros" becomes first, middle, last.
+  - Planet and sign can be overridden; element follows the sign.
+  - Pieces are saved in the browser, woven into a story, copied for
+    The Astral Atlas, and printed with window.print (iPad safe).
+
+  EXPANDING THE ATLAS
+  Each entry: "key": "meaning|origin|Planet|Sign"
+  Keys are lowercase with no accents or apostrophes.
+  VARIANTS maps other spellings to an existing key.
+===================================================================== -->
+<div id="nomen-atlas">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+#nomen-atlas{
+  --na-parch:#F4EFE4; --na-parch2:#FBF8F1; --na-mist:#C9E1DD;
+  --na-teal:#0E6058; --na-ame:#4E3F7A; --na-ink:#16302A;
+  --na-soft:#4A5752; --na-line:rgba(78,63,122,.28); --na-line2:rgba(78,63,122,.14);
+  font-family:"EB Garamond",Georgia,"Times New Roman",serif !important;
+  color:var(--na-ink) !important; background:var(--na-parch) !important;
+  border:1px solid var(--na-line); border-radius:6px;
+  padding:28px 18px 34px !important; line-height:1.6 !important;
+  max-width:760px; margin:0 auto !important;
+}
+#nomen-atlas *{box-sizing:border-box}
+#nomen-atlas .na-eyebrow{font-family:Cinzel,Georgia,serif !important;font-size:11px !important;letter-spacing:.24em;text-transform:uppercase;color:var(--na-teal) !important;text-align:center;margin:0 0 10px !important;line-height:1.5 !important}
+#nomen-atlas h2.na-title{font-family:Cinzel,Georgia,serif !important;font-size:clamp(28px,6vw,40px) !important;font-weight:600 !important;text-align:center;color:var(--na-ink) !important;margin:0 0 6px !important;line-height:1.15 !important;letter-spacing:.02em}
+#nomen-atlas h2.na-title em{font-family:"EB Garamond",Georgia,serif !important;font-style:italic;font-weight:400;color:var(--na-ame) !important}
+#nomen-atlas .na-rule{width:110px;height:1px;background:var(--na-teal) !important;margin:14px auto 16px !important}
+#nomen-atlas .na-sub{text-align:center;font-style:italic;font-size:17px !important;color:var(--na-soft) !important;margin:0 auto 24px !important;max-width:560px}
+#nomen-atlas .na-card{background:var(--na-parch2) !important;border:1px solid var(--na-line);border-radius:6px;padding:20px 18px !important;margin:0 0 22px !important}
+#nomen-atlas label.na-lab{display:block;font-family:Cinzel,Georgia,serif !important;font-size:12px !important;letter-spacing:.14em;text-transform:uppercase;color:var(--na-ame) !important;margin:0 0 6px !important;line-height:1.4 !important}
+#nomen-atlas .na-field{margin:0 0 16px !important}
+#nomen-atlas input[type=text],#nomen-atlas select,#nomen-atlas textarea{
+  -webkit-appearance:none;appearance:none;display:block;width:100%;max-width:100%;min-width:0;
+  font-family:"EB Garamond",Georgia,serif !important;font-size:17px !important;color:var(--na-ink) !important;
+  background:#fff !important;border:1px solid var(--na-line);border-radius:4px;padding:10px 12px !important;margin:0 !important;line-height:1.35 !important}
+#nomen-atlas select{background-image:linear-gradient(45deg,transparent 50%,var(--na-ame) 50%),linear-gradient(135deg,var(--na-ame) 50%,transparent 50%) !important;background-position:calc(100% - 18px) 55%,calc(100% - 12px) 55% !important;background-size:6px 6px,6px 6px !important;background-repeat:no-repeat !important;padding-right:34px !important}
+#nomen-atlas input:focus,#nomen-atlas select:focus,#nomen-atlas textarea:focus{outline:2px solid var(--na-teal);outline-offset:1px}
+#nomen-atlas .na-check{display:flex;align-items:flex-start;gap:10px;margin:2px 0 16px !important;font-size:16px !important;color:var(--na-soft) !important}
+#nomen-atlas .na-check input{width:20px;height:20px;margin:3px 0 0 !important;flex:0 0 auto;accent-color:var(--na-teal)}
+#nomen-atlas button{-webkit-appearance:none;appearance:none;font-family:Cinzel,Georgia,serif !important;font-size:14px !important;letter-spacing:.1em;cursor:pointer;border-radius:4px;line-height:1.3 !important;margin:0 !important}
+#nomen-atlas .na-btn{display:block;width:100%;padding:13px 16px !important;background:var(--na-ame) !important;color:#fff !important;border:1px solid var(--na-ame)}
+#nomen-atlas .na-btn:hover{background:#3d3163 !important}
+#nomen-atlas .na-ghost{display:inline-block;padding:9px 14px !important;background:transparent !important;color:var(--na-teal) !important;border:1px solid var(--na-teal)}
+#nomen-atlas .na-ghost:hover{background:var(--na-mist) !important}
+#nomen-atlas .na-row{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0 !important}
+#nomen-atlas .na-status{min-height:0;margin:12px 0 0 !important;font-size:16px !important;font-style:italic;color:var(--na-soft) !important}
+#nomen-atlas .na-status:empty{display:none}
+#nomen-atlas .na-status.na-bad{color:#8a2d2d !important}
+#nomen-atlas .na-result:empty{display:none}
+#nomen-atlas .na-rname{font-family:Cinzel,Georgia,serif !important;font-size:26px !important;color:var(--na-ink) !important;margin:0 0 2px !important;line-height:1.2 !important}
+#nomen-atlas .na-rkind{font-family:Cinzel,Georgia,serif !important;font-size:11px !important;letter-spacing:.18em;text-transform:uppercase;color:var(--na-teal) !important;margin:0 0 14px !important}
+#nomen-atlas .na-grid{display:grid;grid-template-columns:1fr;gap:0 14px}
+@media (min-width:620px){#nomen-atlas .na-grid.na-g3{grid-template-columns:1fr 1fr 1fr}}
+#nomen-atlas .na-note{font-size:15px !important;color:var(--na-soft) !important;border-left:2px solid var(--na-mist);padding:4px 0 4px 12px !important;margin:4px 0 14px !important}
+#nomen-atlas .na-note a{color:var(--na-teal) !important}
+#nomen-atlas .na-suggest{margin:0 0 12px !important;font-size:16px !important}
+#nomen-atlas .na-suggest button{padding:5px 10px !important;margin:4px 6px 0 0 !important;background:#fff !important;color:var(--na-ame) !important;border:1px solid var(--na-line);font-family:"EB Garamond",Georgia,serif !important;font-size:16px !important;letter-spacing:0}
+#nomen-atlas .na-elem{font-size:16px !important;margin:-4px 0 14px !important;color:var(--na-soft) !important}
+#nomen-atlas .na-elem b{color:var(--na-ink) !important}
+#nomen-atlas .na-sec{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--na-line);padding:0 0 8px !important;margin:6px 0 14px !important}
+#nomen-atlas h3.na-h3{font-family:Cinzel,Georgia,serif !important;font-size:22px !important;font-weight:600 !important;color:var(--na-ame) !important;margin:0 !important;line-height:1.25 !important}
+#nomen-atlas .na-count{font-family:Cinzel,Georgia,serif !important;font-size:11px !important;letter-spacing:.16em;text-transform:uppercase;color:var(--na-soft) !important}
+#nomen-atlas .na-empty{font-style:italic;color:var(--na-soft) !important;margin:0 0 10px !important;font-size:16px !important}
+#nomen-atlas .na-pieces{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px !important}
+#nomen-atlas .na-chip{display:inline-flex;align-items:stretch;border:1px solid var(--na-line);border-radius:999px;background:#fff !important;overflow:hidden}
+#nomen-atlas .na-chip button{border:0;border-radius:0;background:transparent !important;color:var(--na-ink) !important;font-family:"EB Garamond",Georgia,serif !important;font-size:16px !important;letter-spacing:0;padding:6px 12px !important}
+#nomen-atlas .na-chip .na-x{padding:6px 11px !important;color:var(--na-soft) !important;border-left:1px solid var(--na-line2)}
+#nomen-atlas .na-chip.na-on{background:var(--na-mist) !important;border-color:var(--na-teal)}
+#nomen-atlas .na-chip small{font-family:Cinzel,Georgia,serif !important;font-size:10px !important;letter-spacing:.12em;text-transform:uppercase;color:var(--na-teal) !important;margin-left:6px}
+#nomen-atlas .na-story p{margin:0 0 12px !important;font-size:18px !important;color:var(--na-ink) !important;line-height:1.65 !important}
+#nomen-atlas .na-story h4{font-family:Cinzel,Georgia,serif !important;font-size:15px !important;letter-spacing:.12em;text-transform:uppercase;color:var(--na-teal) !important;margin:18px 0 8px !important}
+#nomen-atlas .na-bar{display:flex;align-items:center;gap:10px;margin:0 0 6px !important;font-size:16px !important}
+#nomen-atlas .na-bar span{width:58px;flex:0 0 auto}
+#nomen-atlas .na-bar i{display:block;height:8px;border-radius:4px;background:var(--na-teal) !important}
+#nomen-atlas textarea{min-height:110px;font-family:"Courier New",monospace !important;font-size:14px !important}
+#nomen-atlas .na-foot{text-align:center;font-style:italic;font-size:15px !important;color:var(--na-soft) !important;margin:18px 0 0 !important}
+#nomen-atlas .na-hide{display:none !important}
+#na-print{display:none}
+@media print{
+  body.na-printing *{visibility:hidden !important}
+  body.na-printing #na-print,body.na-printing #na-print *{visibility:visible !important}
+  body.na-printing #na-print{display:block !important;position:absolute;left:0;top:0;width:100%;padding:24px;background:#fff;color:#16302A;font-family:"EB Garamond",Georgia,serif}
+  #na-print h1{font-family:Cinzel,Georgia,serif;font-size:26px;margin:0 0 4px}
+  #na-print h2{font-family:Cinzel,Georgia,serif;font-size:15px;letter-spacing:.12em;text-transform:uppercase;margin:18px 0 6px}
+  #na-print table{width:100%;border-collapse:collapse;font-size:13px}
+  #na-print td,#na-print th{border-bottom:1px solid #ccc;padding:5px 6px;text-align:left;vertical-align:top}
+  #na-print p{font-size:14px;line-height:1.55;margin:0 0 8px}
+}
+</style>
+
+  <p class="na-eyebrow">Onomastics &middot; Anthroponymy &middot; Toponymy &middot; Astrology</p>
+  <h2 class="na-title">The Nomen <em>Atlas</em></h2>
+  <div class="na-rule"></div>
+  <p class="na-sub">Trace any name to its root, then read it against the stars. Look up first, middle and last names, aliases and places, collect the pieces, and weave them into one story of a person and where they came from.</p>
+
+  <div class="na-card">
+    <div class="na-field">
+      <label class="na-lab" for="na-name">Name or place</label>
+      <input type="text" id="na-name" placeholder="Marisa, or a full name, or a city" autocomplete="off" autocapitalize="words" spellcheck="false">
+    </div>
+    <div class="na-field">
+      <label class="na-lab" for="na-kind">Kind</label>
+      <select id="na-kind">
+        <option value="first">First name</option>
+        <option value="middle">Middle name</option>
+        <option value="last">Last name</option>
+        <option value="full">Full name (first, middle, last)</option>
+        <option value="alias">Alias or nickname</option>
+        <option value="place">Place</option>
+      </select>
+    </div>
+    <label class="na-check"><input type="checkbox" id="na-live" checked><span>Search online (Wikipedia for names, Open-Meteo for places) when a name is not in the built-in atlas</span></label>
+    <button type="button" class="na-btn" id="na-go">Trace</button>
+    <div class="na-status" id="na-status" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="na-card na-result" id="na-result"></div>
+
+  <div class="na-sec"><h3 class="na-h3">Your Name Pieces</h3><span class="na-count" id="na-count">0 collected &middot; 0 woven</span></div>
+  <p class="na-empty" id="na-pieces-empty">Traced names land here. Tap a piece to weave it into the story or take it out; tap the x to remove it.</p>
+  <div class="na-pieces" id="na-pieces"></div>
+  <div class="na-row" id="na-piece-tools">
+    <button type="button" class="na-ghost" id="na-weave-all">Weave all</button>
+    <button type="button" class="na-ghost" id="na-clear">Clear pieces</button>
+  </div>
+
+  <div class="na-sec" style="margin-top:26px !important"><h3 class="na-h3">The Woven Story</h3></div>
+  <div class="na-story" id="na-weave"><p class="na-empty">Weave at least one piece to read the story.</p></div>
+
+  <div class="na-sec" style="margin-top:26px !important"><h3 class="na-h3">Keep and Share</h3></div>
+  <div class="na-row" style="margin-top:0 !important">
+    <button type="button" class="na-ghost" id="na-copy">Copy for The Astral Atlas</button>
+    <button type="button" class="na-ghost" id="na-print-btn">Print or save as PDF</button>
+  </div>
+  <div class="na-field na-hide" id="na-export-wrap" style="margin-top:14px !important">
+    <label class="na-lab" for="na-export">Name Pieces export</label>
+    <textarea id="na-export" readonly></textarea>
+  </div>
+  <div class="na-status" id="na-copy-msg"></div>
+
+  <p class="na-foot" id="na-atlas-size"></p>
+  <p class="na-foot">Meanings suggest an astrological signature. Override planet and sign to match a real chart. Online results come from Wikipedia and Open-Meteo; check them before relying on them.</p>
+</div>
+<div id="na-print"></div>
+
+<script>
+(function () {
+  "use strict";
+  if (window.__nomenAtlasV3) { return; }
+
+  /* ================================================================
+     1) ATLAS DATA   "key": "meaning|origin|Planet|Sign"
+  ================================================================ */
+  var NAME_DB = {
+    "marisa":"of the sea|Latin and Italian; from Latin maris, and a familiar form of Maria|Neptune|Pisces",
+    "maria":"traditionally read as beloved or wished-for child; later linked to stella maris, star of the sea|Hebrew Miryam via Latin|Moon|Cancer",
+    "luna":"moon|Latin|Moon|Cancer",
+    "selena":"moon|Greek Selene, the Titan goddess of the Moon|Moon|Cancer",
+    "stella":"star|Latin|Sun|Leo",
+    "aurora":"dawn|Latin; the Roman goddess of the dawn|Sun|Aries",
+    "sol":"sun|Latin and Spanish|Sun|Leo",
+    "diana":"divine, heavenly|Latin; the Roman goddess of the hunt and the Moon|Moon|Sagittarius",
+    "phoebe":"bright, radiant|Greek Phoibe, a Titan associated with the Moon|Moon|Cancer",
+    "cyrus":"often glossed as sun or far-sighted|Old Persian Kurush|Sun|Leo",
+    "esther":"star|Persian, linked with Ishtar|Venus|Taurus",
+    "nova":"new|Latin|Uranus|Aquarius",
+    "celeste":"heavenly|Latin caelestis|Uranus|Aquarius",
+    "aster":"star|Greek|Sun|Leo",
+    "sophia":"wisdom|Greek|Jupiter|Sagittarius",
+    "olivia":"olive tree; peace|Latin oliva, popularized by Shakespeare|Venus|Libra",
+    "oliver":"olive tree|Latin via Old French|Venus|Libra",
+    "emma":"whole, universal|Germanic ermen|Jupiter|Sagittarius",
+    "isabella":"pledged to God|Hebrew Elisheba via Spanish and Italian|Jupiter|Pisces",
+    "mia":"mine; also a short form of Maria|Italian and Scandinavian|Moon|Cancer",
+    "amara":"grace (Igbo); eternal (Sanskrit amara)|Igbo and Sanskrit|Venus|Libra",
+    "grace":"grace, favor|Latin gratia|Venus|Libra",
+    "hannah":"grace, favor|Hebrew|Venus|Libra",
+    "anna":"grace, favor|Hebrew Hannah via Greek and Latin|Venus|Libra",
+    "james":"supplanter, one who follows at the heel|Hebrew Yaaqov via Latin Iacomus|Mercury|Gemini",
+    "jacob":"supplanter, one who follows at the heel|Hebrew Yaaqov|Mercury|Gemini",
+    "william":"resolute protector (will and helmet)|Germanic Willahelm|Mars|Aries",
+    "liam":"resolute protector|Irish short form of William|Mars|Aries",
+    "noah":"rest, repose|Hebrew|Moon|Cancer",
+    "leo":"lion|Latin|Sun|Leo",
+    "victor":"conqueror|Latin|Mars|Aries",
+    "ethan":"firm, enduring|Hebrew|Saturn|Capricorn",
+    "aiden":"little fire|Irish Aodhan|Mars|Aries",
+    "ava":"uncertain; possibly from Latin avis, bird, or Hebrew Chava, life|Germanic or Latin|Venus|Libra",
+    "eva":"life|Hebrew Chava|Venus|Taurus",
+    "chloe":"green shoot|Greek; an epithet of Demeter|Venus|Taurus",
+    "david":"beloved|Hebrew|Venus|Leo",
+    "sarah":"princess, noblewoman|Hebrew|Sun|Leo",
+    "michael":"who is like God?|Hebrew|Mars|Aries",
+    "elena":"traditionally linked to torch or shining light|Greek Helene|Sun|Leo",
+    "ruby":"red gemstone|Latin rubeus|Mars|Aries",
+    "iris":"rainbow|Greek; the messenger goddess|Mercury|Gemini",
+    "jasmine":"the jasmine flower|Persian yasaman|Venus|Taurus",
+    "alexander":"defender of the people|Greek|Mars|Aries",
+    "alexandra":"defender of the people|Greek|Mars|Aries",
+    "ariel":"lion of God|Hebrew|Sun|Leo",
+    "arthur":"possibly bear|Celtic|Mars|Aries",
+    "beatrice":"she who brings happiness|Latin|Jupiter|Sagittarius",
+    "benjamin":"son of the right hand|Hebrew|Jupiter|Sagittarius",
+    "bianca":"white|Italian|Moon|Cancer",
+    "caleb":"wholehearted, faithful|Hebrew|Mercury|Virgo",
+    "charlotte":"free person|Germanic karl via French|Uranus|Aquarius",
+    "clara":"clear, bright|Latin|Sun|Leo",
+    "daniel":"God is my judge|Hebrew|Saturn|Libra",
+    "dylan":"great tide, sea|Welsh|Neptune|Pisces",
+    "eleanor":"uncertain; from Occitan Alienor|Occitan|Sun|Leo",
+    "elijah":"my God is Yahweh|Hebrew|Jupiter|Sagittarius",
+    "emily":"rival, eager|Latin Aemilius|Mars|Aries",
+    "evelyn":"possibly hazelnut|Norman, from Aveline|Venus|Taurus",
+    "felix":"lucky, fortunate|Latin|Jupiter|Sagittarius",
+    "gabriel":"God is my strength|Hebrew|Mercury|Gemini",
+    "george":"farmer, earth-worker|Greek|Venus|Taurus",
+    "hazel":"the hazel tree|English|Mercury|Virgo",
+    "henry":"ruler of the home|Germanic|Saturn|Capricorn",
+    "jade":"the jade stone|Spanish piedra de ijada|Venus|Taurus",
+    "john":"God is gracious|Hebrew Yochanan|Jupiter|Pisces",
+    "joseph":"he will add|Hebrew|Jupiter|Sagittarius",
+    "julia":"traditionally youthful|Latin Julius|Mercury|Gemini",
+    "julian":"traditionally youthful|Latin Julius|Mercury|Gemini",
+    "katherine":"pure, by association with Greek katharos|Greek|Mercury|Virgo",
+    "laura":"laurel, victory|Latin|Sun|Leo",
+    "lily":"the lily flower|English|Moon|Cancer",
+    "lucas":"from Lucania; associated with light|Latin|Sun|Leo",
+    "lucy":"light|Latin lux|Sun|Leo",
+    "madeline":"of Magdala, a town whose name means tower|Hebrew via Greek|Saturn|Capricorn",
+    "maya":"illusion (Sanskrit); water (Hebrew mayim)|Sanskrit and Hebrew|Neptune|Pisces",
+    "natalie":"birthday, born at Christmas|Latin natalis|Sun|Capricorn",
+    "nathan":"he gave|Hebrew|Jupiter|Sagittarius",
+    "oscar":"deer-friend or spear of the gods|Irish or Norse|Mars|Sagittarius",
+    "penelope":"weaver, by association with Greek pene, thread|Greek|Mercury|Virgo",
+    "rose":"the rose|Latin rosa|Venus|Taurus",
+    "samuel":"God has heard|Hebrew|Mercury|Gemini",
+    "sebastian":"venerable|Greek sebastos|Saturn|Capricorn",
+    "stephen":"crown, garland|Greek stephanos|Sun|Leo",
+    "theodore":"gift of God|Greek|Jupiter|Sagittarius",
+    "thomas":"twin|Aramaic|Mercury|Gemini",
+    "violet":"the violet flower and color|Latin viola|Neptune|Pisces",
+    "willow":"the willow tree|English|Moon|Cancer",
+    "zoe":"life|Greek|Sun|Leo",
+    "adam":"human, of the earth (adamah)|Hebrew|Saturn|Capricorn",
+    "aria":"air, melody|Italian|Venus|Libra",
+    "asher":"happy, blessed|Hebrew|Jupiter|Sagittarius",
+    "astrid":"divinely beautiful|Old Norse|Venus|Libra",
+    "august":"venerable, magnificent|Latin Augustus|Sun|Leo",
+    "autumn":"the season of autumn|English|Venus|Libra",
+    "summer":"the season of summer|English|Sun|Cancer",
+    "winter":"the season of winter|English|Saturn|Capricorn",
+    "bella":"beautiful|Italian|Venus|Libra",
+    "cassandra":"uncertain; the Trojan prophetess|Greek|Mercury|Sagittarius",
+    "cora":"maiden; a title of Persephone|Greek Kore|Pluto|Scorpio",
+    "persephone":"queen of the underworld|Greek|Pluto|Scorpio",
+    "dorothy":"gift of God|Greek|Jupiter|Sagittarius",
+    "ezra":"help|Hebrew|Jupiter|Sagittarius",
+    "freya":"lady|Old Norse; goddess of love|Venus|Taurus",
+    "gaia":"earth|Greek|Moon|Taurus",
+    "hunter":"one who hunts|English|Mars|Sagittarius",
+    "ivy":"the ivy plant, an evergreen|English|Saturn|Capricorn",
+    "jasper":"treasurer|Persian|Jupiter|Sagittarius",
+    "kai":"sea|Hawaiian|Neptune|Pisces",
+    "layla":"night|Arabic|Moon|Cancer",
+    "lorenzo":"of Laurentum; associated with laurel|Latin|Sun|Leo",
+    "matthew":"gift of God|Hebrew|Jupiter|Sagittarius",
+    "max":"greatest|Latin Maximus|Jupiter|Sagittarius",
+    "mila":"gracious, dear|Slavic|Venus|Libra",
+    "nadia":"hope|Slavic|Jupiter|Sagittarius",
+    "orion":"the hunter of Greek myth|Greek|Mars|Sagittarius",
+    "ophelia":"help|Greek|Neptune|Pisces",
+    "paige":"young servant|English|Mercury|Virgo",
+    "quinn":"descendant of Conn, chief|Irish|Sun|Leo",
+    "raphael":"God heals|Hebrew|Mercury|Virgo",
+    "river":"river|English|Neptune|Pisces",
+    "scarlett":"red cloth|English|Mars|Aries",
+    "sienna":"the orange-red earth of Siena|Italian|Mars|Taurus",
+    "skylar":"scholar|Dutch Schuyler|Mercury|Gemini",
+    "thalia":"to blossom; the muse of comedy|Greek|Venus|Taurus",
+    "uriel":"God is my light|Hebrew|Sun|Leo",
+    "valentina":"strong, healthy|Latin|Venus|Libra",
+    "wren":"the wren, a small bird|English|Mercury|Gemini",
+    "xavier":"new house|Basque etxe berri|Moon|Cancer",
+    "yara":"water lady|Tupi|Neptune|Pisces",
+    "zara":"blooming flower or princess|Arabic and Hebrew|Sun|Leo",
+    "ann":"grace, favor|Hebrew Hannah via English|Venus|Libra",
+    "marie":"traditionally read as beloved or wished-for child|French form of Maria|Moon|Cancer",
+    "lynn":"lake, pool|Welsh|Neptune|Cancer",
+    "jean":"God is gracious|French and Scottish form of John|Jupiter|Pisces",
+    "lee":"meadow, clearing|English|Venus|Taurus",
+    "ray":"wise protector; also a ray of light|Germanic Raymond|Sun|Leo",
+    "jo":"God will add or God is gracious|English short form|Jupiter|Sagittarius"
+  };
+
+  var LAST_DB = {
+    "medeiros":"from places named Medeiros; medeiro, a stack of harvested sheaves|Portuguese|Saturn|Virgo",
+    "rossi":"red-haired|Italian|Mars|Aries",
+    "russo":"red-haired|Southern Italian|Mars|Aries",
+    "smith":"metalworker|English|Mars|Capricorn",
+    "moon":"the Moon; also from Mohun in Normandy|English and Korean|Moon|Cancer",
+    "johnson":"son of John, God is gracious|English|Jupiter|Pisces",
+    "jones":"son of John|Welsh|Jupiter|Pisces",
+    "garcia":"uncertain; possibly young or bear|Spanish, from Basque|Mars|Aries",
+    "kim":"gold, metal|Korean|Sun|Leo",
+    "nguyen":"the name of several ruling dynasties|Vietnamese|Saturn|Capricorn",
+    "silva":"forest, woodland|Portuguese, from Latin silva|Venus|Taurus",
+    "romano":"Roman|Italian|Saturn|Capricorn",
+    "stone":"stone|English|Saturn|Capricorn",
+    "rivera":"riverbank|Spanish|Neptune|Pisces",
+    "chen":"the name of an ancient state|Chinese|Mercury|Virgo",
+    "khan":"ruler, leader|Turkic and Persian|Sun|Leo",
+    "bell":"bell; or beautiful|English and French|Venus|Libra",
+    "santos":"saints|Portuguese and Spanish|Jupiter|Pisces",
+    "oliveira":"olive tree|Portuguese|Venus|Libra",
+    "pereira":"pear tree|Portuguese|Venus|Taurus",
+    "costa":"coast; slope|Portuguese and Italian|Moon|Cancer",
+    "sousa":"from the River Sousa|Portuguese|Neptune|Pisces",
+    "ferreira":"ironworks|Portuguese|Mars|Capricorn",
+    "carvalho":"oak tree|Portuguese|Jupiter|Sagittarius",
+    "martin":"of Mars|Latin Martinus|Mars|Aries",
+    "martinez":"son of Martin, of Mars|Spanish|Mars|Aries",
+    "rodriguez":"son of Rodrigo, famous ruler|Spanish|Sun|Leo",
+    "lopez":"son of Lope, wolf|Spanish|Mars|Scorpio",
+    "hernandez":"son of Hernando, bold journey|Spanish|Mars|Sagittarius",
+    "gonzalez":"son of Gonzalo, battle|Spanish|Mars|Aries",
+    "perez":"son of Pedro, rock|Spanish|Saturn|Capricorn",
+    "brown":"brown-haired|English|Venus|Taurus",
+    "williams":"son of William, resolute protector|Welsh and English|Mars|Aries",
+    "miller":"grain miller|English|Saturn|Virgo",
+    "davis":"son of David, beloved|Welsh|Venus|Leo",
+    "wilson":"son of Will|English|Mars|Aries",
+    "taylor":"tailor|English|Mercury|Virgo",
+    "anderson":"son of Andrew, manly|Scandinavian and Scottish|Mars|Aries",
+    "thomas":"twin|Welsh and English|Mercury|Gemini",
+    "white":"fair-haired, pale|English|Moon|Cancer",
+    "clark":"clerk, scholar|English|Mercury|Gemini",
+    "wright":"maker, craftsman|English|Saturn|Capricorn",
+    "walker":"cloth-fuller|English|Mercury|Virgo",
+    "hill":"one who lives by a hill|English|Saturn|Capricorn",
+    "wood":"one who lives by a wood|English|Venus|Taurus",
+    "fisher":"fisherman|English|Neptune|Pisces",
+    "fischer":"fisherman|German|Neptune|Pisces",
+    "muller":"miller|German|Saturn|Virgo",
+    "schmidt":"metalworker|German|Mars|Capricorn",
+    "murphy":"sea warrior|Irish O Murchadha|Mars|Pisces",
+    "kelly":"bright-headed or troublesome|Irish|Mars|Aries",
+    "obrien":"descendant of Brian, high or noble|Irish|Sun|Leo",
+    "sullivan":"dark-eyed|Irish|Pluto|Scorpio",
+    "patel":"village headman|Gujarati|Saturn|Capricorn",
+    "singh":"lion|Sanskrit|Sun|Leo",
+    "tanaka":"in the rice field|Japanese|Venus|Taurus",
+    "sato":"helping wisteria|Japanese|Venus|Libra",
+    "yamamoto":"base of the mountain|Japanese|Saturn|Capricorn",
+    "park":"gourd|Korean|Moon|Cancer",
+    "li":"plum tree|Chinese|Venus|Taurus",
+    "wang":"king|Chinese|Sun|Leo",
+    "zhang":"archer|Chinese|Mars|Sagittarius",
+    "ivanov":"son of Ivan, God is gracious|Russian|Jupiter|Pisces",
+    "kowalski":"smith|Polish|Mars|Capricorn",
+    "cohen":"priest|Hebrew|Jupiter|Sagittarius",
+    "levi":"joined, attached|Hebrew|Venus|Libra",
+    "bianchi":"white|Italian|Moon|Cancer",
+    "ricci":"curly-haired|Italian|Mercury|Gemini",
+    "fontaine":"fountain, spring|French|Neptune|Pisces",
+    "dubois":"of the woods|French|Venus|Taurus",
+    "leblanc":"the white|French|Moon|Cancer",
+    "delacroix":"of the cross|French|Jupiter|Sagittarius"
+  };
+
+  var PLACE_DB = {
+    "florence":"flourishing (Florentia)|Latin|Venus|Taurus",
+    "rome":"traditionally from Romulus, its founder|Latin|Sun|Leo",
+    "naples":"new city (Neapolis)|Greek|Uranus|Aquarius",
+    "cairo":"the victorious; named for the planet Mars (al-Qahir)|Arabic|Mars|Aries",
+    "paris":"from the Parisii, a Gaulish tribe|Gaulish via Latin|Venus|Libra",
+    "london":"uncertain; probably a pre-Roman Celtic root|Celtic via Latin Londinium|Mercury|Gemini",
+    "athens":"city of Athena|Greek|Mercury|Gemini",
+    "dublin":"black pool (Dubh Linn)|Irish|Pluto|Scorpio",
+    "lisbon":"uncertain; from pre-Roman Olisipo|Pre-Roman via Latin|Neptune|Pisces",
+    "venice":"from the Veneti people|Latin|Neptune|Pisces",
+    "seville":"from Hispalis, possibly lowland|Phoenician via Latin|Venus|Taurus",
+    "tokyo":"eastern capital|Japanese|Sun|Aries",
+    "kyoto":"capital city|Japanese|Sun|Leo",
+    "beijing":"northern capital|Chinese|Saturn|Capricorn",
+    "montana":"mountainous|Spanish and Latin|Saturn|Capricorn",
+    "california":"a mythical island in a Spanish romance|Spanish|Neptune|Pisces",
+    "sacramento":"sacrament|Spanish|Jupiter|Pisces",
+    "santa cruz":"holy cross|Spanish|Jupiter|Sagittarius",
+    "los angeles":"the angels|Spanish|Neptune|Pisces",
+    "san francisco":"Saint Francis|Spanish|Jupiter|Pisces",
+    "nevada":"snow-covered|Spanish|Saturn|Capricorn",
+    "colorado":"red-colored|Spanish|Mars|Aries",
+    "florida":"flowery, for the Easter feast of flowers|Spanish|Venus|Taurus",
+    "philadelphia":"brotherly love|Greek|Venus|Libra",
+    "chicago":"wild onion or wild garlic|Miami-Illinois|Mars|Taurus",
+    "texas":"friends, allies|Caddo via Spanish|Venus|Libra",
+    "vermont":"green mountain|French|Venus|Capricorn",
+    "hawaii":"possibly homeland|Hawaiian|Moon|Cancer",
+    "honolulu":"sheltered bay|Hawaiian|Moon|Cancer",
+    "buenos aires":"fair winds, good air|Spanish|Venus|Libra",
+    "rio de janeiro":"river of January|Portuguese|Saturn|Capricorn",
+    "brazil":"brazilwood, named for its ember-red dye|Portuguese|Mars|Aries",
+    "argentina":"land of silver|Latin argentum via Spanish|Moon|Cancer",
+    "portugal":"from Portus Cale, the port of Cale|Latin|Moon|Cancer",
+    "azores":"goshawks|Portuguese|Mars|Sagittarius",
+    "madeira":"wood|Portuguese|Venus|Taurus",
+    "ireland":"from Eriu, a goddess of the land|Irish|Venus|Taurus",
+    "egypt":"from Greek Aigyptos, probably Hikuptah, house of the spirit of Ptah|Egyptian via Greek|Saturn|Capricorn",
+    "india":"from the Indus river (Sindhu)|Sanskrit via Greek|Neptune|Pisces",
+    "mexico":"from the Mexica people|Nahuatl|Sun|Leo",
+    "toronto":"where trees stand in the water|Mohawk|Neptune|Pisces",
+    "boston":"Botolph's town|English|Saturn|Capricorn",
+    "jerusalem":"traditionally foundation of peace|Hebrew|Venus|Libra",
+    "babylon":"gate of the gods|Akkadian|Jupiter|Sagittarius",
+    "alexandria":"city of Alexander, defender of the people|Greek|Mars|Aries"
+  };
+
+  var VARIANTS = {
+    "marissa":"marisa","marysa":"marisa","maryssa":"marisa",
+    "mary":"maria","miriam":"maria","maryam":"maria","mariah":"maria",
+    "helen":"elena","helena":"elena","ellen":"elena",
+    "aidan":"aiden","aydan":"aiden","jon":"john","jonathan":"nathan","juan":"john","johnny":"john","ian":"john",
+    "catherine":"katherine","kathryn":"katherine","kate":"katherine","katie":"katherine","kathleen":"katherine",
+    "lucia":"lucy","luz":"lucy","claire":"clara","eve":"eva","rosa":"rose","rosie":"rose","selene":"selena",
+    "stefan":"stephen","steven":"stephen","steve":"stephen","mateo":"matthew","matteo":"matthew","matt":"matthew",
+    "luke":"lucas","laurence":"lorenzo","lawrence":"lorenzo","sophie":"sophia","sofia":"sophia",
+    "isabel":"isabella","isabelle":"isabella","bella":"bella","ana":"anna","anne":"ann","annie":"anna",
+    "alex":"alexander","sasha":"alexandra","will":"william","bill":"william","mike":"michael","miguel":"michael",
+    "dave":"david","sara":"sarah","jake":"jacob","joe":"joseph","jose":"joseph","ben":"benjamin","sam":"samuel",
+    "zoey":"zoe","layla":"layla","leila":"layla","lily":"lily","lillian":"lily","maddie":"madeline","madeleine":"madeline",
+    "magdalena":"madeline","natalia":"natalie","maximilian":"max","teddy":"theodore","tom":"thomas","tomas":"thomas",
+    "freyja":"freya","skyler":"skylar","schuyler":"skylar","valentine":"valentina","zarah":"zara","eli":"elijah",
+    "firenze":"florence","roma":"rome","napoli":"naples","lisboa":"lisbon","venezia":"venice","sevilla":"seville",
+    "souza":"sousa","martins":"martin","martinelli":"martin","rodrigues":"rodriguez","lopes":"lopez","gonzales":"gonzalez",
+    "peres":"perez","mueller":"muller","lee":"lee","smyth":"smith","schmitt":"schmidt"
+  };
+
+  /* ================================================================
+     2) ASTROLOGY REFERENCE
+  ================================================================ */
+  var SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+  var PLANETS = ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
+  var SIGN_ELEMENT = {Aries:"Fire",Leo:"Fire",Sagittarius:"Fire",Taurus:"Earth",Virgo:"Earth",Capricorn:"Earth",Gemini:"Air",Libra:"Air",Aquarius:"Air",Cancer:"Water",Scorpio:"Water",Pisces:"Water"};
+  var SIGN_MODE = {Aries:"Cardinal",Cancer:"Cardinal",Libra:"Cardinal",Capricorn:"Cardinal",Taurus:"Fixed",Leo:"Fixed",Scorpio:"Fixed",Aquarius:"Fixed",Gemini:"Mutable",Virgo:"Mutable",Sagittarius:"Mutable",Pisces:"Mutable"};
+  var SIGN_RULER = {Aries:"Mars",Taurus:"Venus",Gemini:"Mercury",Cancer:"Moon",Leo:"Sun",Virgo:"Mercury",Libra:"Venus",Scorpio:"Pluto",Sagittarius:"Jupiter",Capricorn:"Saturn",Aquarius:"Uranus",Pisces:"Neptune"};
+  var SIGN_TRAD = {Scorpio:"Mars",Aquarius:"Saturn",Pisces:"Jupiter"};
+  var PLANET_HOME = {Sun:"Leo",Moon:"Cancer",Mercury:"Gemini",Venus:"Libra",Mars:"Aries",Jupiter:"Sagittarius",Saturn:"Capricorn",Uranus:"Aquarius",Neptune:"Pisces",Pluto:"Scorpio"};
+
+  var SIGN_GLOSS = {
+    Aries:"Aries is the cardinal fire sign: initiative, courage and the first impulse to act.",
+    Taurus:"Taurus is the fixed earth sign: steadiness, the senses, and what is built to last.",
+    Gemini:"Gemini is the mutable air sign: curiosity, language, and the movement of ideas.",
+    Cancer:"Cancer is the cardinal water sign: belonging, protection, and the instinct to nurture.",
+    Leo:"Leo is the fixed fire sign: the heart, creative self-expression, and steady warmth.",
+    Virgo:"Virgo is the mutable earth sign: discernment, skill, and care given through service.",
+    Libra:"Libra is the cardinal air sign: relationship, fairness, and the search for balance.",
+    Scorpio:"Scorpio is the fixed water sign: depth, loyalty, and transformation through intensity.",
+    Sagittarius:"Sagittarius is the mutable fire sign: faith, exploration, and the pursuit of meaning.",
+    Capricorn:"Capricorn is the cardinal earth sign: responsibility, structure, and long-term ambition.",
+    Aquarius:"Aquarius is the fixed air sign: independence, community, and ideas ahead of their time.",
+    Pisces:"Pisces is the mutable water sign: compassion, imagination, and a permeable boundary with the unseen."
+  };
+  var PLANET_GLOSS = {
+    Sun:"the Sun, the principle of identity, vitality and purpose",
+    Moon:"the Moon, the principle of emotion, memory and need",
+    Mercury:"Mercury, the principle of mind, speech and exchange",
+    Venus:"Venus, the principle of attraction, value and harmony",
+    Mars:"Mars, the principle of will, drive and courage",
+    Jupiter:"Jupiter, the principle of growth, faith and wisdom",
+    Saturn:"Saturn, the principle of structure, time and mastery",
+    Uranus:"Uranus, the principle of awakening, freedom and innovation",
+    Neptune:"Neptune, the principle of imagination, devotion and the boundless",
+    Pluto:"Pluto, the principle of depth, power and renewal"
+  };
+  var ELEMENT_GLOSS = {
+    Fire:"Fire names carry spirit and momentum. They are names that go first.",
+    Earth:"Earth names carry substance and constancy. They are names that hold ground.",
+    Air:"Air names carry thought and connection. They are names that reach toward others.",
+    Water:"Water names carry feeling and memory. They are names that remember where they came from."
+  };
+
+  /* Keyword engine for meanings that are not in the atlas. Order matters. */
+  var KEYWORDS = [
+    [/\b(sea|ocean|marine|tide|wave|water|river|lake|pool|spring|fountain|bay|fish)/i,"Neptune","Pisces"],
+    [/\b(moon|lunar|night|silver|pearl|white|pale)/i,"Moon","Cancer"],
+    [/\b(star|heaven|celestial|sky)/i,"Uranus","Aquarius"],
+    [/\b(sun|solar|light|bright|shin|radiant|gold|golden|king|queen|royal|crown|lion|noble|famous|glory|princess|prince|chief)/i,"Sun","Leo"],
+    [/\b(war|battle|warrior|fight|strong|strength|brave|bold|fire|flame|red|iron|smith|spear|wolf|victor|conquer|hunt)/i,"Mars","Aries"],
+    [/\b(love|beloved|dear|beaut|lovely|grace|peace|harmony|friend|joy|pleasant|sweet)/i,"Venus","Libra"],
+    [/\b(flower|rose|blossom|bloom|tree|wood|forest|oak|olive|garden|field|meadow|earth|farm|grain|wheat|harvest|green)/i,"Venus","Taurus"],
+    [/\b(god|divine|holy|saint|bless|gift|gracious|faith|priest|fortun|lucky|wise|wisdom|teacher|pilgrim)/i,"Jupiter","Sagittarius"],
+    [/\b(stone|rock|mountain|hill|old|elder|ruler|rule|lord|home|house|tower|wall|steady|firm|endur)/i,"Saturn","Capricorn"],
+    [/\b(new|free|freedom|change|thunder|storm|air|wind)/i,"Uranus","Aquarius"],
+    [/\b(dark|black|deep|death|hidden|secret|underworld|shadow|raven)/i,"Pluto","Scorpio"],
+    [/\b(heal|healer|serv|work|craft|maker|weaver|tailor|clerk|miller|herb)/i,"Mercury","Virgo"],
+    [/\b(word|speak|messeng|scholar|learn|clever|twin|bird|swift|quick)/i,"Mercury","Gemini"],
+    [/\b(mother|nurtur|protect|cradle|family|child)/i,"Moon","Cancer"]
+  ];
+
+  function deriveAstro(text) {
+    var i;
+    text = text || "";
+    for (i = 0; i < KEYWORDS.length; i++) {
+      if (KEYWORDS[i][0].test(text)) {
+        return mkAstro(KEYWORDS[i][1], KEYWORDS[i][2], "suggested from the meaning");
+      }
+    }
+    return mkAstro("Mercury", "Gemini", "default; no keyword matched, so Mercury, the planet of names and words, is used");
+  }
+  function mkAstro(planet, sign, basis) {
+    return { element: SIGN_ELEMENT[sign], planet: planet, sign: sign, basis: basis || "" };
+  }
+
+  /* ================================================================
+     3) HELPERS
+  ================================================================ */
+  var A, pieces = [], current = null, uid = 0, STORE = "nomenAtlas.pieces.v2";
+
+  function $(s) { return A.querySelector(s); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function norm(s) {
+    s = String(s || "").toLowerCase();
+    if (s.normalize) { s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    return s.replace(/[\u2019'`.]/g, "").replace(/[^a-z\s-]/g, " ").replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+  }
+  function titleCase(s) {
+    return String(s).replace(/^\s+|\s+$/g, "").replace(/\s+/g, " ").replace(/(^|[\s\-'])([a-z\u00e0-\u00ff])/g, function (m, a, b) { return a + b.toUpperCase(); });
+  }
+  function parseEntry(str) {
+    var p = str.split("|");
+    return { meaning: p[0], origin: p[1], astro: mkAstro(p[2], p[3], "from the atlas") };
+  }
+  function kindLabel(k) {
+    return { first: "First name", middle: "Middle name", last: "Last name", alias: "Alias", place: "Place" }[k] || "Name";
+  }
+  function dbFor(kind) { return kind === "place" ? PLACE_DB : kind === "last" ? LAST_DB : NAME_DB; }
+  function lev(a, b) {
+    var m = a.length, n = b.length, d = [], i, j;
+    if (Math.abs(m - n) > 2) { return 9; }
+    for (i = 0; i <= m; i++) { d[i] = [i]; }
+    for (j = 0; j <= n; j++) { d[0][j] = j; }
+    for (i = 1; i <= m; i++) {
+      for (j = 1; j <= n; j++) {
+        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+      }
+    }
+    return d[m][n];
+  }
+  function suggestions(key, kind) {
+    var dbs = kind === "place" ? [PLACE_DB] : kind === "last" ? [LAST_DB, NAME_DB] : [NAME_DB, LAST_DB];
+    var out = [], seen = {}, i, k, lim = key.length <= 4 ? 1 : 2;
+    for (i = 0; i < dbs.length; i++) {
+      for (k in dbs[i]) {
+        if (dbs[i].hasOwnProperty(k) && !seen[k] && lev(key, k) <= lim) { seen[k] = 1; out.push(k); }
+      }
+    }
+    return out.slice(0, 5);
+  }
+  function setStatus(msg, bad) {
+    var s = $("#na-status");
+    s.innerHTML = msg ? esc(msg) : "";
+    s.className = "na-status" + (bad ? " na-bad" : "");
+  }
+  function getJSON(url, cb) {
+    var x;
+    try { x = new XMLHttpRequest(); } catch (e) { cb(null); return; }
+    var done = false;
+    function fin(v) { if (!done) { done = true; cb(v); } }
+    x.open("GET", url, true);
+    x.timeout = 9000;
+    x.onload = function () {
+      if (x.status >= 200 && x.status < 300) {
+        try { fin(JSON.parse(x.responseText)); } catch (e) { fin(null); }
+      } else { fin(null); }
+    };
+    x.onerror = function () { fin(null); };
+    x.ontimeout = function () { fin(null); };
+    try { x.send(); } catch (e2) { fin(null); }
+  }
+
+  /* ================================================================
+     4) LOOKUP
+  ================================================================ */
+  var DATA_URL = "https://cdn.jsdelivr.net/gh/adventuresastrology-svg/AstroWebService@master/nomen-atlas/nomen-atlas-names.json";
+  var dataState = "idle", waiters = [], SOUND = null;
+
+  function mergeInto(target, src) {
+    var k;
+    if (!src) { return; }
+    for (k in src) { if (src.hasOwnProperty(k) && !target[k]) { target[k] = src[k]; } }
+  }
+  function atlasSize() {
+    var n = 0, k;
+    for (k in NAME_DB) { if (NAME_DB.hasOwnProperty(k)) { n++; } }
+    for (k in LAST_DB) { if (LAST_DB.hasOwnProperty(k)) { n++; } }
+    return n;
+  }
+  function showSize() {
+    var el = A && A.querySelector("#na-atlas-size");
+    if (el) { el.innerHTML = "The built-in atlas holds " + atlasSize() + " names and surnames, plus spelling variants."; }
+  }
+  function loadData() {
+    if (dataState !== "idle") { return; }
+    dataState = "loading";
+    getJSON(DATA_URL, function (d) {
+      if (d && d.names) {
+        mergeInto(NAME_DB, d.names); mergeInto(LAST_DB, d.last);
+        mergeInto(PLACE_DB, d.places); mergeInto(VARIANTS, d.variants);
+        dataState = "ready";
+      } else { dataState = "failed"; }
+      SOUND = null;
+      showSize();
+      var w = waiters; waiters = [];
+      for (var i = 0; i < w.length; i++) { w[i](); }
+    });
+  }
+  function whenReady(fn) {
+    if (dataState === "ready" || dataState === "failed") { fn(); return; }
+    var fired = false;
+    function once() { if (!fired) { fired = true; fn(); } }
+    waiters.push(once);
+    setTimeout(once, 6000);
+    loadData();
+  }
+
+  /* Sound key: spellings that sound alike share a key (Zackary, Zachery and Zakary all match Zachary). */
+  function soundKey(k) {
+    k = String(k).replace(/[^a-z]/g, "").replace(/(.)\1+/g, "$1");
+    return k.replace(/ph/g, "f").replace(/ck/g, "k").replace(/ch/g, "k").replace(/c(?=[eiy])/g, "s")
+      .replace(/c/g, "k").replace(/q/g, "k").replace(/x/g, "ks").replace(/z/g, "s").replace(/y/g, "i")
+      .replace(/([^aeiou])h/g, "$1").replace(/[aeiou]+/g, "a").replace(/(.)\1+/g, "$1");
+  }
+  function buildSound() {
+    var dbs = [NAME_DB, LAST_DB], i, k, sk;
+    SOUND = {};
+    for (i = 0; i < dbs.length; i++) {
+      for (k in dbs[i]) {
+        if (dbs[i].hasOwnProperty(k) && k.indexOf(" ") < 0) {
+          sk = soundKey(k);
+          if (!SOUND[sk]) { SOUND[sk] = []; }
+          if (SOUND[sk].indexOf(k) < 0) { SOUND[sk].push(k); }
+        }
+      }
+    }
+  }
+  function soundMatch(key, kind) {
+    if (kind === "place" || key.length < 3) { return null; }
+    if (!SOUND) { buildSound(); }
+    var list = SOUND[soundKey(key)], pref = dbFor(kind), i, d, best = null, bestD = 99, lim = key.length <= 4 ? 1 : 2;
+    if (!list || !list.length) { return null; }
+    for (i = 0; i < list.length; i++) {
+      if (list[i].charAt(0) !== key.charAt(0) && soundKey(list[i].charAt(0)) !== soundKey(key.charAt(0))) { continue; }
+      d = lev(key, list[i]) - (pref[list[i]] ? 0.5 : 0);
+      if (lev(key, list[i]) <= lim && d < bestD) { bestD = d; best = list[i]; }
+    }
+    return best;
+  }
+
+  function atlasHit(key, kind) {
+    var db = dbFor(kind), k2 = VARIANTS[key], via = "", sm;
+    if (db[key]) { return { e: db[key], via: via }; }
+    if (k2 && db[k2]) { return { e: db[k2], via: k2 }; }
+    if (kind !== "place") {
+      if (NAME_DB[key]) { return { e: NAME_DB[key], via: via }; }
+      if (LAST_DB[key]) { return { e: LAST_DB[key], via: via }; }
+      if (k2 && NAME_DB[k2]) { return { e: NAME_DB[k2], via: k2 }; }
+      if (k2 && LAST_DB[k2]) { return { e: LAST_DB[k2], via: k2 }; }
+      sm = soundMatch(key, kind);
+      if (sm) { return { e: db[sm] || NAME_DB[sm] || LAST_DB[sm], via: sm, sound: true }; }
+    } else if (key.indexOf(" ") > -1 && PLACE_DB[key.split(" ")[0]]) {
+      return { e: PLACE_DB[key.split(" ")[0]], via: key.split(" ")[0] };
+    }
+    return null;
+  }
+
+  function fromAtlas(raw, kind, hit, note) {
+    var r = parseEntry(hit.e);
+    r.name = titleCase(raw); r.kind = kind; r.source = "atlas";
+    r.note = note || (hit.via ? (hit.sound ? "Spelled differently, but it sounds like " + titleCase(hit.via) + ", so it is read as a form of that name." :
+      "Read as a form of " + titleCase(hit.via) + ".") : "");
+    return r;
+  }
+
+  function lookup(raw, kind, cb) {
+    whenReady(function () {
+      var key = norm(raw), hit = atlasHit(key, kind);
+      if (hit) { return cb(fromAtlas(raw, kind, hit)); }
+      if (!$("#na-live").checked) { return cb(notFound(raw, kind)); }
+      if (kind === "place") { livePlace(raw, cb); } else { liveName(raw, kind, cb, 0); }
+    });
+  }
+
+  var WIKI = "https://en.wikipedia.org/api/rest_v1/page/summary/";
+
+  function parseMeaning(text) {
+    var m = text.match(/mean(?:ing|s)\s+["\u201c']([^"\u201d']{2,70})["\u201d']/i) ||
+            text.match(/mean(?:ing|s)\s+(?:simply\s+)?["\u201c]?([a-z][a-z ,\-]{2,50})/i);
+    return m ? m[1].replace(/[,;.\s]+$/, "") : "";
+  }
+  function parseOrigin(text) {
+    var m = text.match(/\b(?:of|from)\s+(?:the\s+)?((?:Old |Middle |Ancient |Modern )?[A-Z][a-z]+(?:(?:\s+or\s+|\s+and\s+|\/)[A-Z][a-z]+)?)\s+(?:origin|word|language|root|name|given|surname|form)/) ||
+            text.match(/\b(?:is an?|of the) (?:[a-z]+ )*?((?:[A-Z][a-z]+(?:,\s*|\s+or\s+|\s+and\s+)?){1,3})\s*(?:male |female |feminine |masculine |unisex )?(?:given name|surname|family name|name)/) ||
+            text.match(/\bderived from (?:the\s+)?([A-Z][a-z]+)/);
+    return m ? m[1].replace(/[,\s]+$/, "") : "";
+  }
+  function firstSentences(t, n) {
+    var parts = String(t || "").match(/[^.!?]+[.!?]*/g) || [];
+    return parts.slice(0, n).join("").replace(/^\s+|\s+$/g, "");
+  }
+
+  var WIKT = "https://en.wiktionary.org/api/rest_v1/page/definition/";
+
+  function stripTags(h) { return String(h || "").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").replace(/^\s+|\s+$/g, ""); }
+
+  /* Finds "alternative form of Zachary", "alternate spelling of Zachary", "diminutive of Margaret" and similar. */
+  function variantOf(text) {
+    var m = String(text || "").match(/\b(?:alternative|alternate|variant|spelling|form|diminutive|nickname|short form|pet form|hypocoristic)\s+(?:spelling\s+|form\s+)?of\s+(?:the\s+)?(?:(?:given|male|female|feminine|masculine)\s+name\s+)?([A-Z][a-zà-ÿ]+)/);
+    return m ? m[1] : "";
+  }
+
+  function wiktionary(raw, cb) {
+    getJSON(WIKT + encodeURIComponent(titleCase(raw)), function (j) {
+      var out = [], i, k, defs;
+      if (j && j.en) {
+        for (i = 0; i < j.en.length; i++) {
+          if (!/proper noun/i.test(j.en[i].partOfSpeech || "")) { continue; }
+          defs = j.en[i].definitions || [];
+          for (k = 0; k < defs.length; k++) { out.push(stripTags(defs[k].definition)); }
+        }
+      }
+      cb(out);
+    });
+  }
+
+  function resolveVariant(raw, kind, target, sourceNote, depth, cb) {
+    var hit = atlasHit(norm(target), kind);
+    if (hit && norm(target) !== norm(raw)) {
+      return cb(fromAtlas(raw, kind, { e: hit.e, via: hit.via || norm(target) },
+        sourceNote + " " + titleCase(raw) + " is read through " + titleCase(hit.via || target) + "."));
+    }
+    if (depth < 1 && norm(target) !== norm(raw)) {
+      return liveName(target, kind, function (r) {
+        if (r.source === "none") { return cb(notFound(raw, kind)); }
+        r.note = sourceNote + " " + (r.note || "");
+        r.name = titleCase(raw);
+        cb(r);
+      }, depth + 1);
+    }
+    cb(null);
+  }
+
+  function liveName(raw, kind, cb, depth) {
+    depth = depth || 0;
+    var base = titleCase(raw).replace(/\s+/g, "_");
+    var tries = kind === "last" ?
+      [base + "_(surname)", base + "_(name)", base] :
+      [base + "_(given_name)", base + "_(name)", base];
+    setStatus("Not in the built-in atlas. Searching online for " + titleCase(raw) + "...");
+    wiktionary(raw, function (defs) {
+      var i, v = "", wiktNote = "";
+      for (i = 0; i < defs.length; i++) {
+        if (!wiktNote && /name/i.test(defs[i])) { wiktNote = defs[i]; }
+        if (!v) { v = variantOf(defs[i]); }
+      }
+      if (v) {
+        return resolveVariant(raw, kind, v, "Wiktionary lists " + titleCase(raw) + " as a form of " + v + ".", depth, function (r) {
+          if (r) { cb(r); } else { wiki(); }
+        });
+      }
+      wiki();
+      function wiki() {
+        (function next(i) {
+          if (i >= tries.length) { return searchWiki(raw, kind, cb, wiktNote); }
+          getJSON(WIKI + encodeURIComponent(tries[i]), function (j) {
+            if (j && j.type === "standard" && j.extract && /name|surname/i.test(j.extract)) {
+              var v2 = variantOf(j.extract);
+              if (v2 && !parseMeaning(j.extract)) {
+                return resolveVariant(raw, kind, v2, "Wikipedia describes " + titleCase(raw) + " as a spelling of " + v2 + ".", depth, function (r) {
+                  cb(r || fromWiki(raw, kind, j));
+                });
+              }
+              return cb(fromWiki(raw, kind, j));
+            }
+            next(i + 1);
+          });
+        })(0);
+      }
+    });
+  }
+
+  function searchWiki(raw, kind, cb, wiktNote) {
+    var q = "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&origin=*&limit=10&namespace=0&search=" + encodeURIComponent(titleCase(raw));
+    getJSON(q, function (j) {
+      var titles = j && j[1] ? j[1] : [], pick = "", i, want = kind === "last" ? /\((surname|name)\)/i : /\((given name|name)\)/i;
+      for (i = 0; i < titles.length; i++) { if (want.test(titles[i])) { pick = titles[i]; break; } }
+      if (!pick) { return cb(wiktNote ? fromWiktionary(raw, kind, wiktNote) : notFound(raw, kind)); }
+      getJSON(WIKI + encodeURIComponent(pick.replace(/\s+/g, "_")), function (s) {
+        if (s && s.extract) { cb(fromWiki(raw, kind, s)); } else { cb(notFound(raw, kind)); }
+      });
+    });
+  }
+
+  function fromWiki(raw, kind, j) {
+    var ex = j.extract || "", meaning = parseMeaning(ex), origin = parseOrigin(ex);
+    var url = j.content_urls && j.content_urls.desktop ? j.content_urls.desktop.page : "";
+    var astro = meaning ? deriveAstro(meaning) : deriveAstro(ex);
+    return {
+      name: titleCase(raw), kind: kind, meaning: meaning, origin: origin, astro: astro, source: "wikipedia",
+      note: firstSentences(ex, 2), link: url,
+      ask: meaning ? "" : "Wikipedia did not state a meaning plainly. Fill it in below if you know it."
+    };
+  }
+
+  function livePlace(raw, cb) {
+    var name = titleCase(raw);
+    setStatus("Not in the built-in atlas. Searching for the place...");
+    getJSON("https://geocoding-api.open-meteo.com/v1/search?count=1&language=en&format=json&name=" + encodeURIComponent(name), function (g) {
+      var hit = g && g.results && g.results[0], where = "";
+      if (hit) {
+        where = [hit.name, hit.admin1, hit.country].filter(function (x) { return !!x; }).join(", ");
+        where += " (" + hit.latitude.toFixed(2) + ", " + hit.longitude.toFixed(2) + ")";
+      }
+      var title = (hit ? hit.name + (hit.admin1 ? ", " + hit.admin1 : "") : name).replace(/\s+/g, "_");
+      getJSON(WIKI + encodeURIComponent(title), function (w) {
+        if ((!w || w.type !== "standard") && hit) {
+          getJSON(WIKI + encodeURIComponent(hit.name.replace(/\s+/g, "_")), function (w2) { finish(w2); });
+        } else { finish(w); }
+      });
+      function finish(w) {
+        var ex = w && w.type === "standard" ? (w.extract || "") : "";
+        if (!hit && !ex) { return cb(notFound(raw, "place")); }
+        var named = ex.match(/named (?:after|for) ([^.;]{3,80})/i);
+        var meaning = parseMeaning(ex) || (named ? "named after " + named[1] : "");
+        cb({
+          name: hit ? hit.name : name, kind: "place", meaning: meaning, origin: hit ? hit.country || "" : "",
+          astro: deriveAstro(meaning || ex), source: "online", location: where,
+          note: (where ? "Located at " + where + ". " : "") + firstSentences(ex, 1),
+          link: w && w.content_urls && w.content_urls.desktop ? w.content_urls.desktop.page : "",
+          ask: meaning ? "" : "No name meaning was found online. Add one below if you know it."
+        });
+      }
+    });
+  }
+
+  function fromWiktionary(raw, kind, def) {
+    var o = def.match(/\bfrom (?:the )?((?:Old |Middle |Ancient )?[A-Z][a-z]+)/);
+    return {
+      name: titleCase(raw), kind: kind, meaning: "", origin: o ? o[1] : "", astro: deriveAstro(def), source: "wiktionary",
+      note: "Wiktionary: " + def,
+      link: "https://en.wiktionary.org/wiki/" + encodeURIComponent(titleCase(raw)),
+      ask: "Wiktionary names the origin but not a meaning. Fill it in below if you know it."
+    };
+  }
+
+  function notFound(raw, kind) {
+    return { name: titleCase(raw), kind: kind, meaning: "", origin: "", astro: null, source: "none", suggest: suggestions(norm(raw), kind) };
+  }
+
+  /* ================================================================
+     5) RESULT CARD
+  ================================================================ */
+  function options(list, sel) {
+    var h = "", i;
+    for (i = 0; i < list.length; i++) {
+      h += "<option" + (list[i] === sel ? " selected" : "") + ">" + list[i] + "</option>";
+    }
+    return h;
+  }
+
+  function renderResult(r) {
+    var box = $("#na-result"), h = "", found = r.source !== "none", astro = r.astro || deriveAstro(r.meaning);
+    current = r;
+    if (found) { setStatus(""); } else { setStatus(r.name + " was not found. You can add it by hand below.", true); }
+    h += "<div class='na-rname'>" + esc(r.name) + "</div>";
+    h += "<div class='na-rkind'>" + esc(kindLabel(r.kind)) + " &middot; " +
+         (r.source === "atlas" ? "from the built-in atlas" : r.source === "none" ? "not found" : r.source === "piece" ? "editing your saved piece" : "found online") + "</div>";
+    if (r.suggest && r.suggest.length) {
+      h += "<div class='na-suggest'>Did you mean: ";
+      for (var i = 0; i < r.suggest.length; i++) { h += "<button type='button' data-sug='" + esc(r.suggest[i]) + "'>" + esc(titleCase(r.suggest[i])) + "</button>"; }
+      h += "</div>";
+    }
+    if (r.note || r.link) {
+      h += "<div class='na-note'>" + esc(r.note || "") +
+        (r.link ? " <a href='" + esc(r.link) + "' target='_blank' rel='noopener'>Read the source</a>" : "") + "</div>";
+    }
+    if (r.ask) { h += "<div class='na-note'>" + esc(r.ask) + "</div>"; }
+    h += "<div class='na-field'><label class='na-lab' for='na-r-meaning'>Meaning</label><input type='text' id='na-r-meaning' value='" + esc(r.meaning) + "' placeholder='What the name means'></div>";
+    h += "<div class='na-field'><label class='na-lab' for='na-r-origin'>Origin</label><input type='text' id='na-r-origin' value='" + esc(r.origin) + "' placeholder='Language or culture of origin'></div>";
+    h += "<div class='na-grid na-g3'>";
+    h += "<div class='na-field'><label class='na-lab' for='na-r-planet'>Planet</label><select id='na-r-planet'>" + options(PLANETS, astro.planet) + "</select></div>";
+    h += "<div class='na-field'><label class='na-lab' for='na-r-sign'>Sign</label><select id='na-r-sign'>" + options(SIGNS, astro.sign) + "</select></div>";
+    h += "<div class='na-field'><label class='na-lab'>Element</label><div class='na-elem' id='na-r-elem' style='margin:10px 0 0 !important'></div></div>";
+    h += "</div>";
+    h += "<div class='na-elem' id='na-r-basis'>" + (astro.basis ? "Signature " + esc(astro.basis) + "." : "") + "</div>";
+    h += "<button type='button' class='na-btn' id='na-add'>" + (r.pieceId ? "Update this piece" : "Add to Name Pieces") + "</button>";
+    box.innerHTML = h;
+    paintElement();
+    $("#na-r-sign").onchange = paintElement;
+    $("#na-add").onclick = addFromCard;
+    var sb = box.querySelectorAll("[data-sug]");
+    for (var k = 0; k < sb.length; k++) {
+      sb[k].onclick = function () { $("#na-name").value = titleCase(this.getAttribute("data-sug")); go(); };
+    }
+  }
+
+  function paintElement() {
+    var s = $("#na-r-sign").value;
+    $("#na-r-elem").innerHTML = "<b>" + SIGN_ELEMENT[s] + "</b> &middot; " + SIGN_MODE[s];
+  }
+
+  function addFromCard() {
+    var r = current, planet = $("#na-r-planet").value, sign = $("#na-r-sign").value;
+    var meaning = $("#na-r-meaning").value.replace(/^\s+|\s+$/g, ""), origin = $("#na-r-origin").value.replace(/^\s+|\s+$/g, "");
+    var piece = {
+      id: r.pieceId || ("p" + (++uid) + "_" + new Date().getTime()),
+      name: r.name, kind: r.kind, meaning: meaning, origin: origin,
+      astro: { element: SIGN_ELEMENT[sign], planet: planet, sign: sign },
+      woven: true
+    };
+    if (!meaning) { piece.needsMeaning = true; }
+    if (r.location) { piece.location = r.location; }
+    upsert(piece);
+    r.pieceId = piece.id;
+    $("#na-add").innerHTML = "Update this piece";
+    setStatus(piece.name + " is in your Name Pieces.");
+  }
+
+  function upsert(piece) {
+    var i;
+    for (i = 0; i < pieces.length; i++) {
+      if (pieces[i].id === piece.id || (norm(pieces[i].name) === norm(piece.name) && pieces[i].kind === piece.kind)) {
+        piece.id = pieces[i].id; piece.woven = pieces[i].woven; pieces[i] = piece; save(); refresh(); return;
+      }
+    }
+    pieces.push(piece); save(); refresh();
+  }
+
+  /* ================================================================
+     6) TRACE (single and full name)
+  ================================================================ */
+  function go() {
+    var raw = $("#na-name").value.replace(/^\s+|\s+$/g, ""), kind = $("#na-kind").value;
+    if (!raw) { setStatus("Type a name or place first.", true); $("#na-name").focus(); return; }
+    if (kind === "full") { return traceFull(raw); }
+    $("#na-go").disabled = true;
+    setStatus("Tracing " + titleCase(raw) + "...");
+    lookup(raw, kind, function (r) {
+      $("#na-go").disabled = false;
+      renderResult(r);
+      if (r.source === "atlas") { addFromCard(); }
+    });
+  }
+
+  function traceFull(raw) {
+    var parts = raw.split(/\s+/), jobs = [], i, added = 0, missing = [];
+    if (parts.length === 1) { $("#na-kind").value = "first"; return go(); }
+    jobs.push({ n: parts[0], k: "first" });
+    for (i = 1; i < parts.length - 1; i++) { jobs.push({ n: parts[i], k: "middle" }); }
+    jobs.push({ n: parts[parts.length - 1], k: "last" });
+    $("#na-go").disabled = true;
+    setStatus("Tracing " + jobs.length + " names...");
+    (function next(j) {
+      if (j >= jobs.length) {
+        $("#na-go").disabled = false;
+        $("#na-result").innerHTML = "";
+        setStatus(added + " of " + jobs.length + " names added." +
+          (missing.length ? " Still needs a meaning: " + missing.join(", ") + ". Tap edit on that piece to fill it in." : ""), false);
+        return;
+      }
+      lookup(jobs[j].n, jobs[j].k, function (r) {
+        var a = r.astro || deriveAstro(r.meaning);
+        var pc = { id: "p" + (++uid) + "_" + new Date().getTime(), name: r.name, kind: r.kind, meaning: r.meaning || "", origin: r.origin || "",
+                   astro: { element: a.element, planet: a.planet, sign: a.sign }, woven: true };
+        if (!r.meaning) { pc.needsMeaning = true; missing.push(r.name); }
+        upsert(pc);
+        added++;
+        next(j + 1);
+      });
+    })(0);
+  }
+
+  /* ================================================================
+     7) PIECES, STORY, EXPORT
+  ================================================================ */
+  function save() {
+    try { window.localStorage.setItem(STORE, JSON.stringify(pieces)); } catch (e) {}
+  }
+  function load() {
+    try {
+      var raw = window.localStorage.getItem(STORE), arr = raw ? JSON.parse(raw) : [];
+      if (Object.prototype.toString.call(arr) === "[object Array]") { pieces = arr; }
+    } catch (e) { pieces = []; }
+  }
+
+  function refresh() { renderPieces(); weave(); }
+
+  function renderPieces() {
+    var box = $("#na-pieces"), h = "", i, w = 0;
+    for (i = 0; i < pieces.length; i++) {
+      if (pieces[i].woven) { w++; }
+      h += "<span class='na-chip" + (pieces[i].woven ? " na-on" : "") + "'>" +
+        "<button type='button' data-tog='" + i + "' aria-pressed='" + (pieces[i].woven ? "true" : "false") + "'>" + esc(pieces[i].name) +
+        "<small>" + esc(kindLabel(pieces[i].kind)) + "</small></button>" +
+        "<button type='button' class='na-x' data-edit='" + i + "' aria-label='Edit " + esc(pieces[i].name) + "'>" + (pieces[i].needsMeaning ? "add meaning" : "edit") + "</button>" +
+        "<button type='button' class='na-x' data-del='" + i + "' aria-label='Remove " + esc(pieces[i].name) + "'>x</button></span>";
+    }
+    box.innerHTML = h;
+    $("#na-count").innerHTML = pieces.length + " collected &middot; " + w + " woven";
+    $("#na-pieces-empty").style.display = pieces.length ? "none" : "";
+    $("#na-piece-tools").style.display = pieces.length ? "" : "none";
+    var t = box.querySelectorAll("[data-tog]"), d = box.querySelectorAll("[data-del]");
+    for (i = 0; i < t.length; i++) {
+      t[i].onclick = function () { var p = pieces[+this.getAttribute("data-tog")]; p.woven = !p.woven; save(); refresh(); };
+    }
+    for (i = 0; i < d.length; i++) {
+      d[i].onclick = function () { pieces.splice(+this.getAttribute("data-del"), 1); save(); refresh(); };
+    }
+    var ed = box.querySelectorAll("[data-edit]");
+    for (i = 0; i < ed.length; i++) {
+      ed[i].onclick = function () {
+        var p = pieces[+this.getAttribute("data-edit")];
+        renderResult({ name: p.name, kind: p.kind, meaning: p.meaning, origin: p.origin, pieceId: p.id, source: "piece",
+          astro: mkAstro(p.astro.planet, p.astro.sign, ""), ask: p.needsMeaning ? "Add the meaning, then tap Update this piece." : "" });
+        var res = $("#na-result");
+        if (res.scrollIntoView) { res.scrollIntoView({ behavior: "smooth", block: "start" }); }
+      };
+    }
+  }
+
+  function joinNice(a) {
+    if (a.length < 2) { return a.join(""); }
+    return a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+  }
+
+  function storyData() {
+    var woven = [], i, el = { Fire: 0, Earth: 0, Air: 0, Water: 0 }, pl = {}, top = [], max = 0, k;
+    for (i = 0; i < pieces.length; i++) { if (pieces[i].woven) { woven.push(pieces[i]); } }
+    for (i = 0; i < woven.length; i++) {
+      el[woven[i].astro.element]++;
+      pl[woven[i].astro.planet] = (pl[woven[i].astro.planet] || 0) + 1;
+    }
+    for (k in el) { if (el.hasOwnProperty(k)) { if (el[k] > max) { max = el[k]; top = [k]; } else if (el[k] === max && max > 0) { top.push(k); } } }
+    return { woven: woven, el: el, pl: pl, top: top };
+  }
+
+  function weave() {
+    var d = storyData(), w = d.woven, h = "", i, p, names = [], places = [], people = [], k, repeats = [];
+    if (!w.length) { $("#na-weave").innerHTML = "<p class='na-empty'>Weave at least one piece to read the story.</p>"; return; }
+    for (i = 0; i < w.length; i++) {
+      if (w[i].kind === "place") { places.push(w[i]); } else { people.push(w[i]); names.push(w[i].name); }
+    }
+    if (people.length) {
+      h += "<p>" + (people.length > 1 ? "The names " + esc(joinNice(names)) + " are woven together here." : "The name " + esc(names[0]) + " is read here on its own.") + "</p>";
+    }
+    h += "<h4>Piece by piece</h4>";
+    for (i = 0; i < w.length; i++) {
+      p = w[i];
+      h += "<p><b>" + esc(p.name) + "</b> (" + esc(kindLabel(p.kind).toLowerCase()) + ")" +
+        (p.origin ? ", " + esc(p.origin) + "," : "") +
+        (p.meaning ? " carries the meaning &ldquo;" + esc(p.meaning) + "&rdquo;." : " has no meaning recorded yet.") +
+        " Its signature is " + esc(PLANET_GLOSS[p.astro.planet]) + ", expressed through " + esc(p.astro.sign) + ". " +
+        esc(SIGN_GLOSS[p.astro.sign]) +
+        (PLANET_HOME[p.astro.planet] === p.astro.sign || SIGN_TRAD[p.astro.sign] === p.astro.planet ? " Here the planet rules its own sign, so the theme speaks clearly and without compromise." : "") +
+        "</p>";
+    }
+    h += "<h4>Elemental balance</h4>";
+    var order = ["Fire", "Earth", "Air", "Water"];
+    for (i = 0; i < order.length; i++) {
+      h += "<div class='na-bar'><span>" + order[i] + "</span><i style='width:" + Math.round(d.el[order[i]] / w.length * 100) + "%'></i> " + d.el[order[i]] + "</div>";
+    }
+    if (d.top.length === 1) {
+      h += "<p>" + esc(d.top[0]) + " leads. " + esc(ELEMENT_GLOSS[d.top[0]]) + "</p>";
+    } else if (d.top.length > 1) {
+      h += "<p>" + esc(joinNice(d.top)) + " share the lead, so the names balance " + (d.top.length === 2 ? "two" : "several") + " temperaments rather than leaning on one.</p>";
+    }
+    for (k in d.pl) { if (d.pl.hasOwnProperty(k) && d.pl[k] > 1) { repeats.push(k); } }
+    if (repeats.length) {
+      h += "<p>" + esc(joinNice(repeats)) + (repeats.length > 1 ? " recur" : " recurs") + " across the names. A repeated planet acts like a family motif: the theme of " +
+        esc(PLANET_GLOSS[repeats[0]].split(", the principle of ")[1]) + " is likely to be named, noticed and lived.</p>";
+    }
+    if (places.length) {
+      h += "<h4>Where they came from</h4>";
+      for (i = 0; i < places.length; i++) {
+        h += "<p>" + esc(places[i].name) + (places[i].meaning ? ", meaning &ldquo;" + esc(places[i].meaning) + "&rdquo;," : "") +
+          " grounds the story in " + esc(places[i].astro.element.toLowerCase()) + ", under " + esc(places[i].astro.planet) + " and " + esc(places[i].astro.sign) + ".</p>";
+      }
+    }
+    h += "<p><i>To read these names against a real chart, compare each signature with the natal Sun, Moon and Rising sign and the chart ruler. A name that shares the element of the Rising sign is often the one a person feels most like.</i></p>";
+    $("#na-weave").innerHTML = h;
+  }
+
+  function exportArray() {
+    var out = [], i, p;
+    for (i = 0; i < pieces.length; i++) {
+      if (!pieces[i].woven) { continue; }
+      p = pieces[i];
+      out.push({ name: p.name, kind: p.kind, meaning: p.meaning, origin: p.origin, astro: { element: p.astro.element, planet: p.astro.planet, sign: p.astro.sign } });
+    }
+    return out;
+  }
+
+  function copyExport() {
+    var arr = exportArray(), txt = JSON.stringify(arr), ta = $("#na-export"), msg = $("#na-copy-msg");
+    if (!arr.length) { msg.innerHTML = "Weave at least one piece first."; return; }
+    $("#na-export-wrap").className = "na-field";
+    ta.value = txt;
+    function ok() { msg.innerHTML = "Copied. Paste it into Import Name Pieces in The Astral Atlas."; }
+    function manual() {
+      try { ta.focus(); ta.select(); ta.setSelectionRange(0, txt.length); if (document.execCommand("copy")) { ok(); return; } } catch (e) {}
+      msg.innerHTML = "Select the text in the box and copy it.";
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(ok, manual);
+    } else { manual(); }
+  }
+
+  function printSheet() {
+    var d = storyData(), sheet = document.getElementById("na-print"), h = "", i, p;
+    if (!d.woven.length) { $("#na-copy-msg").innerHTML = "Weave at least one piece first."; return; }
+    h += "<h1>The Nomen Atlas</h1><p>Adventures In Astrology &middot; adventuresinastrology.com</p>";
+    h += "<h2>Name Pieces</h2><table><tr><th>Name</th><th>Kind</th><th>Meaning</th><th>Origin</th><th>Signature</th></tr>";
+    for (i = 0; i < d.woven.length; i++) {
+      p = d.woven[i];
+      h += "<tr><td>" + esc(p.name) + "</td><td>" + esc(kindLabel(p.kind)) + "</td><td>" + esc(p.meaning) + "</td><td>" + esc(p.origin) +
+        "</td><td>" + esc(p.astro.planet + " in " + p.astro.sign + " (" + p.astro.element + ")") + "</td></tr>";
+    }
+    h += "</table><h2>The Woven Story</h2>" + $("#na-weave").innerHTML.replace(/<div class='na-bar'>[\s\S]*?<\/div>/g, "").replace(/<div class="na-bar">[\s\S]*?<\/div>/g, "");
+    sheet.innerHTML = h;
+    document.body.className += " na-printing";
+    function clean() { document.body.className = document.body.className.replace(/\s*na-printing/g, ""); }
+    if (window.addEventListener) { window.addEventListener("afterprint", clean); }
+    setTimeout(function () { window.print(); setTimeout(clean, 1500); }, 60);
+  }
+
+  /* ================================================================
+     8) WIRE UP (Squarespace-safe initialization)
+  ================================================================ */
+  function init() {
+    A = document.getElementById("nomen-atlas");
+    if (!A || A.getAttribute("data-na-ready")) { return !!A; }
+    A.setAttribute("data-na-ready", "1");
+    window.__nomenAtlasV3 = true;
+    var pr = document.getElementById("na-print");
+    if (pr && pr.parentNode !== document.body) { document.body.appendChild(pr); }
+    $("#na-go").onclick = go;
+    $("#na-name").onkeydown = function (e) { if ((e.key || e.keyCode) === "Enter" || e.keyCode === 13) { e.preventDefault(); go(); } };
+    $("#na-weave-all").onclick = function () { for (var i = 0; i < pieces.length; i++) { pieces[i].woven = true; } save(); refresh(); };
+    $("#na-clear").onclick = function () { if (window.confirm("Remove all Name Pieces?")) { pieces = []; save(); refresh(); $("#na-result").innerHTML = ""; } };
+    $("#na-copy").onclick = copyExport;
+    $("#na-print-btn").onclick = printSheet;
+    load();
+    refresh();
+    showSize();
+    loadData();
+    return true;
+  }
+
+  if (!init()) {
+    var tries = 0, t = setInterval(function () { tries++; if (init() || tries > 60) { clearInterval(t); } }, 250);
+    document.addEventListener("DOMContentLoaded", init);
+    window.addEventListener("mercury:load", init);
+  }
+})();
+</script>
