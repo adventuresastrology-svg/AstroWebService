@@ -1,0 +1,26 @@
+<!-- TikTok Astrology Center loader (Adventures In Astrology).
+     The full Center lives at github.com/adventuresastrology-svg/AstroWebService/tiktok-center -->
+<div id="atc-mount" style="text-align:center;padding:40px 10px;font-family:Arial,sans-serif;color:#FFFCF4">Loading the TikTok Astrology Center…</div>
+<script>
+(function(){
+  var m = document.getElementById("atc-mount");
+  if (!m || m.dataset.ok) return; m.dataset.ok = "1";
+  var urls = [
+    "https://raw.githubusercontent.com/adventuresastrology-svg/AstroWebService/master/tiktok-center/tiktok-astrology-center.html",
+    "https://cdn.jsdelivr.net/gh/adventuresastrology-svg/AstroWebService@master/tiktok-center/tiktok-astrology-center.html"
+  ];
+  function load(i){
+    if (i >= urls.length){ m.textContent = "The TikTok Astrology Center couldn’t load. Please refresh the page."; return; }
+    fetch(urls[i], {cache:"no-cache"})
+      .then(function(r){ if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function(html){
+        m.removeAttribute("style"); m.innerHTML = html;
+        [].slice.call(m.querySelectorAll("script")).forEach(function(s){
+          var n = document.createElement("script"); n.textContent = s.textContent; s.parentNode.replaceChild(n, s);
+        });
+      })
+      .catch(function(){ load(i + 1); });
+  }
+  load(0);
+})();
+</script>

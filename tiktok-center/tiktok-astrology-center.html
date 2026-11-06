@@ -1,0 +1,1713 @@
+<!-- ============================================================
+  ADVENTURES IN ASTROLOGY · TIKTOK ASTROLOGY CENTER (atc-)
+  One code block for the TOP of /tiktok-astrology.
+  It shows a menu of everything on the page, puts each existing tool into its own tab,
+  removes the blank gaps, and includes the TikTok LIVE Classroom as a tab.
+  Your other blocks stay on the page; this just organizes them.
+  Delete this block and the page goes back to exactly how it was.
+  Direct links: #chart-lab  #live  #sky  #study  #calculators  #reading
+============================================================= -->
+<div id="atc-root">
+<style>
+#atc-root{
+  --ink:#1F2A44; --muted:#4C5A78; --turq:#14A39D; --turq-deep:#0E7C78; --turq-lt:#5FE0D6;
+  --terra:#D35A33; --gold:#F4B63F; --gold-lt:#FFE2A0; --plum:#7A4FD8; --sky:#E6F7F5; --card:#FFFCF4;
+  --atc-top:0px;
+  font-family:"Lexend","Segoe UI",Arial,sans-serif; color:var(--ink); line-height:1.45;
+  max-width:1440px; margin:0 auto; padding:clamp(10px,2vw,22px) clamp(8px,2vw,22px) 30px; box-sizing:border-box;
+}
+#atc-root *,#atc-root *::before,#atc-root *::after{box-sizing:border-box}
+#atc-root [hidden]{display:none!important}
+#atc-root .atc-hero{
+  background:var(--sky); border:3px solid var(--ink); border-radius:24px; padding:clamp(16px,2.5vw,28px);
+  box-shadow:0 8px 0 var(--ink); text-align:center;
+  background-image:radial-gradient(circle at 10% 10%,rgba(244,182,63,.3),transparent 35%),radial-gradient(circle at 92% 90%,rgba(122,79,216,.18),transparent 38%);
+}
+#atc-root .atc-kicker{font-family:"Space Mono",monospace; font-weight:700; letter-spacing:.16em; font-size:.78rem; color:var(--terra); text-transform:uppercase}
+#atc-root .atc-title{font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:clamp(28px,4.2vw,52px); line-height:1.05; margin:4px 0 6px; color:var(--ink)}
+#atc-root .atc-title em{font-style:normal; color:var(--turq-deep)}
+#atc-root .atc-sub{margin:0 auto 18px; max-width:680px; color:var(--muted); font-weight:600; font-size:1.05rem}
+#atc-root .atc-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:12px; text-align:left}
+#atc-root .atc-card{
+  cursor:pointer; display:flex; flex-direction:column; gap:4px; padding:14px 14px 12px; min-height:112px;
+  background:var(--card); color:var(--ink); border:2.5px solid var(--ink); border-radius:16px; box-shadow:0 4px 0 var(--ink);
+  font:inherit; text-align:left; transition:transform .08s, box-shadow .08s;
+}
+#atc-root .atc-card:hover{transform:translateY(-2px); box-shadow:0 6px 0 var(--ink)}
+#atc-root .atc-card:focus-visible{outline:4px solid var(--plum); outline-offset:2px}
+#atc-root .atc-card[aria-selected="true"]{background:var(--turq-deep); color:#fff}
+#atc-root .atc-card-icon{font-size:1.7rem; line-height:1}
+#atc-root .atc-card b{font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.18rem; line-height:1.1}
+#atc-root .atc-card span:last-child{font-size:.86rem; font-weight:600; opacity:.85}
+#atc-root .atc-card.atc-start{border-color:var(--terra)}
+#atc-root .atc-card .atc-badge{align-self:flex-start; font-family:"Space Mono",monospace; font-weight:700; font-size:.66rem; letter-spacing:.1em; background:var(--gold); color:var(--ink); border-radius:999px; padding:1px 8px; margin-bottom:2px}
+/* slim sticky bar (appears once the big menu scrolls away) */
+#atc-root .atc-bar{
+  position:sticky; top:var(--atc-top); z-index:50; margin:14px 0 0; display:flex; gap:6px; overflow-x:auto;
+  background:var(--ink); border-radius:14px; padding:6px; scrollbar-width:none;
+  opacity:0; pointer-events:none; transform:translateY(-6px); transition:opacity .15s, transform .15s;
+}
+#atc-root .atc-bar.atc-show{opacity:1; pointer-events:auto; transform:none}
+#atc-root .atc-bar button{
+  flex:none; cursor:pointer; font:inherit; font-weight:800; font-size:.9rem; white-space:nowrap;
+  color:#fff; background:transparent; border:0; border-radius:10px; padding:8px 12px;
+}
+#atc-root .atc-bar button[aria-selected="true"]{background:var(--gold); color:var(--ink)}
+#atc-root .atc-bar button:focus-visible{outline:3px solid var(--turq-lt)}
+#atc-root .atc-panel{margin-top:16px}
+#atc-root .atc-panel-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  background:var(--card); border:3px solid var(--ink); border-radius:18px; padding:12px 16px; margin-bottom:14px;
+}
+#atc-root .atc-panel-head h3{font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.5rem; margin:0; color:var(--ink)}
+#atc-root .atc-panel-head p{margin:2px 0 0; color:var(--muted); font-weight:600; font-size:.95rem}
+#atc-root .atc-top{cursor:pointer; font:inherit; font-weight:800; background:var(--gold-lt); color:var(--ink); border:2.5px solid var(--ink); border-radius:12px; padding:8px 14px}
+#atc-root .atc-slot > .sqs-block{margin:0 0 18px!important; padding:0!important; width:100%!important; height:auto!important; position:relative!important}
+#atc-root .atc-note{margin:12px 0 0; background:var(--gold-lt); color:var(--ink); border:2px dashed var(--ink); border-radius:12px; padding:10px 14px; font-weight:600}
+@media (max-width:600px){
+  #atc-root .atc-cards{grid-template-columns:1fr 1fr; gap:8px}
+  #atc-root .atc-card{min-height:96px; padding:10px}
+  #atc-root .atc-card span:last-child{font-size:.78rem}
+}
+</style>
+
+<div class="atc-hero">
+  <div class="atc-kicker">Adventures In Astrology</div>
+  <h2 class="atc-title">TikTok Astrology <em>Center</em></h2>
+  <p class="atc-sub">Everything from the LIVEs in one place. Pick where you want to go:</p>
+  <div class="atc-cards" id="atc-cards" role="tablist" aria-label="TikTok Astrology Center"></div>
+  <p class="atc-note" id="atc-edit-note" hidden>✏️ Editing mode: tabs are paused so you can edit your blocks normally. Preview or view the live page to see the Center.</p>
+</div>
+<div class="atc-bar" id="atc-bar" role="tablist" aria-label="Center menu"></div>
+
+<div class="atc-panel" data-atc="live" role="tabpanel">
+  <div class="atc-panel-head"><div><h3>🎥 LIVE Classroom</h3><p>Slides, quizzes and follow-along for the TikTok LIVEs.</p></div><button class="atc-top" type="button">↑ Menu</button></div>
+  <div class="atc-slot">
+<!-- ============================================================
+  ADVENTURES IN ASTROLOGY · TIKTOK LIVE CLASSROOM  (aitc-)  v3
+  "Celestial Expedition" · single-file Squarespace code-block embed.
+  Links + how to add lessons: see CONFIG at the top of the script below.
+============================================================= -->
+<div id="aitc-root" class="aitc-day">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Lexend:wght@400;600;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+#aitc-root{
+  --aitc-scale:1;
+  /* expedition palette */
+  --ink:#1F2A44; --muted:#4C5A78;
+  --turq:#14A39D; --turq-lt:#5FE0D6; --turq-deep:#0E7C78;
+  --terra:#D35A33; --terra-lt:#FFB59A;
+  --gold:#F4B63F; --gold-lt:#FFE2A0;
+  --plum:#7A4FD8; --plum-lt:#E4D9FF;
+  --sky:#E6F7F5; --card:#FFFCF4; --paper:#FFF7E6; --line:#1F2A44;
+  --on-bright:#1F2A44;
+  --topo:'%2314A39D';
+  font-family:"Lexend","Segoe UI","Noto Sans Symbols 2","Segoe UI Symbol",Arial,sans-serif;
+  font-size:calc(17px * var(--aitc-scale));
+  line-height:1.5; color:var(--ink);
+  background-color:var(--sky);
+  background-image:
+    radial-gradient(circle at 12% 8%,rgba(244,182,63,.28),transparent 32%),
+    radial-gradient(circle at 92% 92%,rgba(122,79,216,.16),transparent 35%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 360 360'%3E%3Cg fill='none' stroke='%2314A39D' stroke-width='1.6' opacity='.22'%3E%3Cpath d='M40 120c30-50 110-60 150-20s100 40 120 0'/%3E%3Cpath d='M20 150c40-60 140-70 180-25s110 45 140 5'/%3E%3Cpath d='M10 185c50-65 165-75 205-30s120 50 145 10'/%3E%3Cpath d='M60 290c20-30 70-35 95-10s60 25 75 0'/%3E%3Cpath d='M45 315c25-38 90-42 118-12s75 28 92 0'/%3E%3C/g%3E%3Cg fill='%23D35A33' opacity='.35'%3E%3Cpath d='M300 50l3 8 8 3-8 3-3 8-3-8-8-3 8-3z'/%3E%3Cpath d='M70 40l2 5 5 2-5 2-2 5-2-5-5-2 5-2z'/%3E%3Ccircle cx='250' cy='240' r='2.5'/%3E%3Ccircle cx='150' cy='60' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  border:3px solid var(--line); border-radius:24px;
+  padding:clamp(10px,2vw,24px); box-sizing:border-box; position:relative;
+  max-width:1400px; margin:0 auto;
+}
+#aitc-root.aitc-night{
+  --ink:#FFF4DE; --muted:#C9D8E2; --line:#5FE0D6;
+  --sky:#0F2433; --card:#173447; --paper:#1D3E54;
+  --turq:#5FE0D6; --plum-lt:#3A2E66; --gold-lt:#4A3B17;
+  background-image:
+    radial-gradient(circle at 15% 10%,rgba(244,182,63,.20),transparent 30%),
+    radial-gradient(circle at 90% 90%,rgba(122,79,216,.28),transparent 35%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cg fill='%23FFE2A0'%3E%3Ccircle cx='20' cy='30' r='1.4' opacity='.8'/%3E%3Ccircle cx='140' cy='80' r='1' opacity='.6'/%3E%3Ccircle cx='260' cy='40' r='1.6' opacity='.9'/%3E%3Ccircle cx='90' cy='200' r='1.2' opacity='.7'/%3E%3Ccircle cx='220' cy='250' r='1' opacity='.6'/%3E%3Ccircle cx='180' cy='160' r='1.5' opacity='.8'/%3E%3Cpath d='M60 120l2 5 5 2-5 2-2 5-2-5-5-2 5-2z' opacity='.9'/%3E%3C/g%3E%3Cg fill='none' stroke='%235FE0D6' stroke-width='1.2' opacity='.14'%3E%3Cpath d='M0 260c50-40 120-40 170-5s100 30 130 0'/%3E%3C/g%3E%3C/svg%3E");
+}
+#aitc-root *,#aitc-root *::before,#aitc-root *::after{box-sizing:border-box}
+#aitc-root [hidden]{display:none!important}
+#aitc-root a{color:inherit}
+#aitc-root button,#aitc-root input{font:inherit}
+#aitc-root .aitc-mono{font-family:"Space Mono",monospace; font-weight:700; letter-spacing:.12em; text-transform:uppercase}
+
+/* ---------- BASE CAMP ticket (always-on chart bar) ---------- */
+#aitc-root .aitc-calcbar{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px;
+  background:var(--gold); color:var(--on-bright);
+  border:3px solid #1F2A44; border-radius:16px; padding:10px 16px 10px 12px; margin-bottom:12px;
+  box-shadow:0 5px 0 #1F2A44;
+  background-image:radial-gradient(circle at 0 50%,transparent 9px,var(--gold) 10px);
+}
+#aitc-root .aitc-calc-badge{
+  display:flex; align-items:center; gap:10px; padding-right:16px; border-right:3px dashed #1F2A44;
+}
+#aitc-root .aitc-calc-badge svg{width:46px; height:46px; flex:none}
+#aitc-root .aitc-calc-badge b{display:block; font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.25em; line-height:1}
+#aitc-root .aitc-calc-badge small{font-family:"Space Mono",monospace; font-weight:700; font-size:.68em; letter-spacing:.14em}
+#aitc-root .aitc-calc-text{flex:1 1 280px; font-weight:600}
+#aitc-root .aitc-calc-url{display:block; font-family:"Space Mono",monospace; font-weight:700; font-size:1.12em; overflow-wrap:anywhere}
+#aitc-root .aitc-calc-actions{display:flex; gap:8px; flex-wrap:wrap}
+
+/* ---------- sky now ---------- */
+#aitc-root .aitc-sky{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 6px}
+#aitc-root .aitc-sky-label{font-size:.75em; color:var(--muted)}
+#aitc-root .aitc-chip{
+  display:inline-flex; align-items:center; gap:6px; background:var(--card); color:var(--ink);
+  border:2px solid var(--line); border-radius:999px; padding:4px 12px; font-weight:600; font-size:.9em;
+}
+#aitc-root .aitc-rx{background:var(--terra); color:#fff; border-radius:6px; padding:0 6px; font-size:.8em; font-weight:800}
+
+/* ---------- header ---------- */
+#aitc-root .aitc-header{display:flex; align-items:center; justify-content:center; gap:18px; padding:14px 8px 4px; text-align:left}
+#aitc-root .aitc-compass{width:clamp(64px,8vw,96px); height:auto; flex:none; animation:aitcSpin 60s linear infinite}
+@keyframes aitcSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){ #aitc-root .aitc-compass{animation:none} }
+#aitc-root .aitc-kicker{font-size:.78em; color:var(--terra)}
+#aitc-root.aitc-night .aitc-kicker{color:var(--gold)}
+#aitc-root .aitc-title{
+  font-family:"Fraunces",Georgia,serif; font-weight:900; margin:2px 0 4px;
+  font-size:clamp(28px,4.4vw,54px); line-height:1.02; color:var(--ink); letter-spacing:-.01em;
+}
+#aitc-root .aitc-title em{font-style:normal; color:var(--turq-deep)}
+#aitc-root.aitc-night .aitc-title em{color:var(--turq-lt)}
+#aitc-root .aitc-route{height:10px; width:min(440px,100%); background:
+  radial-gradient(circle,var(--terra) 3px,transparent 3.5px) 0 50%/18px 10px repeat-x}
+#aitc-root .aitc-tagline{margin:6px 0 0; color:var(--muted); font-weight:600}
+@media (max-width:560px){ #aitc-root .aitc-header{flex-direction:column; text-align:center} #aitc-root .aitc-route{margin:0 auto} }
+
+/* ---------- buttons ---------- */
+#aitc-root .aitc-btn{
+  cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  min-height:44px; padding:8px 18px; border-radius:12px;
+  border:2.5px solid #1F2A44; background:var(--card); color:var(--ink);
+  font-weight:800; text-decoration:none; box-shadow:0 4px 0 #1F2A44;
+  transition:transform .08s, box-shadow .08s;
+}
+#aitc-root.aitc-night .aitc-btn{border-color:var(--line); box-shadow:0 4px 0 #071520}
+#aitc-root .aitc-btn:hover{transform:translateY(-1px); box-shadow:0 5px 0 #1F2A44}
+#aitc-root .aitc-btn:active{transform:translateY(3px); box-shadow:0 1px 0 #1F2A44}
+#aitc-root .aitc-btn:focus-visible,#aitc-root .aitc-trail-btn:focus-visible{outline:4px solid var(--plum); outline-offset:2px}
+#aitc-root .aitc-btn:disabled{opacity:.35; cursor:not-allowed; transform:none}
+#aitc-root .aitc-btn-ink{background:#1F2A44; color:var(--gold); border-color:#1F2A44}
+#aitc-root .aitc-btn-terra{background:var(--terra); color:#fff; border-color:#1F2A44}
+#aitc-root .aitc-btn-turq{background:var(--turq-lt); color:var(--on-bright); border-color:#1F2A44}
+#aitc-root .aitc-btn-sky{background:var(--plum-lt); color:var(--ink)}
+#aitc-root .aitc-btn[aria-pressed="true"]{background:var(--plum); color:#fff}
+#aitc-root .aitc-btn-sm{min-height:40px; padding:4px 14px; font-size:.9em}
+
+/* ---------- toolbar ---------- */
+#aitc-root .aitc-toolbar{display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; align-items:flex-end; margin:16px 0 18px}
+#aitc-root .aitc-group{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+#aitc-root .aitc-group-label{font-size:.72em; color:var(--muted); width:100%; margin-bottom:-2px}
+/* trails = folder tabs */
+#aitc-root .aitc-trail-btn{
+  cursor:pointer; font-weight:800; min-height:46px; padding:8px 18px 8px 40px; position:relative;
+  border:2.5px solid #1F2A44; border-radius:14px 14px 4px 4px; background:var(--paper); color:var(--ink);
+}
+#aitc-root.aitc-night .aitc-trail-btn{border-color:var(--line)}
+#aitc-root .aitc-trail-btn::before{
+  content:""; position:absolute; left:14px; top:50%; width:16px; height:16px; margin-top:-8px;
+  border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:var(--terra); border:2px solid #1F2A44;
+}
+#aitc-root .aitc-trail-btn[aria-pressed="true"]{background:var(--turq-deep); color:#fff; box-shadow:0 4px 0 #1F2A44}
+#aitc-root .aitc-trail-btn[aria-pressed="true"]::before{background:var(--gold)}
+#aitc-root .aitc-switch{
+  display:inline-flex; align-items:center; gap:8px; font-weight:800; font-size:.9em; color:var(--ink);
+  background:var(--card); border:2.5px solid var(--line); border-radius:12px; padding:4px 12px; min-height:44px;
+}
+#aitc-root .aitc-switch input{width:64px; accent-color:var(--plum); cursor:pointer}
+
+/* ---------- main grid ---------- */
+#aitc-root .aitc-main{display:grid; grid-template-columns:minmax(0,2fr) minmax(280px,1fr); gap:20px; align-items:start}
+@media (max-width:860px){ #aitc-root .aitc-main{grid-template-columns:1fr} }
+
+/* ---------- stage: field journal ---------- */
+#aitc-root .aitc-window{
+  background:var(--card); border:3px solid var(--line); border-radius:20px; overflow:hidden;
+  box-shadow:0 8px 0 rgba(31,42,68,.9);
+}
+#aitc-root.aitc-night .aitc-window{box-shadow:0 8px 0 #071520}
+#aitc-root .aitc-winbar{
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  background:var(--turq-deep); color:#fff; font-weight:800;
+  background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.06) 0 10px,transparent 10px 20px);
+}
+#aitc-root .aitc-winbar svg{width:26px; height:26px; flex:none}
+#aitc-root .aitc-winbar-title{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:"Fraunces",Georgia,serif; font-size:1.15em}
+#aitc-root .aitc-counter{font-family:"Space Mono",monospace; font-size:.85em; background:var(--gold); color:#1F2A44; padding:3px 12px; border-radius:999px; white-space:nowrap; border:2px solid #1F2A44}
+
+/* trail map (progress + jump) */
+#aitc-root .aitc-trail{position:relative; padding:14px clamp(14px,3vw,36px) 6px}
+#aitc-root .aitc-navdots{position:relative; display:flex; justify-content:space-between; align-items:center; gap:4px}
+#aitc-root .aitc-navdots::before{
+  content:""; position:absolute; left:8px; right:8px; top:50%; border-top:3px dashed var(--muted); opacity:.5;
+}
+#aitc-root .aitc-navdots button{
+  position:relative; width:18px; height:18px; border-radius:50%; padding:0; cursor:pointer;
+  border:2.5px solid var(--line); background:var(--card); color:#fff; font-size:13px; line-height:1;
+  display:grid; place-items:center;
+}
+#aitc-root .aitc-navdots button.aitc-visited{background:var(--turq)}
+#aitc-root .aitc-navdots button[aria-current="true"]{width:30px; height:30px; background:var(--terra); border-color:#1F2A44; font-size:16px}
+#aitc-root .aitc-progress{display:none}
+
+#aitc-root .aitc-slide{
+  padding:clamp(16px,3vw,38px); padding-top:clamp(10px,2vw,22px); min-height:330px;
+  display:flex; flex-direction:column; justify-content:center; gap:14px;
+}
+#aitc-root .aitc-slide.aitc-in{animation:aitcIn .3s ease-out}
+@keyframes aitcIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+@media (prefers-reduced-motion:reduce){ #aitc-root .aitc-slide.aitc-in{animation:none} }
+/* passport stamp */
+#aitc-root .aitc-tag{
+  align-self:flex-start; font-family:"Space Mono",monospace; font-weight:700; font-size:.82em; letter-spacing:.12em;
+  color:var(--terra); border:3px double var(--terra); border-radius:8px; padding:4px 12px; transform:rotate(-2deg);
+  background:rgba(211,90,51,.06);
+}
+#aitc-root.aitc-night .aitc-tag{color:var(--terra-lt); border-color:var(--terra-lt)}
+#aitc-root .aitc-arch-badge{
+  align-self:flex-start; font-weight:800; background:var(--plum); color:#fff; border-radius:999px; padding:5px 16px; font-size:.95em;
+}
+#aitc-root .aitc-slide h3{
+  font-family:"Fraunces",Georgia,serif; font-weight:900; margin:0;
+  font-size:clamp(1.7em,3.6vw,2.8em); line-height:1.08; color:var(--ink); letter-spacing:-.01em;
+}
+#aitc-root .aitc-slide-text{font-size:clamp(1.12em,1.8vw,1.4em); margin:0; max-width:46em}
+#aitc-root .aitc-timeline{list-style:none; margin:0; padding:0 0 0 22px; display:grid; gap:10px; border-left:3px dashed var(--turq)}
+#aitc-root .aitc-timeline li{
+  position:relative; display:grid; grid-template-columns:minmax(110px,160px) 1fr; gap:12px; align-items:center;
+  background:var(--paper); border:2px solid var(--line); border-radius:12px; padding:8px 14px; font-size:1.05em;
+}
+#aitc-root .aitc-timeline li::before{
+  content:""; position:absolute; left:-34px; top:50%; width:18px; height:18px; margin-top:-9px; border-radius:50%;
+  background:var(--gold); border:2.5px solid #1F2A44;
+}
+#aitc-root .aitc-timeline b{font-family:"Space Mono",monospace; color:var(--turq-deep)}
+#aitc-root.aitc-night .aitc-timeline b{color:var(--gold)}
+@media (max-width:520px){ #aitc-root .aitc-timeline li{grid-template-columns:1fr; gap:2px} }
+
+/* mission card */
+#aitc-root .aitc-follow{
+  display:flex; gap:14px; align-items:flex-start;
+  margin:0 clamp(14px,3vw,36px); background:#DDF6F2; color:var(--on-bright);
+  border:2.5px dashed var(--turq-deep); border-radius:16px; padding:14px 18px;
+}
+#aitc-root.aitc-night .aitc-follow{background:#DDF6F2}
+#aitc-root .aitc-follow svg{width:34px; height:34px; flex:none; margin-top:2px}
+#aitc-root .aitc-follow-label{display:block; font-size:.74em; color:var(--turq-deep); margin-bottom:2px}
+#aitc-root .aitc-follow p{margin:0; font-size:1.16em; font-weight:600}
+#aitc-root .aitc-chat{
+  margin:12px clamp(14px,3vw,36px) 0; background:var(--plum); color:#fff; font-weight:800;
+  border-radius:14px; padding:10px 16px; font-size:1.06em; border:2.5px solid #1F2A44;
+}
+#aitc-root .aitc-nav{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:16px clamp(14px,3vw,36px) 20px}
+#aitc-root .aitc-keys{font-size:.8em; color:var(--muted); text-align:center; margin:8px 0 0}
+
+/* ---------- side panels ---------- */
+#aitc-root .aitc-panel{
+  background:var(--card); border:3px solid var(--line); border-radius:20px; padding:18px; position:relative;
+  box-shadow:0 8px 0 rgba(31,42,68,.9);
+}
+#aitc-root.aitc-night .aitc-panel{box-shadow:0 8px 0 #071520}
+#aitc-root .aitc-panel + .aitc-panel{margin-top:20px}
+#aitc-root .aitc-panel-head{display:flex; align-items:center; gap:10px; margin-bottom:4px}
+#aitc-root .aitc-panel-head svg{width:34px; height:34px; flex:none}
+#aitc-root .aitc-panel h4{font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.4em; margin:0; color:var(--ink); line-height:1.1}
+#aitc-root .aitc-hint{margin:4px 0 12px; color:var(--muted); font-size:.92em}
+#aitc-root .aitc-search{
+  width:100%; min-height:52px; padding:10px 14px; font-size:1.08em; font-weight:600;
+  border:2.5px solid #1F2A44; border-radius:12px; background:#fff; color:#1F2A44;
+}
+#aitc-root .aitc-search:focus{outline:4px solid var(--turq-lt); outline-offset:1px}
+#aitc-root .aitc-quick{display:flex; flex-wrap:wrap; gap:6px; margin:12px 0 0}
+#aitc-root .aitc-quick button{
+  cursor:pointer; border:2px solid var(--line); background:var(--gold-lt); color:var(--ink);
+  border-radius:8px; padding:5px 11px; font-weight:600; font-size:.88em;
+}
+#aitc-root .aitc-quick button:hover{background:var(--gold); color:#1F2A44}
+#aitc-root .aitc-result{
+  margin-top:14px; border:2.5px solid var(--line); border-radius:14px; padding:14px 16px; background:var(--paper);
+  border-left:8px solid var(--terra);
+}
+#aitc-root .aitc-result h5{font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.3em; margin:0 0 6px; line-height:1.15; color:var(--ink)}
+#aitc-root .aitc-result p{margin:0 0 8px; font-size:1.05em}
+#aitc-root .aitc-ask{font-weight:800; color:var(--plum)}
+#aitc-root.aitc-night .aitc-ask{color:var(--gold)}
+#aitc-root .aitc-jumps{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+
+/* ---------- star map window ---------- */
+#aitc-root .aitc-chartwin{margin-top:20px}
+#aitc-root .aitc-chartwin-head{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; margin-bottom:10px}
+#aitc-root .aitc-frame{width:100%; height:min(80vh,820px); border:2.5px solid #1F2A44; border-radius:12px; background:#fff}
+
+/* ---------- footer ---------- */
+#aitc-root .aitc-footer{margin-top:24px; text-align:center; color:var(--muted); font-size:.92em}
+#aitc-root .aitc-footer-links{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:10px}
+
+/* ---------- presentation mode ---------- */
+#aitc-root.aitc-presenting{
+  position:fixed; inset:0; z-index:2147483000; max-width:none; margin:0;
+  border-radius:0; border-width:0; overflow:auto; padding:12px 16px;
+}
+#aitc-root.aitc-presenting .aitc-header,
+#aitc-root.aitc-presenting .aitc-lessons,
+#aitc-root.aitc-presenting .aitc-footer{display:none}
+#aitc-root.aitc-presenting .aitc-toolbar{margin:0 0 12px; justify-content:flex-end}
+#aitc-root.aitc-presenting .aitc-slide{min-height:48vh}
+#aitc-root.aitc-presenting .aitc-calcbar{font-size:1.1em}
+
+@media (min-width:700px){ #aitc-root .aitc-calcbar{position:sticky; top:0; z-index:5} }
+@media (max-width:600px){
+  #aitc-root{border-radius:16px}
+  #aitc-root .aitc-calcbar{padding:8px 10px; gap:8px}
+  #aitc-root .aitc-calc-badge{border-right:0; padding-right:0}
+  #aitc-root .aitc-calc-url{font-size:.92em}
+  #aitc-root .aitc-navdots button:not([aria-current="true"]){width:12px; height:12px; border-width:2px}
+}
+
+/* ================= v3 additions ================= */
+/* mobile-only base camp strip (desktop shows it in the side column) */
+#aitc-root .aitc-mobile-camp{display:none}
+@media (max-width:860px){ #aitc-root .aitc-mobile-camp{display:flex; position:static} }
+
+/* side column */
+#aitc-root .aitc-side{position:sticky; top:10px; max-height:calc(100vh - 20px); overflow:auto; padding:2px 8px 12px 2px; scrollbar-width:thin}
+@media (max-width:860px){ #aitc-root .aitc-side{position:static; max-height:none; overflow:visible} }
+#aitc-root .aitc-camp{background:var(--gold); color:var(--on-bright); border:3px solid #1F2A44; border-radius:20px; padding:16px; box-shadow:0 8px 0 #1F2A44}
+#aitc-root .aitc-camp .aitc-calc-badge{border:0; padding:0; margin-bottom:8px}
+#aitc-root .aitc-camp .aitc-calc-url{font-size:1.02em; margin:2px 0 12px; background:#FFFCF4; border:2px dashed #1F2A44; border-radius:10px; padding:8px 10px; text-align:center}
+#aitc-root .aitc-camp-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+#aitc-root .aitc-camp-actions .aitc-btn{padding:6px 8px; font-size:.86em}
+#aitc-root .aitc-camp-actions .aitc-btn:first-child{grid-column:1/-1}
+#aitc-root .aitc-camp-small{font-size:.8em; margin:10px 0 0; font-weight:600}
+@media (max-width:860px){ #aitc-root .aitc-camp{display:none} }
+#aitc-root.aitc-night .aitc-camp{box-shadow:0 8px 0 #071520}
+
+/* tabs */
+#aitc-root .aitc-tabs{display:grid; grid-template-columns:1fr 1fr; gap:0; margin-top:20px}
+#aitc-root .aitc-tab{
+  cursor:pointer; font-weight:800; font-size:1em; min-height:48px; color:var(--ink);
+  background:var(--paper); border:3px solid var(--line); border-bottom:0; border-radius:16px 16px 0 0; opacity:.75;
+}
+#aitc-root .aitc-tab[aria-selected="true"]{background:var(--card); opacity:1; position:relative; top:3px; z-index:1}
+#aitc-root .aitc-tab:focus-visible{outline:4px solid var(--plum)}
+#aitc-root .aitc-tabs + .aitc-panel{border-top-left-radius:0; border-top-right-radius:0}
+#aitc-root .aitc-panel + .aitc-panel{margin-top:0}
+
+/* forms */
+#aitc-root .aitc-field{display:block; margin:0 0 10px}
+#aitc-root .aitc-field > span{display:block; font-weight:800; font-size:.86em; margin-bottom:4px; color:var(--ink)}
+#aitc-root .aitc-input{
+  width:100%; min-height:46px; padding:8px 12px; font-size:1em; font-weight:600;
+  border:2.5px solid #1F2A44; border-radius:12px; background:#fff; color:#1F2A44;
+}
+#aitc-root .aitc-input:focus{outline:4px solid var(--turq-lt); outline-offset:1px}
+#aitc-root .aitc-input:disabled{opacity:.4}
+#aitc-root .aitc-row{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+#aitc-root .aitc-row-btn{display:grid; grid-template-columns:1fr auto; gap:8px}
+#aitc-root .aitc-check{display:flex; align-items:center; gap:8px; font-weight:600; font-size:.9em; margin:-2px 0 10px; cursor:pointer}
+#aitc-root .aitc-check input{width:20px; height:20px; accent-color:var(--plum)}
+#aitc-root .aitc-place-opt{display:block; width:100%; text-align:left; cursor:pointer; margin:4px 0; padding:8px 10px; border:2px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font-weight:600}
+#aitc-root .aitc-place-opt:hover{background:var(--turq-lt); color:#1F2A44}
+#aitc-root .aitc-place-chosen{display:inline-block; margin:2px 0 10px; font-weight:800; background:var(--plum-lt); color:var(--ink); border-radius:999px; padding:4px 12px}
+#aitc-root .aitc-sys{display:flex; gap:6px; align-items:center; margin:0 0 12px; flex-wrap:wrap}
+#aitc-root .aitc-sys > span{font-weight:800; font-size:.86em; margin-right:4px}
+#aitc-root .aitc-btn-wide{width:100%; margin-top:6px}
+#aitc-root .aitc-msg{background:#FFE1D3; color:#1F2A44; border:2px solid var(--terra); border-radius:10px; padding:8px 10px; font-weight:600; margin:8px 0 0}
+#aitc-root .aitc-calc-actions2{display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:12px}
+#aitc-root .aitc-calc-title{font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.35em; margin:0 0 2px; color:var(--ink); line-height:1.15}
+#aitc-root .aitc-privacy{font-size:.78em; color:var(--muted); margin:8px 0 0}
+
+/* results */
+#aitc-root .aitc-wheel-wrap{margin:14px auto 4px; max-width:320px}
+#aitc-root .aitc-wheel{width:100%; height:auto; display:block}
+#aitc-root .aitc-res-card{border:2.5px solid var(--line); border-left:8px solid var(--turq); border-radius:14px; background:var(--paper); padding:10px 14px; margin-top:10px}
+#aitc-root .aitc-res-card:nth-child(4n+1){border-left-color:var(--terra)}
+#aitc-root .aitc-res-card:nth-child(4n+2){border-left-color:var(--gold)}
+#aitc-root .aitc-res-card:nth-child(4n+3){border-left-color:var(--plum)}
+#aitc-root .aitc-res-card h5{font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.12em; margin:0 0 4px; color:var(--ink); line-height:1.2}
+#aitc-root .aitc-res-card ul{margin:0; padding-left:18px}
+#aitc-root .aitc-res-card li{margin:2px 0; font-size:.95em}
+#aitc-root .aitc-res-card p{margin:6px 0 0; font-size:.92em; color:var(--muted)}
+
+/* slide extras */
+#aitc-root .aitc-slide-list{margin:0; padding:0; list-style:none; display:grid; gap:8px}
+#aitc-root .aitc-slide-list li{background:var(--paper); border:2px solid var(--line); border-radius:12px; padding:8px 14px; font-size:1.12em; font-weight:600}
+#aitc-root .aitc-slide-art{max-width:340px; width:100%}
+#aitc-root .aitc-slide-art svg{width:100%; height:auto; display:block}
+#aitc-root .aitc-quiz{display:grid; gap:10px; max-width:640px}
+#aitc-root .aitc-quiz-opt{
+  display:flex; align-items:center; gap:14px; text-align:left; cursor:pointer; min-height:54px;
+  background:var(--paper); color:var(--ink); border:2.5px solid var(--line); border-radius:14px; padding:8px 14px; font-size:1.15em; font-weight:600;
+}
+#aitc-root .aitc-quiz-opt b{display:grid; place-items:center; width:34px; height:34px; border-radius:50%; background:#1F2A44; color:var(--gold); flex:none; font-family:"Space Mono",monospace}
+#aitc-root .aitc-quiz-opt:hover:not(:disabled){background:var(--gold-lt)}
+#aitc-root .aitc-quiz-opt:disabled{cursor:default}
+#aitc-root .aitc-quiz-opt.aitc-right{background:#C9F2DD; color:#1F2A44; border-color:#1F7A4D}
+#aitc-root .aitc-quiz-opt.aitc-right b{background:#1F7A4D; color:#fff}
+#aitc-root .aitc-quiz-opt.aitc-wrong{background:#FFE1D3; color:#1F2A44; opacity:.8}
+#aitc-root .aitc-quiz > .aitc-btn{justify-self:start}
+#aitc-root .aitc-quiz-ex{margin:2px 0 0; font-weight:800; font-size:1.1em; color:var(--ink)}
+#aitc-root .aitc-slide-action{align-self:flex-start}
+#aitc-root .aitc-trail-explore{background:var(--plum-lt)}
+#aitc-root .aitc-trail-explore[aria-pressed="true"]{background:var(--plum); color:#fff}
+#aitc-root .aitc-presenting .aitc-lessons{display:none}
+#aitc-root.aitc-presenting .aitc-side{max-height:calc(100vh - 20px)}
+#aitc-root .aitc-field > span.aitc-row-btn{display:grid; grid-template-columns:1fr auto; gap:8px; margin:0}
+#aitc-root .aitc-camp .aitc-calc-url{white-space:pre-line}
+#aitc-root .aitc-main > *{min-width:0}
+@media (max-width:860px){ #aitc-root .aitc-navdots{gap:2px} #aitc-root .aitc-trail{padding-left:10px; padding-right:10px} }
+#aitc-root .aitc-row > *, #aitc-root .aitc-row-btn > *{min-width:0}
+#aitc-root .aitc-input{min-width:0}
+</style>
+
+<!-- MOBILE BASE CAMP (phones only) -->
+<div class="aitc-calcbar aitc-mobile-camp" role="region" aria-label="Calculate your chart">
+  <span class="aitc-calc-text">⭐ Get your free star map:
+    <span class="aitc-calc-url" id="aitc-mob-url"></span></span>
+  <span class="aitc-calc-actions"><a class="aitc-btn aitc-btn-ink" id="aitc-mob-open" target="_blank" rel="noopener">Open Chart Lab ↗</a></span>
+</div>
+
+<!-- SKY NOW -->
+<div class="aitc-sky" id="aitc-sky" hidden aria-live="polite">
+  <span class="aitc-sky-label aitc-mono">Sky Now ✦</span>
+  <span id="aitc-sky-chips" style="display:contents"></span>
+</div>
+
+<header class="aitc-header">
+  <svg class="aitc-compass" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="46" fill="#FFFCF4" stroke="#1F2A44" stroke-width="3"/>
+    <circle cx="50" cy="50" r="38" fill="none" stroke="#14A39D" stroke-width="2" stroke-dasharray="3 5"/>
+    <path d="M50 10l7 33-7 7-7-7z" fill="#D35A33" stroke="#1F2A44" stroke-width="2"/>
+    <path d="M50 90l7-33-7-7-7 7z" fill="#1F2A44"/>
+    <path d="M10 50l33-7 7 7-7 7z" fill="#14A39D" stroke="#1F2A44" stroke-width="2"/>
+    <path d="M90 50l-33-7-7 7 7 7z" fill="#F4B63F" stroke="#1F2A44" stroke-width="2"/>
+    <circle cx="50" cy="50" r="5" fill="#7A4FD8" stroke="#1F2A44" stroke-width="2"/>
+  </svg>
+  <div>
+    <div class="aitc-kicker aitc-mono">Adventures In Astrology · Expedition Log</div>
+    <h2 class="aitc-title">TikTok LIVE <em>Classroom</em></h2>
+    <div class="aitc-route" aria-hidden="true"></div>
+    <p class="aitc-tagline">Grab your star map · Follow the trail · Radio in on the chat</p>
+  </div>
+</header>
+
+<!-- TOOLBAR -->
+<div class="aitc-toolbar">
+  <div class="aitc-group aitc-lessons" id="aitc-lessons" role="group" aria-label="Choose a lesson">
+    <span class="aitc-group-label aitc-mono">Choose your trail</span>
+  </div>
+  <div class="aitc-group" role="group" aria-label="Display controls">
+    <button class="aitc-btn aitc-btn-sm" id="aitc-font-down" aria-label="Smaller text">A−</button>
+    <button class="aitc-btn aitc-btn-sm" id="aitc-font-up" aria-label="Bigger text">A+</button>
+    <button class="aitc-btn aitc-btn-sm" id="aitc-theme" aria-pressed="false">Night Mode</button>
+    <label class="aitc-switch">Classic
+      <input type="range" id="aitc-arch" min="0" max="1" step="1" value="0" aria-label="Slide into archetype version">
+      Archetype</label>
+    <button class="aitc-btn aitc-btn-sm aitc-btn-terra" id="aitc-present">▶ Present</button>
+  </div>
+</div>
+
+<div class="aitc-main">
+  <!-- STAGE: presentation + follow-along -->
+  <section class="aitc-window" aria-label="Lesson slides">
+    <div class="aitc-winbar">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 7l8-3 8 3 8-3v21l-8 3-8-3-8 3z" fill="#FFE2A0" stroke="#1F2A44" stroke-width="2" stroke-linejoin="round"/><path d="M12 4v21M20 7v21" stroke="#1F2A44" stroke-width="2"/><path d="M7 14l4 2 5-4 5 3 4-2" fill="none" stroke="#D35A33" stroke-width="2" stroke-dasharray="2 2"/></svg>
+      <span class="aitc-winbar-title" id="aitc-lesson-title"></span>
+      <span class="aitc-counter" id="aitc-counter"></span>
+    </div>
+    <div class="aitc-trail"><div class="aitc-navdots" id="aitc-navdots" role="group" aria-label="Jump to a stop"></div></div>
+    <div class="aitc-slide" id="aitc-slide" aria-live="polite">
+      <span class="aitc-tag" id="aitc-tag"></span>
+      <span class="aitc-arch-badge" id="aitc-arch-badge" hidden></span>
+      <h3 id="aitc-slide-title"></h3>
+      <div class="aitc-slide-art" id="aitc-slide-art" hidden></div>
+      <p class="aitc-slide-text" id="aitc-slide-text"></p>
+      <ul class="aitc-timeline" id="aitc-timeline" hidden></ul>
+      <ul class="aitc-slide-list" id="aitc-slide-list" hidden></ul>
+      <div class="aitc-quiz" id="aitc-quiz" hidden></div>
+      <button class="aitc-btn aitc-btn-ink aitc-slide-action" id="aitc-slide-action" hidden>🧭 Calculate it on the side</button>
+    </div>
+    <div class="aitc-follow">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 30s-9-9.5-9-16a9 9 0 0118 0c0 6.5-9 16-9 16z" fill="#D35A33" stroke="#1F2A44" stroke-width="2"/><circle cx="16" cy="14" r="3.5" fill="#FFFCF4" stroke="#1F2A44" stroke-width="2"/></svg>
+      <div><span class="aitc-follow-label aitc-mono">Your Mission · Follow Along</span><p id="aitc-follow-text"></p></div>
+    </div>
+    <div class="aitc-chat" id="aitc-chat" hidden></div>
+    <div class="aitc-nav">
+      <button class="aitc-btn" id="aitc-prev">◀ Back</button>
+      <button class="aitc-btn aitc-btn-turq" id="aitc-next">Onward ▶</button>
+    </div>
+  </section>
+
+  <!-- SIDE: always on screen -->
+  <aside class="aitc-side">
+    <div class="aitc-camp" role="region" aria-label="Get your chart">
+      <div class="aitc-calc-badge">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="#FFFCF4" stroke="#1F2A44" stroke-width="3"/><path d="M24 7l5 17-5 17-5-17z" fill="#D35A33" stroke="#1F2A44" stroke-width="2"/><path d="M7 24l17-5 17 5-17 5z" fill="#14A39D" stroke="#1F2A44" stroke-width="2"/><circle cx="24" cy="24" r="3" fill="#1F2A44"/></svg>
+        <span><small>BASE CAMP</small><b>Get Your Free Star Map</b></span>
+      </div>
+      <span class="aitc-calc-url" id="aitc-calc-url"></span>
+      <div class="aitc-camp-actions">
+        <a class="aitc-btn aitc-btn-ink" id="aitc-calc-open" target="_blank" rel="noopener">Open Chart Lab ↗</a>
+        <a class="aitc-btn" id="aitc-station-open" target="_blank" rel="noopener">More Calculators</a>
+        <button class="aitc-btn" id="aitc-chart-toggle">Open Here</button>
+      </div>
+    </div>
+
+    <div class="aitc-tabs" role="tablist">
+      <button class="aitc-tab" id="aitc-tab-calc" role="tab" aria-controls="aitc-pane-calc">🧭 Calculate</button>
+      <button class="aitc-tab" id="aitc-tab-explore" role="tab" aria-controls="aitc-pane-explore">🔍 Explore</button>
+    </div>
+
+    <!-- CALCULATE: follows the lesson -->
+    <div class="aitc-panel" id="aitc-pane-calc" role="tabpanel">
+      <h4 class="aitc-calc-title" id="aitc-calc-title"></h4>
+      <p class="aitc-hint">Enter birth details to see what we’re learning about, live in a real chart.</p>
+      <label class="aitc-field"><span>Name for the spotlight (optional)</span>
+        <input class="aitc-input" id="aitc-name" type="text" autocomplete="off" placeholder="e.g. @stargazer"></label>
+      <div class="aitc-row">
+        <label class="aitc-field"><span>Birth date</span><input class="aitc-input" id="aitc-date" type="date" autocomplete="off"></label>
+        <label class="aitc-field"><span>Birth time</span><input class="aitc-input" id="aitc-time" type="time" autocomplete="off"></label>
+      </div>
+      <label class="aitc-check"><input type="checkbox" id="aitc-notime"> I don’t know the birth time</label>
+      <label class="aitc-field"><span>Birthplace</span>
+        <span class="aitc-row-btn"><input class="aitc-input" id="aitc-place" type="text" autocomplete="off" placeholder="City">
+        <button class="aitc-btn aitc-btn-sm aitc-btn-turq" id="aitc-place-btn" type="button">Find</button></span></label>
+      <div id="aitc-place-list"></div>
+      <span class="aitc-place-chosen" id="aitc-place-chosen" hidden></span>
+      <div class="aitc-sys"><span>Houses:</span>
+        <button class="aitc-btn aitc-btn-sm" id="aitc-sys-p" aria-pressed="true">Placidus</button>
+        <button class="aitc-btn aitc-btn-sm" id="aitc-sys-e" aria-pressed="false">Equal</button>
+      </div>
+      <button class="aitc-btn aitc-btn-terra aitc-btn-wide" id="aitc-calc-go">✦ Calculate</button>
+      <p class="aitc-msg" id="aitc-calc-msg" hidden></p>
+      <div id="aitc-calc-out"></div>
+      <div class="aitc-calc-actions2" id="aitc-calc-actions" hidden>
+        <button class="aitc-btn aitc-btn-ink" id="aitc-spotlight">★ Put on stage</button>
+        <button class="aitc-btn" id="aitc-calc-clear">Clear</button>
+      </div>
+      <p class="aitc-privacy">Nothing is saved. Clear wipes everything, and the page starts fresh every visit.</p>
+    </div>
+
+    <!-- EXPLORE: anything → presentation -->
+    <div class="aitc-panel" id="aitc-pane-explore" role="tabpanel" hidden>
+      <h4 class="aitc-calc-title">Explore Anything</h4>
+      <p class="aitc-hint">Type a sign, planet, house or placement, like “Venus in Scorpio”, “Leo”, “10th house” or “Libra rising”. It becomes a mini presentation.</p>
+      <input class="aitc-search" id="aitc-search" type="search" autocomplete="off" placeholder="Type a topic…" aria-label="Explore a topic">
+      <div class="aitc-quick" id="aitc-quick"></div>
+      <div class="aitc-result" id="aitc-result" hidden aria-live="polite"></div>
+    </div>
+  </aside>
+</div>
+
+<!-- STAR MAP WINDOW -->
+<section class="aitc-chartwin aitc-panel" id="aitc-chartwin" hidden aria-label="Chart calculator window">
+  <div class="aitc-chartwin-head">
+    <h4>Chart Lab</h4>
+    <span class="aitc-group">
+      <a class="aitc-btn aitc-btn-sm" id="aitc-chart-newtab" target="_blank" rel="noopener">Open in new tab ↗</a>
+      <button class="aitc-btn aitc-btn-sm" id="aitc-chart-close">Close ✕</button>
+    </span>
+  </div>
+  <iframe class="aitc-frame" id="aitc-frame" title="Chart calculator" loading="lazy"></iframe>
+  <p class="aitc-hint" style="margin-top:8px">If the window stays blank, use “Open in new tab”.</p>
+</section>
+
+<footer class="aitc-footer">
+  <div class="aitc-footer-links">
+    <a class="aitc-btn aitc-btn-sm" id="aitc-foot-tiktok" target="_blank" rel="noopener">Chart Lab: TikTok Edition</a>
+    <a class="aitc-btn aitc-btn-sm" id="aitc-foot-calc" target="_blank" rel="noopener">Chart Calculation Station</a>
+    <a class="aitc-btn aitc-btn-sm" id="aitc-foot-home" target="_blank" rel="noopener">Adventures In Astrology</a>
+  </div>
+  <p class="aitc-keys">Keys: ← → stops · / explore · C calculate · P present · Esc exit</p>
+  Adventures In Astrology LLC · adventuresinastrology.com
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var root = document.getElementById("aitc-root");
+  if (!root || root.dataset.ready === "yes") return;
+  root.dataset.ready = "yes";
+
+  /* ==================== EDIT YOUR LINKS HERE ==================== */
+  var CONFIG = {
+    calcUrl:    "https://www.adventuresinastrology.com/tiktok-astrology",          // Chart Lab: TikTok Edition (main link)
+    calcShow:   "adventuresinastrology.com/tiktok-astrology",                      // what viewers see on screen
+    calcLabHeading: "Chart Lab: TikTok Edition",                                   // heading to jump to when the classroom is on that page
+    stationUrl: "https://www.adventuresinastrology.com/chart-calculation-station", // all other calculators
+    homeUrl:    "https://www.adventuresinastrology.com"
+  };
+  /* ============================================================== */
+  /* ADDING A NEW LESSON: copy a lesson in the "lessons" list below. Give it a
+     short name, slides, and a focus. The focus tells the side calculator what to
+     show, e.g. {sign:6, title:"Where’s YOUR Libra?", modules:["signHouse","planetsInSign","rulers"]}.
+     Signs are numbered 0 Aries … 11 Pisces. Modules: bigThree, signHouse,
+     planetsInSign, rulers, planet, houseFocus, transitSun, newMoon, zone, zoneContacts, cazimi. */
+
+  var T = "︎";
+  function g(s){ return String(s).replace(/([☀-⛿])(?!︎)/g, "$1" + T); }
+  /* =================== REFERENCE DATA (all signs / planets / houses) =================== */
+  var SIGNS = [
+    {n:"Aries", g:"♈", el:"Fire", mo:"Cardinal", r:["Mars"], sym:"the Ram", k:"courage, initiative, independence and action", arch:"The Pioneer", sh:"impatience and impulsiveness", gi:"courage to go first"},
+    {n:"Taurus", g:"♉", el:"Earth", mo:"Fixed", r:["Venus"], sym:"the Bull", k:"stability, pleasure, values and patience", arch:"The Gardener", sh:"stubbornness and possessiveness", gi:"steadiness and loyalty"},
+    {n:"Gemini", g:"♊", el:"Air", mo:"Mutable", r:["Mercury"], sym:"the Twins", k:"curiosity, communication, learning and variety", arch:"The Storyteller", sh:"scattered focus and restlessness", gi:"curiosity and quick wit"},
+    {n:"Cancer", g:"♋", el:"Water", mo:"Cardinal", r:["Moon"], sym:"the Crab", k:"nurturing, home, belonging and memory", arch:"The Caretaker", sh:"moodiness and clinging", gi:"deep care and protection"},
+    {n:"Leo", g:"♌", el:"Fire", mo:"Fixed", r:["Sun"], sym:"the Lion", k:"creativity, heart, play and confidence", arch:"The Performer", sh:"pride and needing the spotlight", gi:"warmth and generosity"},
+    {n:"Virgo", g:"♍", el:"Earth", mo:"Mutable", r:["Mercury"], sym:"the Maiden", k:"craft, service, health and improvement", arch:"The Craftsperson", sh:"perfectionism and worry", gi:"skill and helpfulness"},
+    {n:"Libra", g:"♎", el:"Air", mo:"Cardinal", r:["Venus"], sym:"the Scales", k:"balance, partnership, fairness and beauty", arch:"The Diplomat", sh:"indecision and people-pleasing", gi:"harmony and fairness"},
+    {n:"Scorpio", g:"♏", el:"Water", mo:"Fixed", r:["Mars","Pluto"], sym:"the Scorpion, Eagle and Phoenix", k:"depth, intensity, loyalty and transformation", arch:"The Detective", sh:"control, jealousy and secrecy", gi:"emotional courage and honesty"},
+    {n:"Sagittarius", g:"♐", el:"Fire", mo:"Mutable", r:["Jupiter"], sym:"the Archer", k:"adventure, meaning, freedom and faith", arch:"The Explorer", sh:"restlessness and overpromising", gi:"optimism and big-picture vision"},
+    {n:"Capricorn", g:"♑", el:"Earth", mo:"Cardinal", r:["Saturn"], sym:"the Sea-Goat", k:"ambition, structure, mastery and responsibility", arch:"The Builder", sh:"rigidity and all-work-no-play", gi:"perseverance and mastery"},
+    {n:"Aquarius", g:"♒", el:"Air", mo:"Fixed", r:["Saturn","Uranus"], sym:"the Water Bearer", k:"innovation, community, freedom and ideals", arch:"The Visionary", sh:"detachment and contrariness", gi:"originality and vision"},
+    {n:"Pisces", g:"♓", el:"Water", mo:"Mutable", r:["Jupiter","Neptune"], sym:"the Fish", k:"imagination, compassion, spirituality and dreams", arch:"The Mystic", sh:"escapism and blurry boundaries", gi:"compassion and imagination"}
+  ];
+  var ELEMENT_TXT = {Fire:"Fire is the element of spirit, drive and inspiration.", Earth:"Earth is the element of the body, practical life and building things that last.", Air:"Air is the element of ideas, words and connection.", Water:"Water is the element of feeling, intuition and emotional bonds."};
+  var MODE_TXT = {Cardinal:"Cardinal signs start things and take initiative.", Fixed:"Fixed signs hold steady and follow through.", Mutable:"Mutable signs adapt, adjust and connect."};
+  var PL = {
+    "Sun":{g:"☉", k:"identity, vitality and purpose", arch:"The Hero"},
+    "Moon":{g:"☽", k:"emotions, needs, comfort and memory", arch:"The Nurturer"},
+    "Mercury":{g:"☿", k:"thinking, talking, learning and messages", arch:"The Messenger"},
+    "Venus":{g:"♀", k:"love, values, beauty and pleasure", arch:"The Lover"},
+    "Mars":{g:"♂", k:"drive, courage, desire and action", arch:"The Warrior"},
+    "Jupiter":{g:"♃", k:"growth, faith, wisdom and opportunity", arch:"The Sage"},
+    "Saturn":{g:"♄", k:"structure, discipline, time and mastery", arch:"The Elder"},
+    "Uranus":{g:"♅", k:"change, freedom, innovation and awakening", arch:"The Rebel"},
+    "Neptune":{g:"♆", k:"dreams, spirituality, imagination and compassion", arch:"The Dreamer"},
+    "Pluto":{g:"♇", k:"power, depth, endings and rebirth", arch:"The Alchemist"},
+    "North Node":{g:"☊", k:"growth direction and life lessons", arch:"The Compass"}
+  };
+  var PL_ALIASES = {"sun":"Sun","moon":"Moon","mercury":"Mercury","venus":"Venus","mars":"Mars","jupiter":"Jupiter","saturn":"Saturn","uranus":"Uranus","neptune":"Neptune","pluto":"Pluto","north node":"North Node","node":"North Node"};
+  var DOMICILE = {Sun:[4], Moon:[3], Mercury:[2,5], Venus:[1,6], Mars:[0,7], Jupiter:[8,11], Saturn:[9,10], Uranus:[10], Neptune:[11], Pluto:[7]};
+  var EXALT = {Sun:0, Moon:1, Mercury:5, Venus:11, Mars:9, Jupiter:3, Saturn:6};
+  function dignity(planet, si){
+    var dom = DOMICILE[planet] || [];
+    if (dom.indexOf(si) > -1) return {t:"Domicile", d:planet + " is at home in " + SIGNS[si].n + " and works easily here."};
+    if (EXALT[planet] === si) return {t:"Exaltation", d:planet + " is exalted in " + SIGNS[si].n + ", an honored guest at its best."};
+    if (dom.some(function(x){ return (x + 6) % 12 === si; })) return {t:"Detriment", d:planet + " is in detriment in " + SIGNS[si].n + " (opposite its home). It works harder here, which can build real skill."};
+    if (EXALT[planet] != null && (EXALT[planet] + 6) % 12 === si) return {t:"Fall", d:planet + " is in fall in " + SIGNS[si].n + ". It has to earn its confidence here."};
+    return {t:"Peregrine / neutral", d:planet + " has no special dignity in " + SIGNS[si].n + ". It takes its cues from the sign’s ruler."};
+  }
+  var HOUSES = [null,
+    {name:"The Front Door", t:"self, body, appearance and fresh starts"},
+    {name:"The Treasury", t:"money, possessions, values and self-worth"},
+    {name:"The Neighborhood", t:"communication, learning, siblings and local trips"},
+    {name:"The Roots", t:"home, family, ancestry and private life"},
+    {name:"The Playground", t:"creativity, romance, play and children"},
+    {name:"The Workshop", t:"daily routines, work, health habits and service"},
+    {name:"The Mirror", t:"partners, marriage, contracts and one-on-one relationships"},
+    {name:"The Vault", t:"shared resources, intimacy, debts, inheritance and transformation"},
+    {name:"The Horizon", t:"travel, higher learning, beliefs and big-picture meaning"},
+    {name:"The Summit", t:"career, reputation, public role and goals"},
+    {name:"The Village", t:"friends, groups, community and hopes for the future"},
+    {name:"The Sanctuary", t:"rest, solitude, the unconscious, endings and spiritual life"}];
+  var ORD = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
+  /* Hand-written Scorpio texts (used whenever the topic is Scorpio) */
+  var SCORPIO_IN = {
+    Sun:["Identity grows through depth, loyalty and emotional honesty. Shines by seeing what others miss.","Where do I go all-in?"],
+    Moon:["Feelings run deep and private. Needs trust and emotional truth before opening up.","What helps me feel safe enough to open up?"],
+    Mercury:["A detective’s mind: probing, perceptive and strategic. Notices what goes unsaid.","What question am I really trying to answer?"],
+    Venus:["Loves with intensity and loyalty and wants a soul-level bond, not a surface one.","What does real intimacy mean to me?"],
+    Mars:["Mars at home: focused, strategic and enduring. Rarely gives up once committed.","Where is my staying power?"],
+    Jupiter:["Growth through depth: research, psychology, shared resources and transformation.","Where does going deeper bring me luck?"],
+    Saturn:["Lessons around trust, control and emotional boundaries. Strength built by facing fears slowly.","What am I learning to trust?"],
+    Uranus:["Generational (about 1975–1981): shook up ideas about power, intimacy and shared money.","Where do I break taboos?"],
+    Neptune:["Generational (about 1957–1970): dissolved old taboos and brought a pull toward the mystical.","What hidden thing fascinates me?"],
+    Pluto:["Generational (about 1984–1995), Pluto in its own sign: tuned to power, survival and transformation.","Where have I been reborn?"],
+    "North Node":["Growth through depth and emotional honesty, moving away from Taurus-style comfort and holding on.","What am I ready to let go of?"]
+  };
+  var SCORPIO_HOUSE = ["",
+    "You come across intense and private. Personal reinvention is a life theme.",
+    "Money and values handled privately and strategically. Self-worth deepens as you learn what can’t be lost.",
+    "A researcher’s curiosity, careful speech and conversations that go straight to the heart of things.",
+    "Deep family roots and strong privacy at home. Home is a place of emotional transformation.",
+    "Passionate creativity and all-or-nothing romance. Creative work can be deeply healing.",
+    "Intense focus in daily work, with a pull toward fixing, researching or healing.",
+    "Partnerships run deep. Loyalty, intensity and trust are central, and relationships change you.",
+    "Scorpio in its natural house: at ease with depth, shared resources, intimacy and big life changes.",
+    "Beliefs get tested and rebuilt. Drawn to deep study, psychology and travel that transforms.",
+    "A career with power and depth: research, healing, finance, psychology or crisis work.",
+    "Few friends, very loyal ones. Groups with a shared deep purpose.",
+    "A rich private inner world, strong dreams and intuition. Healing through solitude and reflection."];
+  var GLOSSARY = [
+    {k:["retrograde","rx"], n:"Retrograde", t:"A planet’s apparent backward motion as seen from Earth. Astrologically it’s read as a time to review, revise and reconsider.", a:"What deserves a second look?"},
+    {k:["shadow"], n:"Shadow Period", t:"The stretch of zodiac a retrograde planet covers three times. In 2026 Mercury’s shadow is 5°–21° Scorpio, from Oct 4 to Nov 29.", a:"What came up in early October?"},
+    {k:["cazimi"], n:"Cazimi", t:"When a planet sits in the exact heart of the Sun. Traditionally a strong, clear moment. Mercury’s cazimi is Nov 4, 2026.", a:"What insight clicked into place?"},
+    {k:["fixed"], n:"Fixed Signs", t:"Taurus, Leo, Scorpio and Aquarius: the signs of steadiness, loyalty and follow-through.", a:"Where am I steady, and where am I stuck?"},
+    {k:["cardinal"], n:"Cardinal Signs", t:"Aries, Cancer, Libra and Capricorn: the signs that start things and open each season.", a:"What am I ready to start?"},
+    {k:["mutable"], n:"Mutable Signs", t:"Gemini, Virgo, Sagittarius and Pisces: the signs that adapt and close each season.", a:"Where do I need flexibility?"},
+    {k:["detriment"], n:"Detriment", t:"A planet in the sign opposite its home. It works harder there, like Venus in Scorpio.", a:"Which of my planets works overtime?"},
+    {k:["exalt"], n:"Exaltation", t:"A sign where a planet is an honored guest and shows its best side, like the Sun in Aries.", a:"Which planet shines brightest for me?"},
+    {k:["domicile","rulership","ruler"], n:"Rulership", t:"Each sign has a ruling planet that acts like its host. Scorpio is ruled by Mars (traditional) and Pluto (modern).", a:"Where is my chart ruler?"},
+    {k:["new moon"], n:"New Moon in Scorpio", t:"Nov 8, 2026 (Pacific time) at about 17° Scorpio. A fresh start for the house it lands in.", a:"What do I want to begin there?"},
+    {k:["ascendant","rising"], n:"The Ascendant (Rising Sign)", t:"The sign rising on the eastern horizon at birth. It shapes first impressions and starts the 1st house. It needs an accurate birth time.", a:"How do people first see me?"},
+    {k:["midheaven"], n:"The Midheaven (MC)", t:"The highest point of the chart: career, reputation and the path you’re seen on in public.", a:"What do I want to be known for?"},
+    {k:["placidus"], n:"Placidus Houses", t:"A popular time-based house system. Houses can be different sizes, so a sign can span two houses.", a:"Which house system feels right to me?"},
+    {k:["equal house"], n:"Equal Houses", t:"Every house is exactly 30°, starting from the Ascendant degree. Simple and clear.", a:"Which house system feels right to me?"}
+  ];
+  /* =================== CHART MATH (Astronomy Engine) =================== */
+  var D2R = Math.PI / 180, R2D = 180 / Math.PI;
+  function norm(x){ x %= 360; return x < 0 ? x + 360 : x; }
+  function tzOffsetMs(tz, ms){
+    var f = new Intl.DateTimeFormat("en-US", {timeZone:tz, hourCycle:"h23", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit"});
+    var p = {}; f.formatToParts(new Date(ms)).forEach(function(x){ p[x.type] = x.value; });
+    var asUTC = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second);
+    return asUTC - ms;
+  }
+  function localToUtc(y, mo, d, h, mi, tz){
+    var guess = Date.UTC(y, mo - 1, d, h, mi);
+    var off = tzOffsetMs(tz, guess);
+    var utc = guess - off;
+    var off2 = tzOffsetMs(tz, utc);
+    if (off2 !== off) utc = guess - off2;
+    return new Date(utc);
+  }
+  var BODIES = ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
+  function bodyLon(A, name, date){
+    if (name === "Sun") return A.SunPosition(date).elon;
+    return A.Ecliptic(A.GeoVector(A.Body[name], date, true)).elon;
+  }
+  function isRetro(A, name, date){
+    if (name === "Sun" || name === "Moon") return false;
+    var a = bodyLon(A, name, date), b = bodyLon(A, name, new Date(date.getTime() + 6 * 3600e3));
+    return (((b - a + 540) % 360) - 180) < 0;
+  }
+  function jcent(date){ return (date.getTime() / 86400000 + 2440587.5 - 2451545.0) / 36525; }
+  function meanNode(date){ var T = jcent(date); return norm(125.0445479 - 1934.1362891 * T + 0.0020754 * T * T); }
+  function oblq(date){ var T = jcent(date); return 23.4392911 - 0.0130042 * T - 1.64e-7 * T * T + 5.04e-7 * T * T * T; }
+  function raToLon(ra, eps){ return norm(Math.atan2(Math.sin(ra * D2R), Math.cos(ra * D2R) * Math.cos(eps * D2R)) * R2D); }
+  function angles(A, date, lat, lon){
+    var eps = oblq(date);
+    var ramc = norm(A.SiderealTime(date) * 15 + lon);
+    var mc = raToLon(ramc, eps);
+    var r = ramc * D2R, e = eps * D2R, f = lat * D2R;
+    var asc = norm(Math.atan2(Math.cos(r), -(Math.sin(r) * Math.cos(e) + Math.tan(f) * Math.sin(e))) * R2D);
+    return {ramc:ramc, mc:mc, asc:asc, eps:eps};
+  }
+  function placidus(ang, lat){
+    var eps = ang.eps, f = lat * D2R, e = eps * D2R;
+    function cusp(offsetFrac, below){
+      // offsetFrac: fraction of semi-arc; below=false -> houses 11/12, true -> 2/3
+      var lon = norm(ang.mc + (below ? 180 : 0) + (below ? -1 : 1) * offsetFrac * 90), i;
+      for (i = 0; i < 60; i++){
+        var dec = Math.asin(Math.sin(e) * Math.sin(lon * D2R));
+        var x = Math.tan(f) * Math.tan(dec);
+        if (Math.abs(x) >= 1) return null;
+        var ad = Math.asin(x) * R2D;
+        var ra = below ? norm(ang.ramc + 180 - offsetFrac * (90 - ad)) : norm(ang.ramc + offsetFrac * (90 + ad));
+        var nl = raToLon(ra, eps);
+        if (Math.abs(((nl - lon + 540) % 360) - 180) < 1e-7){ lon = nl; break; }
+        lon = nl;
+      }
+      return lon;
+    }
+    var c11 = cusp(1/3, false), c12 = cusp(2/3, false), c2 = cusp(2/3, true), c3 = cusp(1/3, true);
+    if ([c11, c12, c2, c3].some(function(v){ return v === null || isNaN(v); })) return null;
+    var c = [];
+    c[1] = ang.asc; c[10] = ang.mc; c[11] = c11; c[12] = c12; c[2] = c2; c[3] = c3;
+    c[4] = norm(ang.mc + 180); c[5] = norm(c11 + 180); c[6] = norm(c12 + 180);
+    c[7] = norm(ang.asc + 180); c[8] = norm(c2 + 180); c[9] = norm(c3 + 180);
+    return c;
+  }
+  function equalCusps(start){ var c = []; for (var h = 1; h <= 12; h++) c[h] = norm(start + (h - 1) * 30); return c; }
+  function wholeSignCusps(lon){ return equalCusps(Math.floor(lon / 30) * 30); }
+  function houseOf(lon, cusps){
+    for (var h = 1; h <= 12; h++){
+      var a = cusps[h], b = cusps[h % 12 + 1], span = norm(b - a), d = norm(lon - a);
+      if (d < span) return h;
+    }
+    return 1;
+  }
+  /* birth: {y,mo,d,h,mi, timeKnown, lat, lon, tz}, system: "placidus"|"equal" */
+  function castChart(A, birth, system){
+    var hasTime = !!birth.timeKnown;
+    var date = localToUtc(birth.y, birth.mo, birth.d, hasTime ? birth.h : 12, hasTime ? birth.mi : 0, birth.tz);
+    var pts = BODIES.map(function(n){ return {name:n, lon:bodyLon(A, n, date), rx:isRetro(A, n, date)}; });
+    pts.push({name:"North Node", lon:meanNode(date), rx:true});
+    var chart = {date:date, hasTime:hasTime, points:pts, system:system, note:""};
+    if (hasTime){
+      var ang = angles(A, date, birth.lat, birth.lon);
+      chart.asc = ang.asc; chart.mc = ang.mc;
+      var cusps = system === "equal" ? equalCusps(ang.asc) : placidus(ang, birth.lat);
+      if (!cusps){ cusps = equalCusps(ang.asc); chart.system = "equal"; chart.note = "Placidus doesn’t work this far north/south, so Equal houses are shown."; }
+      chart.cusps = cusps;
+    } else {
+      var sun = pts[0].lon;
+      chart.cusps = wholeSignCusps(sun); chart.system = "solar";
+      chart.note = "No birth time: houses are Solar houses (Sun sign = 1st house), and the Moon is shown as a range.";
+      var d0 = localToUtc(birth.y, birth.mo, birth.d, 0, 0, birth.tz), d1 = localToUtc(birth.y, birth.mo, birth.d, 23, 59, birth.tz);
+      chart.moonRange = [bodyLon(A, "Moon", d0), bodyLon(A, "Moon", d1)];
+    }
+    chart.points.forEach(function(p){ p.house = houseOf(p.lon, chart.cusps); });
+    return chart;
+  }
+  /* =================== TOPIC PARSER + PRESENTATION BUILDER =================== */
+  var WORDNUM = {first:1,second:2,third:3,fourth:4,fifth:5,sixth:6,seventh:7,eighth:8,ninth:9,tenth:10,eleventh:11,twelfth:12};
+  function hasWord(q, w){ return new RegExp("(^|[^a-z])" + w + "([^a-z]|$)").test(q); }
+  function parseTopic(raw){
+    var q = " " + raw.toLowerCase().replace(/[’']/g, "").replace(/\s+/g, " ").trim() + " ";
+    var t = {raw:raw.trim(), sign:null, planet:null, house:0, special:""};
+    SIGNS.forEach(function(s, i){ if (t.sign === null && (hasWord(q, s.n.toLowerCase()) || q.indexOf(s.g) > -1)) t.sign = i; });
+    var keys = Object.keys(PL_ALIASES).sort(function(a, b){ return b.length - a.length; });
+    for (var i = 0; i < keys.length; i++){ if (hasWord(q, keys[i])){ t.planet = PL_ALIASES[keys[i]]; break; } }
+    var m = q.match(/(^|[^0-9])(1[0-2]|[1-9])(st|nd|rd|th)?([^0-9]|$)/);
+    if (m) t.house = parseInt(m[2], 10);
+    else for (var w in WORDNUM){ if (hasWord(q, w)){ t.house = WORDNUM[w]; break; } }
+    if (/(rising|ascendant|\basc\b)/.test(q)){ t.special = "rising"; if (!t.house) t.house = 1; }
+    if (/(midheaven|\bmc\b)/.test(q)){ t.special = "mc"; if (!t.house) t.house = 10; }
+    if (t.sign === null && !t.planet && !t.house) {
+      for (var j = 0; j < GLOSSARY.length; j++){
+        for (var k = 0; k < GLOSSARY[j].k.length; k++){ if (q.indexOf(GLOSSARY[j].k[k]) > -1){ t.gloss = GLOSSARY[j]; return t; } }
+      }
+      return null;
+    }
+    if (t.sign === null && !t.planet && t.special && !/house/.test(q)) {
+      return {raw:raw, gloss:GLOSSARY.filter(function(x){ return x.k.indexOf(t.special === "mc" ? "midheaven" : "ascendant") > -1; })[0]};
+    }
+    return t;
+  }
+  function rulersTxt(si){ return SIGNS[si].r.join(" & "); }
+  function chartSlide(what){
+    return {tag:"YOUR CHART", title:"Find It in Your Chart",
+      text:"Use the calculator on the side, or open the Chart Lab, to see " + what + " in your own chart.",
+      follow:"Calculate your chart, then find " + what + ".", action:"calc"};
+  }
+  function buildDeck(t){
+    if (!t) return null;
+    var S = t.sign !== null ? SIGNS[t.sign] : null, P = t.planet ? PL[t.planet] : null, H = t.house ? HOUSES[t.house] : null;
+    var sl = [], title, focus = {modules:[]};
+    if (t.gloss){
+      return {kind:"explore", short:t.gloss.n, title:"Explore · " + t.gloss.n, focus:null, slides:[
+        {tag:"FIELD GUIDE", title:t.gloss.n, text:t.gloss.t, follow:t.gloss.a, chat:"💬 Questions? Drop them in the chat!"}]};
+    }
+    if (P && S){
+      var p = t.planet, si = t.sign, sc = si === 7 && SCORPIO_IN[p];
+      title = P.g + " " + p + " in " + S.n + (H ? " · " + ORD[t.house] + " House" : "");
+      sl.push({tag:"EXPLORE", title:title,
+        text: sc ? SCORPIO_IN[p][0] : p + " is the part of you that handles " + P.k + ". In " + S.n + ", it expresses itself through " + S.k + ".",
+        follow:"Find " + p + " in your chart. Is it in " + S.n + "?",
+        chat:"💬 Who has " + p + " in " + S.n + "? Say “me!” in the chat",
+        arch:{name:P.arch + " as " + S.arch, text:"Picture " + P.arch + " stepping into the role of " + S.arch + ": " + P.k + " expressed through " + S.k + "."}});
+      sl.push({tag:"THE PLANET", title:P.g + " " + p + ": " + P.arch, text:p + " describes " + P.k + ". Wherever it sits in your chart, that’s where this energy shows up.", follow:"Note the sign and house of your " + p + "."});
+      sl.push({tag:"THE SIGN", title:S.g + " " + S.n + ": " + S.arch, text:S.el + " + " + S.mo + ". " + ELEMENT_TXT[S.el] + " " + MODE_TXT[S.mo] + " Keywords: " + S.k + ".", follow:"Find " + S.n + " on your wheel. Which house is it in?"});
+      if (p !== "North Node"){ var dg = dignity(p, si); sl.push({tag:"DIGNITY CHECK", title:dg.t, text:dg.d, follow:"Is your " + p + " comfortable where it is? Check its dignity in your chart."}); }
+      if (H) sl.push({tag:"THE HOUSE", title:ORD[t.house] + " House: " + H.name, text:"The " + ORD[t.house] + " house covers " + H.t + ". " + p + " here brings " + P.k + " into these areas of life.", follow:"Which house is your " + p + " in?"});
+      sl.push(chartSlide("your " + p));
+      sl.push({tag:"REFLECT", title:"Explorer’s Question", text: sc ? SCORPIO_IN[p][1] : "Where do I express " + P.k + " in a " + S.n + " way?", follow:"Write one sentence about how this shows up for you.", chat:"💬 Share your sentence in the chat!"});
+      focus = {planet:p, sign:si, house:t.house, title:"Where’s YOUR " + p + "?", modules:["planet","signHouse"].concat(H ? ["houseFocus"] : [])};
+    } else if (S){
+      var si2 = t.sign, rr = rulersTxt(si2);
+      if (H){
+        var rising = t.special === "rising", mc = t.special === "mc";
+        title = S.g + " " + S.n + (rising ? " Rising" : mc ? " Midheaven" : " on the " + ORD[t.house] + " House");
+        sl.push({tag:"EXPLORE", title:title,
+          text: rising ? "With " + S.n + " rising, first impressions carry " + S.k + ". " + rr + (S.r.length > 1 ? " become your chart rulers." : " becomes your chart ruler.")
+              : mc ? "With " + S.n + " on the Midheaven, career and reputation are colored by " + S.k + "."
+              : (si2 === 7 ? SCORPIO_HOUSE[t.house] : S.n + " brings " + S.k + " to the " + ORD[t.house] + " house: " + H.t + "."),
+          follow:"Which sign is on your " + (rising ? "Ascendant" : mc ? "Midheaven" : ORD[t.house] + " house cusp") + "?",
+          chat:"💬 Who has " + S.n + " here? Tell us in the chat!",
+          arch:{name:S.arch + " in " + H.name, text:S.arch + " moves into " + H.name + ", bringing " + S.k + " to " + H.t + "."}});
+        sl.push({tag:"THE SIGN", title:S.g + " " + S.n + ": " + S.arch, text:S.el + " + " + S.mo + ". " + ELEMENT_TXT[S.el] + " Keywords: " + S.k + ".", follow:"Find " + S.n + " on your wheel."});
+        sl.push({tag:"THE HOUSE", title:ORD[t.house] + " House: " + H.name, text:"The " + ORD[t.house] + " house covers " + H.t + ".", follow:"Find your " + ORD[t.house] + " house cusp."});
+        sl.push({tag:"THE RULER", title:"Follow the Ruler: " + rr, text:"The planet that rules " + S.n + " (" + rr + ") shows how this plays out. Its sign and house add the next chapter of the story.", follow:"Find " + rr + " in your chart: sign and house."});
+        sl.push(chartSlide(S.n + " and " + rr));
+        sl.push({tag:"REFLECT", title:"Explorer’s Question", text:"Where am I being asked to bring " + S.k + " into " + H.t + "?", follow:"Write one sentence about it.", chat:"💬 Share it in the chat!"});
+        focus = {sign:si2, house:t.house, title:"Where’s YOUR " + S.n + "?", modules:["signHouse","houseFocus","rulers"]};
+      } else {
+        var O = SIGNS[(si2 + 6) % 12];
+        title = S.g + " " + S.n;
+        sl.push({tag:"EXPLORE", title:title, text:S.n + ", " + S.sym + ", is the sign of " + S.k + ".", follow:"Find " + S.n + " on your wheel.", chat:"💬 Any " + S.n + " placements out there? Drop them in the chat!", arch:{name:S.arch, text:S.arch + " lives in every chart. " + S.n + " shows where you play that role."}});
+        sl.push({tag:"ELEMENT + MODE", title:S.mo + " " + S.el, text:ELEMENT_TXT[S.el] + " " + MODE_TXT[S.mo], follow:"Which house has " + S.n + " on its cusp?"});
+        sl.push({tag:"THE RULER", title:"Ruled by " + rr, text:rr + (S.r.length > 1 ? " rule " : " rules ") + S.n + ". Find " + (S.r.length > 1 ? "them" : "it") + " to see how " + S.n + " plays out in your life.", follow:"Find " + rr + " in your chart."});
+        sl.push({tag:"POLARITY", title:"Opposite Sign: " + O.g + " " + O.n, text:"Every sign has a partner across the wheel. " + S.n + " (" + S.k + ") balances " + O.n + " (" + O.k + ").", follow:"Which houses hold " + S.n + " and " + O.n + "? They work as a pair."});
+        sl.push({tag:"SHADOW + GIFT", title:"Shadow & Gift", text:"Shadow: " + S.sh + ". Gift: " + S.gi + ".", follow:"Pick one " + S.n + " gift to grow.", chat:"💬 Share your gift word in the chat!"});
+        sl.push(chartSlide(S.n));
+        focus = {sign:si2, title:"Where’s YOUR " + S.n + "?", modules:["signHouse","planetsInSign","rulers"]};
+      }
+    } else if (P){
+      var p2 = t.planet;
+      if (H){
+        title = P.g + " " + p2 + " in the " + ORD[t.house] + " House";
+        sl.push({tag:"EXPLORE", title:title, text:p2 + " (" + P.k + ") in the " + ORD[t.house] + " house puts that energy into " + H.t + ".", follow:"Which house is your " + p2 + " in?", chat:"💬 Who has " + p2 + " in the " + ORD[t.house] + "?", arch:{name:P.arch + " in " + H.name, text:P.arch + " sets up camp in " + H.name + "."}});
+        sl.push({tag:"THE PLANET", title:P.g + " " + p2 + ": " + P.arch, text:p2 + " describes " + P.k + ".", follow:"Note your " + p2 + "’s sign."});
+        sl.push({tag:"THE HOUSE", title:ORD[t.house] + " House: " + H.name, text:"The " + ORD[t.house] + " house covers " + H.t + ".", follow:"Which sign is on your " + ORD[t.house] + " house cusp?"});
+        if (p2 !== "North Node") sl.push({tag:"AS A TRANSIT", title:"When " + p2 + " Visits", text:"When transiting " + p2 + " moves through your " + ORD[t.house] + " house, themes of " + P.k + " get activated around " + H.t + ".", follow:"Where is " + p2 + " today? Check Sky Now at the top."});
+        sl.push(chartSlide("your " + p2 + " and " + ORD[t.house] + " house"));
+        focus = {planet:p2, house:t.house, title:"Where’s YOUR " + p2 + "?", modules:["planet","houseFocus"]};
+      } else {
+        title = P.g + " " + p2;
+        var dom = (DOMICILE[p2] || []).map(function(i){ return SIGNS[i].n; });
+        sl.push({tag:"EXPLORE", title:P.g + " " + p2 + ": " + P.arch, text:p2 + " describes " + P.k + ".", follow:"Find " + p2 + " in your chart.", chat:"💬 What sign is your " + p2 + "? Tell us in the chat!", arch:{name:P.arch, text:P.arch + " is one of the characters in your chart’s story."}});
+        if (dom.length) sl.push({tag:"RULERSHIP", title:p2 + " Rules " + dom.join(" & "), text:p2 + " is at home in " + dom.join(" and ") + ". Houses with " + dom.join(" or ") + " on the cusp are ruled by your " + p2 + ".", follow:"Which of your houses start with " + dom.join(" or ") + "?"});
+        if (EXALT[p2] != null){
+          var d0 = DOMICILE[p2].map(function(i){ return SIGNS[(i + 6) % 12].n; });
+          sl.push({tag:"DIGNITIES", title:"Strong & Challenged", text:"Exalted in " + SIGNS[EXALT[p2]].n + ". In detriment in " + d0.join(" and ") + ". In fall in " + SIGNS[(EXALT[p2] + 6) % 12].n + ". Challenged placements work harder, not worse.", follow:"Which sign is your " + p2 + " in? Strong, challenged or neutral?"});
+        }
+        sl.push(chartSlide("your " + p2));
+        sl.push({tag:"REFLECT", title:"Explorer’s Question", text:"Where in my life do I express " + P.k + "?", follow:"Write one sentence about your " + p2 + ".", chat:"💬 Share it in the chat!"});
+        focus = {planet:p2, title:"Where’s YOUR " + p2 + "?", modules:["planet"]};
+      }
+    } else if (H){
+      var NS = SIGNS[t.house - 1];
+      title = ORD[t.house] + " House: " + H.name;
+      sl.push({tag:"EXPLORE", title:title, text:"The " + ORD[t.house] + " house covers " + H.t + ".", follow:"Find your " + ORD[t.house] + " house. What sign is on the cusp?", chat:"💬 What sign is on your " + ORD[t.house] + " house?", arch:{name:H.name, text:H.name + " is one of the twelve rooms of your chart."}});
+      sl.push({tag:"NATURAL SIGN", title:"Natural Sign: " + NS.g + " " + NS.n, text:"The " + ORD[t.house] + " house shares themes with " + NS.n + " and its ruler " + rulersTxt(t.house - 1) + ". The house and the sign are related, but they’re separate systems.", follow:"Is " + NS.n + " on your " + ORD[t.house] + " house? Often it isn’t, and that’s normal."});
+      sl.push({tag:"EMPTY HOUSE?", title:"No Planets Here?", text:"Empty houses are normal. Read the sign on the cusp, then follow its ruling planet to see how this area of life plays out.", follow:"Find the ruler of your " + ORD[t.house] + " house cusp sign."});
+      sl.push(chartSlide("your " + ORD[t.house] + " house"));
+      focus = {house:t.house, title:"YOUR " + ORD[t.house] + " House", modules:["houseFocus"]};
+    }
+    return {kind:"explore", short:title, title:"Explore · " + title.replace(/^[^A-Za-z0-9]+ /, ""), slides:sl, focus:focus};
+  }
+  /* =================== LESSON CALCULATOR MODULES =================== */
+  /* Each module reads the chart (C) + the current focus (F) and returns {title, lines[], note}.
+     Any lesson or explored topic picks modules by name, so new lessons get a matching calculator automatically. */
+  function fmt(lon){ var s = Math.floor(norm(lon) / 30), d = norm(lon) - s * 30, deg = Math.floor(d), min = Math.floor((d - deg) * 60); return deg + "°" + (min < 10 ? "0" : "") + min + "′ " + SIGNS[s].n; }
+  function signOf(lon){ return Math.floor(norm(lon) / 30); }
+  function getPt(C, n){ for (var i = 0; i < C.points.length; i++) if (C.points[i].name === n) return C.points[i]; return null; }
+  function ptLine(C, n){
+    var p = getPt(C, n); if (!p) return "";
+    if (n === "Moon" && !C.hasTime && C.moonRange) return PL.Moon.g + " Moon: somewhere from " + fmt(C.moonRange[0]) + " to " + fmt(C.moonRange[1]);
+    return PL[n].g + " " + n + ": " + fmt(p.lon) + (p.rx && n !== "North Node" ? " ℞" : "") + " · " + ORD[p.house] + " house";
+  }
+  function housesForSign(C, si){
+    var start = si * 30, hs = [houseOf(start + 0.0001, C.cusps)];
+    for (var h = 1; h <= 12; h++){ var d = norm(C.cusps[h] - start); if (d > 0.0001 && d < 30 && hs.indexOf(h) < 0) hs.push(h); }
+    return hs;
+  }
+  function andList(a){ return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
+  var EVENTS = { newMoon:{lon:226.9, label:"Nov 8 New Moon · 16°54′ Scorpio"}, cazimi:{lon:222.2, label:"Nov 4 Mercury cazimi · about 12° Scorpio"}, zone:[215.03, 230.98] };
+  var MODULES = {
+    bigThree:function(C){
+      var lines = [ptLine(C, "Sun"), ptLine(C, "Moon")];
+      lines.push(C.hasTime ? "AC Rising: " + fmt(C.asc) : "AC Rising: needs a birth time");
+      if (C.hasTime) lines.push("MC Midheaven: " + fmt(C.mc));
+      return {title:"Big Three", lines:lines};
+    },
+    signHouse:function(C, F){
+      var si = F.sign != null ? F.sign : 7, S = SIGNS[si], hs = housesForSign(C, si);
+      var title = S.g + " " + S.n + " is in your " + andList(hs.map(function(h){ return ORD[h]; })) + " house" + (hs.length > 1 ? "s" : "");
+      var note = si === 7 ? SCORPIO_HOUSE[hs[0]] : S.n + " brings " + S.k + " to " + HOUSES[hs[0]].t + ".";
+      return {title:title, lines:hs.map(function(h){ return ORD[h] + " house · " + HOUSES[h].name + ": " + HOUSES[h].t; }), note:note};
+    },
+    planetsInSign:function(C, F){
+      var si = F.sign != null ? F.sign : 7, S = SIGNS[si];
+      var inS = C.points.filter(function(p){ return signOf(p.lon) === si && !(p.name === "Moon" && !C.hasTime && C.moonRange && signOf(C.moonRange[0]) !== signOf(C.moonRange[1])); });
+      if (C.hasTime){ if (signOf(C.asc) === si) inS.push({name:"ASC"}); if (signOf(C.mc) === si) inS.push({name:"MC"}); }
+      if (!inS.length) return {title:"Planets in " + S.n + ": none", lines:["No planets in " + S.n + ". That’s normal!"], note:"Read the house " + S.n + " sits in, then follow its ruler" + (S.r.length > 1 ? "s" : "") + "."};
+      return {title:"Planets in " + S.n + ": " + inS.length, lines:inS.map(function(p){ return p.name === "ASC" ? "AC " + S.n + " Rising: " + fmt(C.asc) : p.name === "MC" ? "MC Midheaven: " + fmt(C.mc) : ptLine(C, p.name); })};
+    },
+    rulers:function(C, F){
+      var si = F.sign != null ? F.sign : 7, S = SIGNS[si];
+      return {title:"Follow the ruler" + (S.r.length > 1 ? "s" : "") + ": " + rulersTxt(si), lines:S.r.map(function(r){ return ptLine(C, r); }), note:"The ruler’s sign and house add the next chapter of the " + S.n + " story."};
+    },
+    planet:function(C, F){
+      var n = F.planet || "Sun", p = getPt(C, n), si = signOf(p.lon);
+      var lines = [ptLine(C, n)];
+      if (n !== "North Node") lines.push("Dignity: " + dignity(n, si).t);
+      var note = si === 7 && SCORPIO_IN[n] ? SCORPIO_IN[n][0] : n + " (" + PL[n].k + ") expressed through " + SIGNS[si].n + ": " + SIGNS[si].k + ".";
+      return {title:PL[n].g + " Your " + n + " is in " + SIGNS[si].n, lines:lines, note:note};
+    },
+    houseFocus:function(C, F){
+      var h = F.house || 1, cs = signOf(C.cusps[h]), S = SIGNS[cs];
+      var inH = C.points.filter(function(p){ return p.house === h; });
+      var lines = ["Cusp: " + fmt(C.cusps[h])];
+      lines.push(inH.length ? "Planets here: " + inH.map(function(p){ return p.name; }).join(", ") : "No planets here. Read the cusp sign and its ruler.");
+      S.r.forEach(function(r){ lines.push("Ruler " + ptLine(C, r)); });
+      return {title:"Your " + ORD[h] + " house starts in " + S.n, lines:lines, note:HOUSES[h].name + ": " + HOUSES[h].t + "."};
+    },
+    transitSun:function(C){
+      var A = window.Astronomy, now = new Date(), l = bodyLon(A, "Sun", now), h = houseOf(l, C.cusps);
+      return {title:"☉ Today’s Sun lights up your " + ORD[h] + " house", lines:["Transiting Sun: " + fmt(l), HOUSES[h].name + ": " + HOUSES[h].t], note:"This area of life gets extra attention and energy right now."};
+    },
+    newMoon:function(C){
+      var h = houseOf(EVENTS.newMoon.lon, C.cusps);
+      return {title:"🌑 The New Moon lands in your " + ORD[h] + " house", lines:[EVENTS.newMoon.label, HOUSES[h].name + ": " + HOUSES[h].t], note:"A fresh start for this area of life. Set an intention here."};
+    },
+    zone:function(C){
+      var a = houseOf(EVENTS.zone[0], C.cusps), b = houseOf(EVENTS.zone[1], C.cusps);
+      var hs = a === b ? [a] : [a, b];
+      return {title:"☿℞ Mercury retrograde is in your " + andList(hs.map(function(h){ return ORD[h]; })) + " house" + (hs.length > 1 ? "s" : ""), lines:hs.map(function(h){ return HOUSES[h].name + ": " + HOUSES[h].t; }), note:"Review, revisit and rethink in this area until Nov 13."};
+    },
+    zoneContacts:function(C){
+      var hits = [], ASP = {7:"conjunct", 1:"opposite", 4:"square", 10:"square"};
+      var list = C.points.filter(function(p){ return !(p.name === "Moon" && !C.hasTime); }).map(function(p){ return {n:p.name, l:p.lon}; });
+      if (C.hasTime){ list.push({n:"ASC", l:C.asc}); list.push({n:"MC", l:C.mc}); }
+      list.forEach(function(p){
+        var s = signOf(p.l), d = norm(p.l) - s * 30;
+        if (ASP[s] && d >= 5.03 && d <= 20.98) hits.push((PL[p.n] ? PL[p.n].g + " " : "") + p.n + " " + fmt(p.l) + ": Mercury ℞ " + ASP[s]);
+      });
+      return {title:hits.length ? "Mercury ℞ touches " + hits.length + " point" + (hits.length > 1 ? "s" : "") + " in your chart" : "No direct Mercury ℞ contacts", lines:hits.length ? hits : ["Nothing between 5° and 21° of Taurus, Leo, Scorpio or Aquarius."], note:hits.length ? "These planets get the strongest Mercury review." : "The retrograde mostly works through the house it’s visiting."};
+    },
+    cazimi:function(C){
+      var h = houseOf(EVENTS.cazimi.lon, C.cusps);
+      return {title:"✦ The cazimi lights up your " + ORD[h] + " house", lines:[EVENTS.cazimi.label], note:"Look for a clear insight about " + HOUSES[h].t + "."};
+    }
+  };
+
+  /* =================== MINI CHART WHEEL (SVG string) =================== */
+  var EL_FILL = {Fire:"#FFE1D3", Earth:"#EAF2D8", Air:"#E4ECFF", Water:"#D9F4F1"};
+  function wheelSVG(C, focusSign, focusPlanet){
+    var cx = 160, cy = 160, ref = C.hasTime ? C.asc : C.cusps[1];
+    function pt(lon, r){ var a = (180 + lon - ref) * D2R; return [cx + r * Math.cos(a), cy - r * Math.sin(a)]; }
+    function f(n){ return n.toFixed(1); }
+    var o = ['<svg viewBox="0 0 320 320" class="aitc-wheel" role="img" aria-label="Chart wheel">'];
+    o.push('<circle cx="160" cy="160" r="156" fill="#FFFCF4" stroke="#1F2A44" stroke-width="3"/>');
+    for (var i = 0; i < 12; i++){
+      var a0 = i * 30, a1 = a0 + 30, p1 = pt(a0, 150), p2 = pt(a1, 150), p3 = pt(a1, 122), p4 = pt(a0, 122);
+      var fill = i === focusSign ? "#F4B63F" : EL_FILL[SIGNS[i].el];
+      o.push('<path d="M' + f(p1[0]) + ' ' + f(p1[1]) + ' A150 150 0 0 0 ' + f(p2[0]) + ' ' + f(p2[1]) + ' L' + f(p3[0]) + ' ' + f(p3[1]) + ' A122 122 0 0 1 ' + f(p4[0]) + ' ' + f(p4[1]) + ' Z" fill="' + fill + '" stroke="#1F2A44" stroke-width="1.5"/>');
+      var gp = pt(a0 + 15, 136);
+      o.push('<text x="' + f(gp[0]) + '" y="' + f(gp[1]) + '" font-size="16" text-anchor="middle" dominant-baseline="central" fill="#1F2A44" font-family="Noto Sans Symbols 2,Segoe UI Symbol,sans-serif">' + SIGNS[i].g + "︎</text>");
+    }
+    o.push('<circle cx="160" cy="160" r="122" fill="none" stroke="#1F2A44" stroke-width="1.5"/><circle cx="160" cy="160" r="58" fill="#FFF7E6" stroke="#1F2A44" stroke-width="1.5"/>');
+    for (var h = 1; h <= 12; h++){
+      var c = C.cusps[h], q1 = pt(c, 58), q2 = pt(c, 122), ang = (h === 1 || h === 10) && C.hasTime;
+      o.push('<line x1="' + f(q1[0]) + '" y1="' + f(q1[1]) + '" x2="' + f(q2[0]) + '" y2="' + f(q2[1]) + '" stroke="' + (ang ? "#D35A33" : "#4C5A78") + '" stroke-width="' + (ang ? 3 : 1) + '"/>');
+      var mid = c + norm(C.cusps[h % 12 + 1] - c) / 2, np = pt(mid, 68);
+      o.push('<text x="' + f(np[0]) + '" y="' + f(np[1]) + '" font-size="10" text-anchor="middle" dominant-baseline="central" fill="#4C5A78" font-family="Lexend,sans-serif">' + h + "</text>");
+    }
+    if (C.hasTime){ var ap = pt(C.asc, 42); o.push('<text x="' + f(ap[0]) + '" y="' + f(ap[1]) + '" font-size="11" font-weight="800" text-anchor="middle" dominant-baseline="central" fill="#D35A33" font-family="Lexend,sans-serif">AC</text>'); }
+    var ps = C.points.map(function(p){ return {n:p.name, l:p.lon, d:p.lon}; }).sort(function(a, b){ return a.l - b.l; });
+    for (var k = 1; k < ps.length; k++){ if (norm(ps[k].d - ps[k - 1].d) < 9) ps[k].d = ps[k - 1].d + 9; }
+    ps.forEach(function(p){
+      var hp = pt(p.d, 100), tick1 = pt(p.l, 122), tick2 = pt(p.l, 114), hot = p.n === focusPlanet || signOf(p.l) === focusSign;
+      o.push('<line x1="' + f(tick1[0]) + '" y1="' + f(tick1[1]) + '" x2="' + f(tick2[0]) + '" y2="' + f(tick2[1]) + '" stroke="#1F2A44" stroke-width="2"/>');
+      if (hot) o.push('<circle cx="' + f(hp[0]) + '" cy="' + f(hp[1]) + '" r="11" fill="#D35A33"/>');
+      o.push('<text x="' + f(hp[0]) + '" y="' + f(hp[1]) + '" font-size="15" text-anchor="middle" dominant-baseline="central" fill="' + (hot ? "#FFFFFF" : "#1F2A44") + '" font-family="Noto Sans Symbols 2,Segoe UI Symbol,sans-serif">' + PL[p.n].g + "︎</text>");
+    });
+    o.push("</svg>");
+    return o.join("");
+  }
+  var lessons = [
+  {
+    id:"scorpio", kind:"lesson", index:0, short:"Scorpio Season", title:"Scorpio Season 2026",
+    focus:{sign:7, title:"Where’s YOUR Scorpio?", modules:["signHouse","planetsInSign","rulers","transitSun","newMoon"]},
+    slides:[
+      { tag:"OCT 23 – NOV 21, 2026", title:"Welcome to Scorpio Season",
+        text:"The Sun travels through Scorpio from October 23 to November 21, 2026 (Pacific time). Scorpio is the sign of depth, focus, loyalty, privacy and transformation.",
+        follow:"Open the chart calculator and find the "+g("♏")+" Scorpio symbol on your wheel.",
+        chat:"💬 Drop your Sun sign in the chat!",
+        arch:{name:"The Detective", text:"Scorpio season wakes up the Detective in everyone: look under the surface, follow the clues, and ask what is really going on."}},
+      { tag:"SYMBOLS", title:"Scorpion, Eagle & Phoenix",
+        text:"Scorpio is often taught with three images: the scorpion (self-protection), the eagle (rising above to see clearly) and the phoenix (rebirth after an ending). They are three levels of the same energy.",
+        follow:"Which image fits how Scorpio shows up in your life right now?",
+        chat:"💬 Scorpion, eagle or phoenix? Tell us in the chat!",
+        arch:{name:"The Shapeshifter", text:"The Shapeshifter changes form to survive and grow: first it protects, then it gains perspective, then it is reborn."}},
+      { tag:"ELEMENT + MODE", title:"Fixed Water",
+        text:"Water is the element of feeling and connection. Fixed is the mode of steadiness and staying power. Together they describe emotions that run deep, last long and hold on to what matters.",
+        follow:"Find the house with Scorpio on its cusp (the starting line). That area of life gets the fixed-water treatment.",
+        arch:{name:"The Deep Well", text:"The Deep Well is still on the surface and endless underneath. It keeps everything it is given."}},
+      { tag:"TRADITIONAL RULER", title:"Mars Rules Scorpio",
+        text:"In traditional astrology Mars rules Scorpio. This is Mars as strategist: protecting what is valued, enduring, facing hard truths and holding a boundary.",
+        follow:"Find natal "+g("♂")+" Mars. What sign and house is it in?",
+        chat:"💬 Where's your Mars? Sign + house in the chat!",
+        arch:{name:"The Guardian", text:"The Guardian doesn’t start fights. It stands at the door and decides who gets in."}},
+      { tag:"MODERN RULER", title:"Pluto Rules Scorpio",
+        text:"Modern astrologers add Pluto as Scorpio’s ruler. Pluto speaks to power, what is hidden, letting go and deep regeneration.",
+        follow:"Find natal "+g("♇")+" Pluto. Compare its house with Mars: two rulers, two stories.",
+        arch:{name:"The Alchemist", text:"The Alchemist turns lead into gold by breaking things down first. Nothing is wasted, only transformed."}},
+      { tag:"YOUR CHART", title:"Where Is Scorpio for You?",
+        text:"Every chart holds all twelve signs. The house where Scorpio sits shows where you are asked to go deeper, trust carefully and transform.",
+        follow:"Find Scorpio’s house. Use the calculator on the side, or ask me and I’ll look it up live.", action:"calc",
+        chat:"💬 Type “Scorpio + your house” in the chat!",
+        arch:{name:"The Treasure Map", text:"Scorpio marks the X on your chart’s treasure map: the place where something valuable is buried and worth digging for."}},
+      { tag:"THE ASCENDANT", title:"Scorpio Rising",
+        text:"With Scorpio rising, the first impression is often calm, private and magnetic. Mars and Pluto become chart rulers, so their placements tell the bigger story.",
+        follow:"Check your Ascendant (ASC). Scorpio rising? Then find Mars and Pluto next.",
+        arch:{name:"The Mystery", text:"The Mystery doesn’t introduce itself all at once. You earn the next chapter."}},
+      { tag:"PLACEMENTS", title:"Planets in Scorpio",
+        text:"A planet in Scorpio still does its own job, just in a Scorpio way: Mercury investigates, Venus bonds deeply, the Moon feels intensely, Saturn tests trust.",
+        follow:"List any planets in Scorpio. None? Totally normal. Use the house and its rulers instead.",
+        chat:"💬 Drop your Scorpio placements in the chat!",
+        arch:{name:"The Costume Change", text:"Each planet walks into Scorpio and puts on a darker, deeper costume, but it’s still the same actor underneath."}},
+      { tag:"DIGNITIES", title:"Who’s Comfortable Here?",
+        text:"Mars is at home in Scorpio. Venus is in detriment (opposite her home, Taurus), and the Moon is in fall. Some modern astrologers place Uranus’s exaltation here. Detriment and fall mean a planet works harder, not that it’s “bad.”",
+        follow:"Do you have Mars, Venus or the Moon in Scorpio? Notice how at ease that planet feels.",
+        arch:{name:"The Host & the Guests", text:"Mars is the host of this house. Venus and the Moon are guests who need a little more trust before they relax."}},
+      { tag:"SIGN ≠ HOUSE", title:"Scorpio & the 8th House",
+        text:"Scorpio and the 8th house share themes: shared resources, intimacy, debts, endings and rebirth. But signs and houses are separate systems. Scorpio might be in your 3rd house, and your 8th might be Gemini.",
+        follow:"Find your 8th house cusp. What sign is it? Is it Scorpio?",
+        arch:{name:"Cousins, Not Twins", text:"Scorpio and the 8th house are cousins: same family stories, different homes."}},
+      { tag:"TRANSIT", title:"The Sun Lights Up a House",
+        text:"During Scorpio season the transiting Sun moves through the house (or houses) where Scorpio sits in your chart, shining a month-long spotlight on that part of life.",
+        follow:"Check “Sky Now” above for today’s Sun degree. Which house is it in for you?",
+        chat:"💬 Which house is the Sun lighting up for you?",
+        arch:{name:"The Spotlight", text:"The Sun is a stage light. This month it’s pointed at your Scorpio house. What’s standing there?"}},
+      { tag:"THIS SEASON’S SKY", title:"What Else Is Happening",
+        timeline:[
+          ["Oct 3 – Nov 13","Venus retrograde, backing from Scorpio into Libra"],
+          ["Oct 24 – Nov 13","Mercury retrograde, entirely in Scorpio"],
+          ["Nov 8 (PT)","New Moon in Scorpio, about 17°"],
+          ["Nov 21 (PT)","Sun enters Sagittarius"]
+        ],
+        text:"",
+        follow:"Find about 17° Scorpio in your chart. Which house will the New Moon land in?",
+        arch:{name:"The Underground River", text:"This season both personal planets swim backward through deep water. It’s a time to revisit, not to rush."}},
+      { tag:"SHADOW + GIFT", title:"Scorpio’s Shadow & Gift",
+        text:"Shadow: jealousy, control, secrecy, holding grudges. Gift: loyalty, honesty, emotional courage and the power to heal and begin again.",
+        follow:"Pick one Scorpio gift you want to grow this season.",
+        chat:"💬 Share your gift word in the chat!",
+        arch:{name:"The Healer", text:"The Healer has been through the fire and comes back to help others through it."}},
+      { tag:"QUICK QUIZ", title:"Pop Quiz, Explorers!",
+        text:"Which planet is Scorpio’s traditional ruler?",
+        quiz:{opts:["Venus","Mars","The Moon"], ans:1, why:"Mars is Scorpio’s traditional ruler. Pluto is its modern ruler."},
+        follow:"Answer in the chat before the reveal!", chat:"💬 Type A, B or C in the chat!"},
+      { tag:"WRAP-UP", title:"Putting It Together",
+        text:"Put it together: the house Scorpio occupies + Mars and Pluto + any planets in Scorpio + where the Sun is moving now.",
+        follow:"Finish these: “Scorpio is in my ___ house. My rulers say ___. This season I’m digging into ___.”",
+        chat:"💬 Share your three sentences in the chat!",
+        arch:{name:"Your Scorpio Story", text:"Every chart tells a Scorpio story. Yours has a setting (house), two narrators (Mars and Pluto) and a plot twist (this season’s transits)."}}
+    ]
+  },
+  {
+    id:"mercury", kind:"lesson", index:1, short:"Mercury ℞ in Scorpio", title:"Mercury Retrograde in Scorpio 2026",
+    focus:{sign:7, planet:"Mercury", title:"Where’s Mercury ℞ in YOUR chart?", modules:["planet","zone","zoneContacts","cazimi"]},
+    slides:[
+      { tag:"OCT 24 – NOV 13, 2026", title:"Mercury Retrograde in Scorpio",
+        text:"Mercury appears to move backward from October 24 to November 13, 2026, and it never leaves Scorpio. It’s a review season with an investigative, psychological tone.",
+        follow:"Find Scorpio and your natal "+g("☿")+" Mercury in your chart.",
+        chat:"💬 What sign is your Mercury? Tell us in the chat!",
+        arch:{name:"The Detective Re-opens the Case", text:"The Detective goes back to the files. Something in the first investigation was missed."}},
+      { tag:"THE 2026 CYCLE", title:"The Timeline",
+        timeline:[
+          ["Oct 4","Pre-shadow begins · 5°02′ Scorpio"],
+          ["Oct 24","Stations retrograde · 20°59′ Scorpio (12:12 AM PT)"],
+          ["Nov 4","Cazimi: Mercury meets the Sun · about 12° Scorpio"],
+          ["Nov 13","Stations direct · 5°02′ Scorpio (7:53 AM PT)"],
+          ["Nov 29 (PT)","Post-shadow ends · back at 20°59′ Scorpio"]
+        ],
+        text:"",
+        follow:"Find 5° to 21° Scorpio in your chart. That’s the zone Mercury covers three times.", action:"calc",
+        arch:{name:"Three Passes", text:"First pass: preview. Second pass: review. Third pass: integrate. The story gets told three times."}},
+      { tag:"THE PLANET", title:"Mercury’s Archetype",
+        text:"Mercury rules communication, learning, thinking, messages, travel, trade and how we organize information.",
+        follow:"Find natal Mercury by sign, house and major aspects.",
+        arch:{name:"The Messenger", text:"The Messenger carries information between worlds: between people, between ideas, between the conscious and the unconscious."}},
+      { tag:"MERCURY + SCORPIO", title:"Mercury Through Scorpio",
+        text:"Mercury in Scorpio favors research, strategy, honest conversations and reading between the lines. It wants the real story, not small talk.",
+        follow:"Which house is Mercury moving through for you? What topics there need a deeper look?",
+        arch:{name:"The Investigator", text:"The Investigator listens for what isn’t said and asks the question no one else will."}},
+      { tag:"THE ASTRONOMY", title:"What Retrograde Means",
+        text:"Retrograde is an apparent backward motion seen from Earth. Mercury isn’t really reversing. Astrologically it’s read as a time to review, revise and reconsider.",
+        follow:"Name one Mercury matter worth revisiting: a message, plan, contract or conversation.",
+        arch:{name:"The Rewind", text:"Think of it as rewinding the tape to catch the line you missed."}},
+      { tag:"THE SHADOW", title:"The Shadow Zone",
+        text:"Mercury covers 5° to 21° Scorpio three times: forward in the pre-shadow, backward while retrograde, then forward again in the post-shadow. Themes from early October may return.",
+        follow:"Look back: what came up around October 4 – 24? Watch for it again.",
+        arch:{name:"The Echo", text:"What you said in the pre-shadow echoes back. Listen to how it sounds the second time."}},
+      { tag:"NOV 4", title:"The Cazimi",
+        text:"Halfway through, Mercury lines up exactly with the Sun (cazimi, “in the heart of the Sun”). Traditionally it’s a moment of clarity, a fresh insight in the middle of the review.",
+        follow:"Find about 12° Scorpio in your chart. What house is it in?",
+        arch:{name:"The Lightbulb", text:"In the middle of the dark, the lightbulb clicks on. Write that idea down."}},
+      { tag:"CONTACTS", title:"Does It Touch Your Chart?",
+        text:"Check for natal planets or angles between about 5° and 21° of Scorpio (conjunctions), Taurus (oppositions), or Leo and Aquarius (squares). Those get the strongest Mercury review.",
+        follow:"Scan your chart for planets in that 5°–21° range in the fixed signs.",
+        chat:"💬 Got a planet in that range? Drop it in the chat!",
+        arch:{name:"The Doorbell", text:"If Mercury rings your planet’s doorbell, that planet gets a visit from the Messenger."}},
+      { tag:"HOUSES", title:"Retrograde Through Your Houses",
+        text:"The house (or houses) Mercury moves through shows where review themes may feel most personal. Not every mix-up is caused by the retrograde. Use it as a lens, not a blame list.",
+        follow:"Name the house and describe its topics in your own words.",
+        arch:{name:"The Room Being Reorganized", text:"Mercury is reorganizing one room of your house. Which one?"}},
+      { tag:"QUICK QUIZ", title:"Pop Quiz, Explorers!",
+        text:"Mercury stations direct on November 13 at about which degree of Scorpio?",
+        quiz:{opts:["21°","12°","5°"], ans:2, why:"Mercury stations direct at 5°02′ Scorpio. 21° is where it turned retrograde, and 12° is the cazimi."},
+        follow:"Answer in the chat before the reveal!", chat:"💬 Type A, B or C in the chat!"},
+      { tag:"WRAP-UP", title:"Integrate & Reflect",
+        text:"Bring it together: Mercury’s archetype + Scorpio’s depth + your house + any contacts + the station dates.",
+        follow:"Write one useful insight from this retrograde and one thing you’ll finish after November 13.",
+        chat:"💬 Share your insight in the chat!",
+        arch:{name:"Case Closed", text:"The Detective closes the file, a little wiser and a lot more honest."}}
+    ]
+  }];
+  /* =================== STATE =================== */
+  var deck = null, si = 0, lessonIdx = 0, arch = false, night = false, presenting = false, scale = 1;
+  var lessonPos = lessons.map(function(){ return 0; });
+  var chart = null, birth = null, place = null, houseSys = "placidus", viewerName = "";
+  var focus = lessons[0].focus;
+  function $(id){ return root.querySelector("#" + id); }
+  function el(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+
+  /* links */
+  $("aitc-calc-url").textContent = CONFIG.calcShow.replace("/", "/\n");
+  $("aitc-mob-url").textContent = CONFIG.calcShow.replace("/", "/\u200B");
+  ["aitc-calc-open","aitc-mob-open","aitc-foot-tiktok","aitc-chart-newtab"].forEach(function(id){ $(id).href = CONFIG.calcUrl; });
+  ["aitc-station-open","aitc-foot-calc"].forEach(function(id){ $(id).href = CONFIG.stationUrl; });
+  $("aitc-foot-home").href = CONFIG.homeUrl;
+
+  /* =================== RENDER =================== */
+  var trailBtns = lessons.map(function(L, i){
+    var b = el("button", "aitc-trail-btn", L.short);
+    b.addEventListener("click", function(){ openLesson(i); });
+    $("aitc-lessons").appendChild(b);
+    return b;
+  });
+  var exploreBtn = el("button", "aitc-trail-btn aitc-trail-explore", "");
+  exploreBtn.hidden = true;
+  exploreBtn.addEventListener("click", function(){ if (lastExtra){ setDeck(lastExtra, lastExtraPos); } });
+  $("aitc-lessons").appendChild(exploreBtn);
+  var lastExtra = null, lastExtraPos = 0;
+
+  function setDeck(d, start){
+    if (deck && deck.kind === "lesson") lessonPos[lessonIdx] = si;
+    if (deck && deck.kind !== "lesson") lastExtraPos = si;
+    deck = d; si = start || 0;
+    if (d.kind === "lesson") lessonIdx = d.index;
+    else { lastExtra = d; exploreBtn.textContent = (d.kind === "spotlight" ? "★ " : "✦ ") + d.short; exploreBtn.hidden = false; }
+    if (d.focus){ focus = d.focus; renderCalc(); }
+    render(true);
+  }
+  function openLesson(i){ setDeck(lessons[i], lessonPos[i]); }
+
+  function render(animate){
+    var s = deck.slides[si], useArch = arch && s.arch;
+    $("aitc-lesson-title").textContent = g(deck.title);
+    $("aitc-counter").textContent = "Stop " + (si + 1) + " of " + deck.slides.length;
+    $("aitc-tag").textContent = s.tag || "";
+    var badge = $("aitc-arch-badge"); badge.hidden = !useArch;
+    if (useArch) badge.textContent = "Archetype: " + s.arch.name;
+    $("aitc-slide-title").textContent = g(s.title);
+    var body = useArch ? s.arch.text : s.text;
+    $("aitc-slide-text").textContent = body ? g(body) : ""; $("aitc-slide-text").hidden = !body;
+    var tl = $("aitc-timeline"); tl.replaceChildren(); tl.hidden = !(s.timeline && !useArch);
+    if (s.timeline && !useArch) s.timeline.forEach(function(r){ var li = el("li"); li.appendChild(el("b", null, r[0])); li.appendChild(el("span", null, r[1])); tl.appendChild(li); });
+    var ls = $("aitc-slide-list"); ls.replaceChildren(); ls.hidden = !s.list;
+    if (s.list) s.list.forEach(function(x){ ls.appendChild(el("li", null, g(x))); });
+    var art = $("aitc-slide-art"); art.innerHTML = s.svg || ""; art.hidden = !s.svg;
+    renderQuiz(s);
+    var act = $("aitc-slide-action"); act.hidden = s.action !== "calc";
+    $("aitc-follow-text").textContent = g(s.follow || "");
+    $("aitc-chat").hidden = !s.chat; if (s.chat) $("aitc-chat").textContent = g(s.chat);
+    $("aitc-prev").disabled = si === 0;
+    $("aitc-next").disabled = si === deck.slides.length - 1;
+    var dots = $("aitc-navdots"); dots.replaceChildren();
+    deck.slides.forEach(function(sl, i){
+      var d = el("button"); d.setAttribute("aria-label", "Stop " + (i + 1) + ": " + sl.title);
+      d.setAttribute("aria-current", i === si ? "true" : "false");
+      if (i < si) d.className = "aitc-visited";
+      if (i === si) d.textContent = "★";
+      d.addEventListener("click", function(){ go(i); });
+      dots.appendChild(d);
+    });
+    trailBtns.forEach(function(b, i){ b.setAttribute("aria-pressed", deck.kind === "lesson" && i === lessonIdx ? "true" : "false"); });
+    exploreBtn.setAttribute("aria-pressed", deck.kind !== "lesson" ? "true" : "false");
+    if (animate){ var sd = $("aitc-slide"); sd.classList.remove("aitc-in"); void sd.offsetWidth; sd.classList.add("aitc-in"); }
+  }
+  function go(i){ var n = Math.max(0, Math.min(deck.slides.length - 1, i)); var ch = n !== si; si = n; render(ch); }
+  $("aitc-prev").addEventListener("click", function(){ go(si - 1); });
+  $("aitc-next").addEventListener("click", function(){ go(si + 1); });
+  $("aitc-slide-action").addEventListener("click", function(){ showTab("calc"); $("aitc-date").focus(); });
+
+  function renderQuiz(s){
+    var box = $("aitc-quiz"); box.replaceChildren(); box.hidden = !s.quiz;
+    if (!s.quiz) return;
+    var letters = "ABCD", btns = [];
+    function reveal(pick){
+      btns.forEach(function(b, i){
+        b.disabled = true;
+        if (i === s.quiz.ans) b.classList.add("aitc-right");
+        else if (i === pick) b.classList.add("aitc-wrong");
+      });
+      var ex = el("p", "aitc-quiz-ex", "✔ " + s.quiz.why); box.appendChild(ex);
+      rv.hidden = true;
+    }
+    s.quiz.opts.forEach(function(o, i){
+      var b = el("button", "aitc-quiz-opt");
+      b.appendChild(el("b", null, letters[i])); b.appendChild(el("span", null, g(o)));
+      b.addEventListener("click", function(){ reveal(i); });
+      btns.push(b); box.appendChild(b);
+    });
+    var rv = el("button", "aitc-btn aitc-btn-sm aitc-btn-ink", "Reveal answer");
+    rv.addEventListener("click", function(){ reveal(-1); });
+    box.appendChild(rv);
+  }
+
+  /* =================== CONTROLS =================== */
+  function setScale(v){ scale = Math.max(.85, Math.min(1.6, Math.round(v * 100) / 100)); root.style.setProperty("--aitc-scale", scale); }
+  $("aitc-font-up").addEventListener("click", function(){ setScale(scale + .1); });
+  $("aitc-font-down").addEventListener("click", function(){ setScale(scale - .1); });
+  $("aitc-theme").addEventListener("click", function(){
+    night = !night; root.classList.toggle("aitc-night", night); root.classList.toggle("aitc-day", !night);
+    this.setAttribute("aria-pressed", night ? "true" : "false"); this.textContent = night ? "Day Mode" : "Night Mode";
+  });
+  $("aitc-arch").addEventListener("input", function(){ arch = this.value === "1"; render(true); });
+  function setPresenting(on){
+    presenting = on; root.classList.toggle("aitc-presenting", on);
+    $("aitc-present").textContent = on ? "✕ Exit" : "▶ Present";
+    document.documentElement.style.overflow = on ? "hidden" : "";
+    if (on && root.requestFullscreen && !document.fullscreenElement){ root.requestFullscreen().catch(function(){}); }
+    if (!on && document.fullscreenElement === root && document.exitFullscreen){ document.exitFullscreen().catch(function(){}); }
+  }
+  $("aitc-present").addEventListener("click", function(){ setPresenting(!presenting); });
+  document.addEventListener("fullscreenchange", function(){ if (!document.fullscreenElement && presenting) setPresenting(false); });
+
+  /* side tabs */
+  function showTab(t){
+    ["calc","explore"].forEach(function(n){
+      $("aitc-tab-" + n).setAttribute("aria-selected", n === t ? "true" : "false");
+      $("aitc-pane-" + n).hidden = n !== t;
+    });
+  }
+  $("aitc-tab-calc").addEventListener("click", function(){ showTab("calc"); });
+  $("aitc-tab-explore").addEventListener("click", function(){ showTab("explore"); });
+
+  /* =================== CHART LAB LINK / STAR MAP WINDOW =================== */
+  function samePage(){ try { return new URL(CONFIG.calcUrl).pathname.replace(/\/$/, "") === location.pathname.replace(/\/$/, ""); } catch(e){ return false; } }
+  function findLab(){
+    var hs = document.querySelectorAll("h1,h2,h3");
+    for (var i = 0; i < hs.length; i++){ if (!root.contains(hs[i]) && hs[i].textContent.indexOf(CONFIG.calcLabHeading) > -1) return hs[i]; }
+    return null;
+  }
+  function jumpToLab(e){
+    if (window.atcCenter){ if (e) e.preventDefault(); if (presenting) setPresenting(false); window.atcCenter.open("chart"); return true; }
+    var lab = findLab(); if (!lab) return false; if (e) e.preventDefault(); if (presenting) setPresenting(false); lab.scrollIntoView({behavior:"smooth", block:"start"}); return true; }
+  if (samePage()){
+    ["aitc-calc-open","aitc-mob-open"].forEach(function(id){ var a = $(id); a.removeAttribute("target"); a.textContent = "Go to Chart Lab ↓"; a.addEventListener("click", jumpToLab); });
+  }
+  function setChartWin(open){
+    $("aitc-chartwin").hidden = !open;
+    var f = $("aitc-frame");
+    if (open){ f.src = CONFIG.calcUrl; $("aitc-chartwin").scrollIntoView({behavior:"smooth", block:"start"}); }
+    else f.removeAttribute("src");
+  }
+  $("aitc-chart-toggle").addEventListener("click", function(){
+    if ($("aitc-chartwin").hidden && samePage() && jumpToLab()) return;
+    setChartWin($("aitc-chartwin").hidden);
+  });
+  $("aitc-chart-close").addEventListener("click", function(){ setChartWin(false); });
+
+  /* =================== EXPLORE (any topic → presentation) =================== */
+  var QUICK = ["Scorpio","Mars in Scorpio","Venus in Scorpio","Scorpio Rising","8th house","Pluto","Moon in Cancer","Cazimi"];
+  var pending = null;
+  function showExplore(raw){
+    var box = $("aitc-result"); box.replaceChildren(); pending = null;
+    if (!raw.trim()){ box.hidden = true; return; }
+    var d = buildDeck(parseTopic(raw));
+    if (!d){
+      box.appendChild(el("h5", null, "Off the map! Try one of these"));
+      box.appendChild(el("p", null, "A sign (“Leo”), a planet (“Saturn”), a house (“5th house”), or mix them: “Venus in Scorpio”, “Mars in the 10th”, “Scorpio 7th house”, “Libra rising”."));
+    } else {
+      pending = d;
+      box.appendChild(el("h5", null, g(d.slides[0].title)));
+      box.appendChild(el("p", null, g(d.slides[0].text)));
+      var go_ = el("button", "aitc-btn aitc-btn-terra aitc-btn-wide", "▶ Present this (" + d.slides.length + " stops)");
+      go_.addEventListener("click", function(){ setDeck(pending, 0); root.querySelector(".aitc-window").scrollIntoView({behavior:"smooth", block:"nearest"}); });
+      box.appendChild(go_);
+    }
+    box.hidden = false;
+  }
+  var tmr;
+  $("aitc-search").addEventListener("input", function(){ var v = this.value; clearTimeout(tmr); tmr = setTimeout(function(){ showExplore(v); }, 200); });
+  $("aitc-search").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ clearTimeout(tmr); showExplore(this.value); }
+  });
+  QUICK.forEach(function(q){
+    var b = el("button", null, q);
+    b.addEventListener("click", function(){ $("aitc-search").value = q; showExplore(q); });
+    $("aitc-quick").appendChild(b);
+  });
+
+  /* =================== CALCULATOR UI =================== */
+  function renderFocusTitle(){ $("aitc-calc-title").textContent = g(focus.title); }
+  $("aitc-notime").addEventListener("change", function(){ $("aitc-time").disabled = this.checked; });
+  function setSys(s){
+    houseSys = s;
+    $("aitc-sys-p").setAttribute("aria-pressed", s === "placidus" ? "true" : "false");
+    $("aitc-sys-e").setAttribute("aria-pressed", s === "equal" ? "true" : "false");
+    if (birth) compute();
+  }
+  $("aitc-sys-p").addEventListener("click", function(){ setSys("placidus"); });
+  $("aitc-sys-e").addEventListener("click", function(){ setSys("equal"); });
+
+  function placeLabel(r){ return [r.name, r.admin1, r.country].filter(Boolean).join(", "); }
+  function choosePlace(r){
+    place = {lat:r.latitude, lon:r.longitude, tz:r.timezone, label:placeLabel(r)};
+    $("aitc-place-list").replaceChildren();
+    $("aitc-place-chosen").textContent = "📍 " + place.label; $("aitc-place-chosen").hidden = false;
+  }
+  function findPlace(){
+    var q = $("aitc-place").value.trim(), list = $("aitc-place-list");
+    list.replaceChildren(); place = null; $("aitc-place-chosen").hidden = true;
+    if (!q) return;
+    list.appendChild(el("p", "aitc-hint", "Searching…"));
+    fetch("https://geocoding-api.open-meteo.com/v1/search?count=6&language=en&format=json&name=" + encodeURIComponent(q.split(",")[0]))
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        list.replaceChildren();
+        var res = (j.results || []).filter(function(r){ return r.timezone; });
+        if (!res.length){ list.appendChild(el("p", "aitc-hint", "No places found. Try just the city name.")); return; }
+        if (res.length === 1){ choosePlace(res[0]); return; }
+        res.forEach(function(r){ var b = el("button", "aitc-place-opt", placeLabel(r)); b.addEventListener("click", function(){ choosePlace(r); }); list.appendChild(b); });
+      })
+      .catch(function(){ list.replaceChildren(el("p", "aitc-hint", "Couldn’t reach the place search. Check your connection and try again.")); });
+  }
+  $("aitc-place-btn").addEventListener("click", findPlace);
+  $("aitc-place").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); findPlace(); } });
+
+  function msg(t){ var m = $("aitc-calc-msg"); m.textContent = t; m.hidden = !t; }
+  $("aitc-calc-go").addEventListener("click", function(){
+    var dv = $("aitc-date").value, tv = $("aitc-time").value, nt = $("aitc-notime").checked;
+    if (!dv){ msg("Add a birth date first."); return; }
+    if (!nt && !tv){ msg("Add a birth time, or tick “I don’t know my birth time”."); return; }
+    if (!place){ msg("Search for the birthplace and pick it from the list."); return; }
+    if (!window.Astronomy){ msg("The star engine is still loading. Try again in a moment."); return; }
+    var dp = dv.split("-").map(Number), tp = (tv || "12:00").split(":").map(Number);
+    birth = {y:dp[0], mo:dp[1], d:dp[2], h:tp[0], mi:tp[1], timeKnown:!nt, lat:place.lat, lon:place.lon, tz:place.tz};
+    viewerName = $("aitc-name").value.trim();
+    msg(""); compute();
+  });
+  function compute(){
+    try { chart = castChart(window.Astronomy, birth, houseSys); }
+    catch(err){ msg("Something went wrong with that date. Please double-check it."); return; }
+    renderCalc();
+  }
+  function moduleResults(){
+    var mods = ["bigThree"].concat(focus.modules.filter(function(m){ return m !== "bigThree"; }));
+    return mods.map(function(m){ return MODULES[m] ? MODULES[m](chart, focus) : null; }).filter(Boolean);
+  }
+  function renderCalc(){
+    renderFocusTitle();
+    var out = $("aitc-calc-out"); out.replaceChildren();
+    $("aitc-calc-actions").hidden = !chart;
+    if (!chart) return;
+    var w = el("div", "aitc-wheel-wrap"); w.innerHTML = wheelSVG(chart, focus.sign, focus.planet); out.appendChild(w);
+    var sysName = chart.system === "solar" ? "Solar houses" : chart.system === "equal" ? "Equal houses" : "Placidus houses";
+    out.appendChild(el("p", "aitc-hint", sysName + (chart.note ? " · " + chart.note : "")));
+    moduleResults().forEach(function(r){
+      var c = el("div", "aitc-res-card");
+      c.appendChild(el("h5", null, g(r.title)));
+      if (r.lines && r.lines.length){ var ul = el("ul"); r.lines.forEach(function(x){ ul.appendChild(el("li", null, g(x))); }); c.appendChild(ul); }
+      if (r.note) c.appendChild(el("p", null, g(r.note)));
+      out.appendChild(c);
+    });
+  }
+  $("aitc-spotlight").addEventListener("click", function(){
+    if (!chart) return;
+    var who = viewerName ? viewerName + "’s" : "This", res = moduleResults();
+    var slides = [{tag:"VIEWER SPOTLIGHT", title:who + " Star Map", svg:wheelSVG(chart, focus.sign, focus.planet),
+      list:res[0].lines, follow:"Find these same points in your own chart.", chat:"💬 Calculate yours at the link on screen!"}];
+    res.slice(1).forEach(function(r){ slides.push({tag:"VIEWER SPOTLIGHT", title:r.title, list:r.lines, text:r.note || "", follow:"Now find this in your own chart."}); });
+    setDeck({kind:"spotlight", short:viewerName ? viewerName + "’s chart" : "Spotlight", title:"Viewer Spotlight · " + (viewerName || "Chart"), slides:slides, focus:null}, 0);
+  });
+  $("aitc-calc-clear").addEventListener("click", function(){
+    ["aitc-date","aitc-time","aitc-place","aitc-name"].forEach(function(id){ $(id).value = ""; });
+    $("aitc-notime").checked = false; $("aitc-time").disabled = false;
+    $("aitc-place-list").replaceChildren(); $("aitc-place-chosen").hidden = true;
+    place = null; birth = null; chart = null; viewerName = ""; msg(""); renderCalc();
+  });
+
+  /* =================== KEYBOARD =================== */
+  function inView(){ var r = root.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; }
+  document.addEventListener("keydown", function(e){
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))){ if (e.key === "Escape" && root.contains(t)) t.blur(); return; }
+    if (!presenting && !inView()) return;
+    if (e.key === "ArrowRight"){ go(si + 1); e.preventDefault(); }
+    else if (e.key === "ArrowLeft"){ go(si - 1); e.preventDefault(); }
+    else if (e.key === "/"){ showTab("explore"); $("aitc-search").focus(); e.preventDefault(); }
+    else if (e.key === "c" || e.key === "C"){ showTab("calc"); $("aitc-date").focus(); e.preventDefault(); }
+    else if (e.key === "p" || e.key === "P"){ setPresenting(!presenting); }
+    else if (e.key === "Escape" && presenting){ setPresenting(false); }
+  });
+
+  /* =================== SKY NOW (live) =================== */
+  var SKY = ["Sun","Moon","Mercury","Venus","Mars"];
+  function drawSky(){
+    var A = window.Astronomy; if (!A) return;
+    try {
+      var now = new Date(), box = $("aitc-sky-chips"); box.replaceChildren();
+      SKY.forEach(function(n){
+        var l = bodyLon(A, n, now), chip = el("span", "aitc-chip", g(PL[n].g) + " " + n + " " + Math.floor(l % 30) + "° " + SIGNS[signOf(l)].n);
+        if (isRetro(A, n, now)) chip.appendChild(el("span", "aitc-rx", "℞"));
+        box.appendChild(chip);
+      });
+      $("aitc-sky").hidden = false;
+    } catch(err){ $("aitc-sky").hidden = true; }
+  }
+  function loadEngine(){
+    if (window.Astronomy){ drawSky(); return; }
+    var s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js";
+    s.onload = function(){ drawSky(); if (birth) compute(); };
+    document.head.appendChild(s);
+  }
+  loadEngine();
+  setInterval(drawSky, 10 * 60 * 1000);
+
+  /* start */
+  showTab("calc");
+  renderCalc();
+  setDeck(lessons[0], 0);
+})();
+</script>
+</div>
+
+  </div>
+</div>
+<div class="atc-panel" data-atc="chart" role="tabpanel" hidden>
+  <div class="atc-panel-head"><div><h3>🧭 Chart Lab</h3><p>Calculate your free birth chart, TikTok Edition.</p></div><button class="atc-top" type="button">↑ Menu</button></div>
+  <div class="atc-slot"></div>
+</div>
+<div class="atc-panel" data-atc="sky" role="tabpanel" hidden>
+  <div class="atc-panel-head"><div><h3>🌙 Today’s Sky</h3><p>The Moon and planets right now.</p></div><button class="atc-top" type="button">↑ Menu</button></div>
+  <div class="atc-slot"></div>
+</div>
+<div class="atc-panel" data-atc="study" role="tabpanel" hidden>
+  <div class="atc-panel-head"><div><h3>📚 Study &amp; Practice</h3><p>Learn your chart one piece at a time.</p></div><button class="atc-top" type="button">↑ Menu</button></div>
+  <div class="atc-slot"></div>
+</div>
+<div class="atc-panel" data-atc="calc" role="tabpanel" hidden>
+  <div class="atc-panel-head"><div><h3>🔭 More Calculators</h3><p>Advanced and alternate chart calculators.</p></div><button class="atc-top" type="button">↑ Menu</button></div>
+  <div class="atc-slot"></div>
+</div>
+<div class="atc-panel" data-atc="reading" role="tabpanel" hidden>
+  <div class="atc-panel-head"><div><h3>🔮 Reading Center</h3><p>Practitioner tools for readings and practice.</p></div><button class="atc-top" type="button">↑ Menu</button></div>
+  <div class="atc-slot"></div>
+</div>
+<div class="atc-panel" data-atc="more" role="tabpanel" hidden>
+  <div class="atc-panel-head"><div><h3>✨ More Tools</h3><p>Time converter and extra astrology widgets.</p></div><button class="atc-top" type="button">↑ Menu</button></div>
+  <div class="atc-slot"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root = document.getElementById("atc-root");
+  if (!root || root.dataset.ready === "yes") return;
+  root.dataset.ready = "yes";
+
+  /* The tabs. "find" decides which of the page's existing blocks go in each tab. */
+  var TABS = [
+    {id:"chart",   hash:"chart-lab",   icon:"🧭", title:"Chart Lab",         sub:"Calculate your free birth chart", start:true},
+    {id:"live",    hash:"live",        icon:"🎥", title:"LIVE Classroom",    sub:"Slides & follow-along for the LIVEs"},
+    {id:"sky",     hash:"sky",         icon:"🌙", title:"Today’s Sky",       sub:"The Moon & planets right now"},
+    {id:"study",   hash:"study",       icon:"📚", title:"Study & Practice",  sub:"Learn your chart step by step"},
+    {id:"calc",    hash:"calculators", icon:"🔭", title:"More Calculators",  sub:"Advanced & alternate tools"},
+    {id:"reading", hash:"reading",     icon:"🔮", title:"Reading Center",    sub:"Practitioner tools"},
+    {id:"more",    hash:"more",        icon:"✨", title:"More Tools",        sub:"Time converter & extra widgets"}
+  ];
+  function classify(b){
+    var txt = (b.innerText || "").slice(0, 400), html = b.innerHTML;
+    if (/Enter a valid embed|Add code here|Embed Block/i.test(txt) && !b.querySelector("iframe")) return null; // empty placeholder
+    if (b.querySelector("#tta-root")) return "chart";
+    if (b.querySelector("#arc-root")) return "reading";
+    if (b.querySelector("#lab-name, #levelSelect")) return "study";
+    if (/TODAY.?S MOON|Sky right now|Waning|Waxing|Full Moon|New Moon|First Quarter|Last Quarter|Gibbous|Crescent/i.test(txt)) return "sky";
+    if (/Advanced Chart Calculator/i.test(txt) || /astro-charts\.com/i.test(html)) return "calc";
+    return "more"; // anything else, including the astro-app.net widgets
+  }
+
+  /* ---------- build menu ---------- */
+  var cards = root.querySelector("#atc-cards"), bar = root.querySelector("#atc-bar"), current = null;
+  var cardEls = {}, barEls = {};
+  TABS.forEach(function(t){
+    var c = document.createElement("button");
+    c.type = "button"; c.className = "atc-card" + (t.start ? " atc-start" : ""); c.setAttribute("role", "tab");
+    if (t.start){ var bd = document.createElement("span"); bd.className = "atc-badge"; bd.textContent = "START HERE"; c.appendChild(bd); }
+    var ic = document.createElement("span"); ic.className = "atc-card-icon"; ic.textContent = t.icon; c.appendChild(ic);
+    var b = document.createElement("b"); b.textContent = t.title; c.appendChild(b);
+    var s = document.createElement("span"); s.textContent = t.sub; c.appendChild(s);
+    c.addEventListener("click", function(){ open(t.id, true); });
+    cards.appendChild(c); cardEls[t.id] = c;
+    var p = document.createElement("button");
+    p.type = "button"; p.setAttribute("role", "tab"); p.textContent = t.icon + " " + t.title;
+    p.addEventListener("click", function(){ open(t.id, true); });
+    bar.appendChild(p); barEls[t.id] = p;
+  });
+  function panel(id){ return root.querySelector('.atc-panel[data-atc="' + id + '"]'); }
+  function open(id, scroll){
+    if (!panel(id) || cardEls[id].hidden) id = "chart";
+    current = id;
+    TABS.forEach(function(t){
+      var on = t.id === id;
+      panel(t.id).hidden = !on;
+      cardEls[t.id].setAttribute("aria-selected", on ? "true" : "false");
+      barEls[t.id].setAttribute("aria-selected", on ? "true" : "false");
+    });
+    var t = TABS.filter(function(x){ return x.id === id; })[0];
+    try { history.replaceState(null, "", "#" + t.hash); } catch(e){}
+    setTimeout(function(){ window.dispatchEvent(new Event("resize")); }, 30);
+    if (scroll){
+      var y = panel(id).getBoundingClientRect().top + window.pageYOffset - headerH() - 70;
+      if (window.pageYOffset > y || scroll === "force") window.scrollTo({top:Math.max(0, y), behavior:"smooth"});
+    }
+  }
+  root.querySelectorAll(".atc-top").forEach(function(b){
+    b.addEventListener("click", function(){ root.querySelector(".atc-hero").scrollIntoView({behavior:"smooth", block:"start"}); });
+  });
+  window.atcCenter = { open:function(id){ open(id, "force"); } };
+
+  /* ---------- sticky bar under the site header ---------- */
+  function headerH(){
+    var h = document.querySelector("header#header, header");
+    if (!h) return 0;
+    var pos = getComputedStyle(h).position;
+    return (pos === "fixed" || pos === "sticky") ? h.getBoundingClientRect().bottom : 0;
+  }
+  function setTop(){ root.style.setProperty("--atc-top", Math.max(0, headerH()) + "px"); }
+  setTop(); window.addEventListener("resize", setTop);
+  if ("IntersectionObserver" in window){
+    new IntersectionObserver(function(es){ bar.classList.toggle("atc-show", !es[0].isIntersecting); }, {threshold:0, rootMargin:"-" + Math.round(headerH()) + "px 0px 0px 0px"}).observe(cards);
+  }
+
+  /* ---------- editing mode? leave the page alone ---------- */
+  var editing = false;
+  try { editing = window.top !== window.self && /\/config/.test(window.top.location.pathname); } catch(e){ editing = window.top !== window.self; }
+  if (document.body.className.indexOf("sqs-edit-mode") > -1) editing = true;
+  if (editing){
+    root.querySelector("#atc-edit-note").hidden = false;
+    TABS.forEach(function(t){ if (t.id !== "live"){ cardEls[t.id].hidden = true; barEls[t.id].hidden = true; } });
+    open("live");
+    return;
+  }
+
+  /* ---------- organize the page ---------- */
+  var scope = root.closest("#sections") || root.closest("main") || document.body;
+  var ownSection = root.closest("section.page-section") || root.closest("section");
+  var hideStyle = document.createElement("style");
+  hideStyle.textContent = "main section.page-section:not(.atc-own-section){visibility:hidden}";
+  if (ownSection){ ownSection.classList.add("atc-own-section"); document.head.appendChild(hideStyle); }
+
+  var done = false;
+  function organize(){
+    if (done) return; done = true;
+    hideStyle.remove(); // un-hide first so each tool's text can be read
+    try {
+      var ownBlock = root.closest(".sqs-block");
+      var blocks = [].slice.call(scope.querySelectorAll(".sqs-block")).filter(function(b){
+        return b !== ownBlock && !b.contains(root) && !root.contains(b) && !b.parentElement.closest(".sqs-block") && !b.closest("footer");
+      });
+      var counts = {};
+      blocks.forEach(function(b){
+        var hasStuff = b.querySelector("iframe, canvas, svg, img, input, button, script") || (b.innerText || "").trim().length > 2;
+        if (!hasStuff) return; // empty spacer: leave it behind
+        var id = classify(b);
+        if (!id){ b.style.display = "none"; return; } // hide empty placeholders
+        panel(id).querySelector(".atc-slot").appendChild(b);
+        counts[id] = (counts[id] || 0) + 1;
+      });
+      /* move the Center out of its grid cell so it can grow freely */
+      var grid = root.closest(".fluid-engine") || (ownBlock && ownBlock.parentNode);
+      if (grid && grid.parentNode){ grid.parentNode.insertBefore(root, grid); grid.style.display = "none"; }
+      /* hide sections that are now empty (these were the blank gaps) */
+      [].slice.call(scope.querySelectorAll("section.page-section")).forEach(function(s){
+        if (s === ownSection || s.contains(root)) return;
+        var left = [].slice.call(s.querySelectorAll(".sqs-block")).filter(function(b){ return b.style.display !== "none" && ((b.innerText || "").trim().length > 2 || b.querySelector("iframe, img, canvas")); });
+        if (!left.length) s.style.display = "none";
+      });
+      TABS.forEach(function(t){ if (t.id !== "live" && !counts[t.id]){ cardEls[t.id].hidden = true; barEls[t.id].hidden = true; } });
+    } catch(err){
+      if (window.console) console.warn("TikTok Astrology Center:", err);
+    }
+    hideStyle.remove();
+    var h = (location.hash || "").replace("#", ""), pick = "chart";
+    TABS.forEach(function(t){ if (t.hash === h) pick = t.id; });
+    open(pick, false);
+  }
+  if (document.readyState === "complete") organize();
+  else window.addEventListener("load", organize);
+  setTimeout(organize, 9000); // safety net
+})();
+</script>
+</div>
