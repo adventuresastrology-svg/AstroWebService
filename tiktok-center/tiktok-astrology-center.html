@@ -1702,7 +1702,9 @@
         var ob = other.querySelector(".section-background") || other, mb = ownSection.querySelector(".section-background") || ownSection;
         var col = getComputedStyle(ob).backgroundColor;
         if (col && col !== "rgba(0, 0, 0, 0)"){ mb.style.background = col; [].slice.call(mb.children).forEach(function(c){ c.style.opacity = "0"; }); }
-        ownSection.style.paddingTop = "0"; ownSection.style.minHeight = "0";
+        ownSection.style.minHeight = "0";
+        var cw = ownSection.querySelector(".content-wrapper");
+        if (cw){ cw.style.paddingTop = "24px"; cw.style.paddingBottom = "40px"; }
       }
       TABS.forEach(function(t){ if (t.id !== "live" && !counts[t.id]){ cardEls[t.id].hidden = true; barEls[t.id].hidden = true; } });
     } catch(err){
